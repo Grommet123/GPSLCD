@@ -7,7 +7,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "1.0"          // Version number
+#define VERSION  "2.0"          // Version number
 //#define _16x2                 // LCD type (20x4 or 16x2). Comment out for 20x4
 //#define DEBUG                 // Comment out to turn on debug
 //#define DATA_VALID_OVERRIDE   // Override the data valid flag (comment out to turn off)
@@ -69,6 +69,7 @@ struct GPSStruct {
   uint32_t satellites;
 #ifndef _16x2
   double   heading;       // Degrees
+  uint32_t hdop;
   uint16_t year;
   uint8_t  month;
   uint8_t  day;
