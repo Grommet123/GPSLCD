@@ -99,7 +99,8 @@ void loop()
     gps.course.isValid()     &&
     gps.date.isValid()       &&
     gps.time.isValid()       &&
-    gps.satellites.isValid();
+    gps.satellites.isValid() &&
+    gps.hdop.isValid();
 
   // Check if the GPS data is valid or data valid override is set (for debugging)
   if (dataValid || dataValidOverride) {
@@ -112,6 +113,7 @@ void loop()
     GPSData.altitude   = gps.altitude.feet();
 #ifndef _16x2
     GPSData.heading    = gps.course.deg();
+    GPSData.hdop       = gps.hdop.value();
     GPSData.year       = gps.date.year();
     GPSData.month      = gps.date.month();
     GPSData.day        = gps.date.day();
@@ -128,6 +130,7 @@ void loop()
     GPSData.altitude   = 555.0d;
 #ifndef _16x2
     GPSData.heading    = 60.0d; // ENE or NE (16 cardinal points or 8 cardinal points)
+    GPSData.hdop       = 240;
     GPSData.year       = 2016;
     GPSData.month      = 11; // Day before ST starts
     GPSData.day        = 5;  //      "
@@ -257,6 +260,14 @@ void loop()
     else {
       lcd.print("         "); // Clear the extra chars
     }
+#else // #ifndef CONVERT_TO_LOCAL
+    //Dis[lay HDOP with the format X.X (it comes in from the GPS module as XXX)
+    uint32_t hdopInteger = GPSData.hdop / 100;
+    uint32_t hdopFarction = (GPSData.hdop - (hdopInteger * 100)) / 10;
+    lcd.print(" Hdop:");
+    lcd.print(hdopInteger);
+    lcd.print(".");
+    lcd.print(hdopFarction);
 #endif // #ifndef CONVERT_TO_LOCAL
     lcd.setCursor (0, 2); // Go to 3rd line
     lcd.print("Spd: ");
