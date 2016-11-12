@@ -261,9 +261,7 @@ void loop()
     // It comes in from the GPS module as XXX
     // If you care how Hdop is computed (I don't :-(), see the following:
     // http://www2.unb.ca/gge/Resources/gpsworld.may99.pdf
-    uint32_t hdopInteger = GPSData.hdop / 100;
-    uint32_t hdopFarction = (GPSData.hdop - (hdopInteger * 100)) / 10;
-    float Hdop = (float)hdopInteger + ((float)hdopFarction) / 10.0f; // In X.X format
+    float Hdop = (float)GPSData.hdop / 100.0f; // In X.X format
     lcd.print(" Hdop:");
     if (Hdop < 10.0f) {
       lcd.print(Hdop);
@@ -285,9 +283,7 @@ void loop()
     } // if (hdopInteger < 10)
 #else // #ifdef DISPLAY_HDOP_ERROR
     // Display horizontal position error in feet
-    uint32_t hdopInteger = GPSData.hdop / 100;
-    uint32_t hdopFarction = (GPSData.hdop - (hdopInteger * 100)) / 10;
-    float hError = (float)hdopInteger + ((float)hdopFarction) / 10.0f;
+    float hError = (float)GPSData.hdop / 100.0f; // In X.X format
     hError *= GPS_RECEIVER_ERROR; // Error in meters
     hError *= _GPS_FEET_PER_METER; // Error in feet
     lcd.print(" Err: ");
