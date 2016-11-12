@@ -7,7 +7,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "1.2"               // Version number
+#define VERSION  "1.3"               // Version number
 //#define _16x2                      // LCD type (20x4 or 16x2). Comment out for 20x4
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
                                      // It also feed fake GPS data to the system for debugging
@@ -34,7 +34,7 @@
 #define COLUMN 16                    // Number of Columns
 #define ROW 2                        // Number of rows
 #define SPEED_ALTITUDE_SW 5          // Speed/Altitude select switch
-#define I2C_ADDR    0x27             // Address of my 16x2 LCD
+#define I2C_ADDR    0x27             // Address of my 16x2 LCD (yours might be different)
 
 // Function Prototypes
 //     Nada
@@ -42,12 +42,12 @@
 #define COLUMN 20                    // Number of Columns
 #define ROW 4                        // Number of rows
 #define ALTITUDE_DATE_TIME_SW 5      // Altitude/Date time select switch
-#define I2C_ADDR    0x3F             // Address of my 20x4 LCD
+#define I2C_ADDR    0x3F             // Address of my 20x4 LCD (yours might be different)
 #define DISPLAY_12_HOUR              // Display either 12 or 24 hour time (comment out for 24)
 #define CONVERT_TO_LOCAL             // Convert the UTC time/date to local time/date (comment out for UTC)
-//#define DISPLAY_HDOP_ERROR         // Displays horizontal position error or Hdop (comment out for horizontal position error)
-#ifndef DISPLAY_HDOP_ERROR
-#define GPS_RECEIVER_ERROR 2.5f      // Receiver error for the GPS module
+//#define DISPLAY_HDOP               // Displays Hdop or horizontal position error (comment out for horizontal position error)
+#ifndef DISPLAY_HDOP
+#define GPS_RECEIVER_ERROR 2.5f      // Receiver error for the GPS module (Ublox NEO-6M)
 #endif
 //#define _16CARDINAL                // Displays 16 cardinal heading points (comment out for 8)
 
