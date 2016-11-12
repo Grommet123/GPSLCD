@@ -7,7 +7,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "1.0"               // Version number
+#define VERSION  "1.1"               // Version number
 //#define _16x2                      // LCD type (20x4 or 16x2). Comment out for 20x4
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
                                      // It also feed fake GPS data to the system for debugging
@@ -45,10 +45,9 @@
 #define I2C_ADDR    0x3F             // Address of my 20x4 LCD
 #define DISPLAY_12_HOUR              // Display either 12 or 24 hour time (comment out for 24)
 #define CONVERT_TO_LOCAL             // Convert the UTC time/date to local time/date (comment out for UTC)
-//#define DISPLAY_HDOP_ERROR         // Displays horizontal error or Hdop (comment out for horizontal error)
+//#define DISPLAY_HDOP_ERROR         // Displays horizontal position error or Hdop (comment out for horizontal position error)
 #ifndef DISPLAY_HDOP_ERROR
 #define GPS_RECEIVER_ERROR 2.5f      // Receiver error for the GPS module
-#define METERS_TO_FEET 3.2f          // Meters to feet
 #endif
 //#define _16CARDINAL                // Displays 16 cardinal heading points (comment out for 8)
 
