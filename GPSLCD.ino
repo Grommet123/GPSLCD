@@ -263,11 +263,10 @@ void loop()
     // http://www2.unb.ca/gge/Resources/gpsworld.may99.pdf
     uint32_t hdopInteger = GPSData.hdop / 100;
     uint32_t hdopFarction = (GPSData.hdop - (hdopInteger * 100)) / 10;
+    float Hdop = (float)hdopInteger + ((float)hdopFarction) / 10.0f; // In X.X format
     lcd.print(" Hdop:");
-    if (hdopInteger < 10) {
-      lcd.print(hdopInteger); // Integer part
-      lcd.print(".");
-      lcd.print(hdopFarction); // Fraction part
+    if (Hdop < 10.0f) {
+      lcd.print(Hdop);
     }
     else {
       // Hdop value too large for my LCD, so cross it out
@@ -290,7 +289,7 @@ void loop()
     uint32_t hdopFarction = (GPSData.hdop - (hdopInteger * 100)) / 10;
     float hError = (float)hdopInteger + ((float)hdopFarction) / 10.0f;
     hError *= GPS_RECEIVER_ERROR; // Error in meters
-    hError *= METERS_TO_FEET; // Error in feet
+    hError *= _GPS_FEET_PER_METER; // Error in feet
     lcd.print(" Err: ");
     if (hError < 100.0f) {
       lcd.print((uint8_t)hError);
