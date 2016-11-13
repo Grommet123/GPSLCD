@@ -22,8 +22,6 @@
 TinyGPSPlus gps; // This is the GPS object that will pretty much do all the grunt work with the NMEA data
 SoftwareSerial GPSModule(10, 11); // RX, TX
 LiquidCrystal_I2C lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin); // Initializes class variables and defines the I2C address of the LCD
-bool dataValid; // Data is valid from the GPS module
-GPSStruct GPSData; // Holds the GPS data coming from the GPS module
 
 // The setup (runs once at start up)
 void setup()
@@ -58,6 +56,9 @@ void loop()
   static bool leftInitialization = false;
   static bool creditToggle = true;
   static bool invalidSatellitesToggle = true;
+  bool dataValid; // Data valid from the GPS module
+  GPSStruct GPSData; // Holds the GPS data coming from the GPS module
+  unsigned long now = millis(); // The time "now"
 #ifndef _16x2
   static unsigned long prevDateTime = TOGGLETIME_INTERVAL;
   static unsigned long prevHeadingTime = TOGGLETIME_INTERVAL;
@@ -79,13 +80,12 @@ void loop()
   // Turn LCD backlight on/off
   lcd.setBacklight(digitalRead(BACKLIGHT_SW));
 #endif
-  unsigned long now = millis();
 
-  while (GPSModule.available()) // While there are characters to come from the GPS
+  // Get the data from the GPS module
+  while (GPSModule.available()) // While there are characters coming from the GPS module
   {
     bool b = gps.encode(GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
   }
-
   // Get the GPS data valid flags
   dataValid =
     gps.location.isValid()   &&
@@ -96,7 +96,6 @@ void loop()
     gps.time.isValid()       &&
     gps.satellites.isValid() &&
     gps.hdop.isValid();
-
   // Check if the GPS data is valid or data valid override is set (for debugging)
   if (dataValid || dataValidOverride) {
 #ifndef DATA_VALID_OVERRIDE
@@ -126,7 +125,7 @@ void loop()
 #ifndef _16x2
     GPSData.heading    = 60.0d; // ENE or NE (16 cardinal points or 8 cardinal points)
     GPSData.hdop       = 150;
-    GPSData.year       = 2016;
+    GPSData.year       = 2017;
     GPSData.month      = 11; // Day before ST starts
     GPSData.day        = 5;  //      "
     GPSData.hour       = 23; // 7pm my local time
