@@ -35,6 +35,8 @@ void setup()
   // Selects either altitude or the date/time to be displayed
   pinMode(ALTITUDE_DATE_TIME_SW, INPUT);
 #endif
+  pinMode (ON_BOARD_LED, OUTPUT); // Turn off on-board LED
+  digitalWrite (ON_BOARD_LED, LOW); //       "
 
   GPSModule.begin(9600); // This opens up communications to the software serial tx and rx lines
   GPSModule.flush();
