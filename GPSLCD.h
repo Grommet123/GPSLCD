@@ -7,7 +7,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "1.4"               // Version number
+#define VERSION  "1.5"               // Version number
 //#define _16x2                      // LCD type (20x4 or 16x2). Comment out for 20x4
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
                                      // It also feed fake GPS data to the system for debugging
@@ -20,6 +20,7 @@
 #define D5_pin  5                    //                   "
 #define D6_pin  6                    //                   "
 #define D7_pin  7                    //                   "
+#define ON_BOARD_LED 13              // On-board LED
 #define BACKLIGHT_SW 6               // LCD backlight select switch
 #define INITIALIZATION_INTERVAL 1000 // Initialization display interval
 #define SPEED_CUTOUT 10.0            // Value where the speed & heading are set to 0
