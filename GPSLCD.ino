@@ -360,16 +360,14 @@ void loop()
           lcd.print("            "); // Clear the extra chars
         }
       } // if (now - prevCreditTime > TOGGLETIME_INTERVAL)
-      prevDateTime = TOGGLETIME_INTERVAL;
-      dateTimeToggle = true; // Default first to display date
     } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
     else {
       // Toggle date/time every TOGGLETIME_INTERVAL seconds
       if (now - prevDateTime > TOGGLETIME_INTERVAL) {
         prevDateTime = now;
-        if (!dateTimeToggle) {
+        if (dateTimeToggle) {
           // Display time
-          dateTimeToggle = true;
+          dateTimeToggle = false;
           lcd.print("Time: ");
           uint8_t hour = GPSData.hour;
           uint8_t day  = GPSData.day;
@@ -418,10 +416,10 @@ void loop()
           lcd.print("   UTC");
 #endif // #ifdef DISPLAY_12_HOUR
 #endif // #ifndef CONVERT_TO_LOCAL
-        } // if (!dateTimeToggle)
+        } // if (dateTimeToggle)
         else {
           // Display date
-          dateTimeToggle = false;
+          dateTimeToggle = true;
           lcd.print("Date: ");
           uint8_t hour = GPSData.hour;
           uint8_t day  = GPSData.day;
@@ -440,7 +438,7 @@ void loop()
           lcd.print("/");
           lcd.print(year);
           printDay (dayOfWeek (year, month, day));
-        } // if (!dateTimeToggle)
+        } // if (dateTimeToggle)
       } // if (now - prevDateTime > TOGGLETIME_INTERVAL)
     } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
 #endif //------------------------------------------------------------
