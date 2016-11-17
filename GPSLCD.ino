@@ -367,29 +367,7 @@ void loop()
       // Toggle date/time every TOGGLETIME_INTERVAL seconds
       if (now - prevDateTime > TOGGLETIME_INTERVAL) {
         prevDateTime = now;
-        if (dateTimeToggle) {
-          // Display date
-          dateTimeToggle = false;
-          lcd.print("Date: ");
-          uint8_t hour = GPSData.hour;
-          uint8_t day  = GPSData.day;
-          uint8_t month = GPSData.month;
-          uint16_t year = GPSData.year;
-#ifdef CONVERT_TO_LOCAL
-          // Convert UTC date to local date
-          bool DST = convertToLocal (&hour, &year, &month,
-                                     &day, GPSData.lon, true); // true means date conversion
-#endif // #ifdef CONVERT_TO_LOCAL
-          if (month < 10) lcd.print("0");
-          lcd.print(month);
-          lcd.print("/");
-          if (day < 10) lcd.print("0");
-          lcd.print(day);
-          lcd.print("/");
-          lcd.print(year);
-          printDay (dayOfWeek (year, month, day));
-        } // if (dateTimeToggle)
-        else {
+        if (!dateTimeToggle) {
           // Display time
           dateTimeToggle = true;
           lcd.print("Time: ");
@@ -440,7 +418,29 @@ void loop()
           lcd.print("   UTC");
 #endif // #ifdef DISPLAY_12_HOUR
 #endif // #ifndef CONVERT_TO_LOCAL
-        } // if (dateTimeToggle)
+        } // if (!dateTimeToggle)
+        else {
+          // Display date
+          dateTimeToggle = false;
+          lcd.print("Date: ");
+          uint8_t hour = GPSData.hour;
+          uint8_t day  = GPSData.day;
+          uint8_t month = GPSData.month;
+          uint16_t year = GPSData.year;
+#ifdef CONVERT_TO_LOCAL
+          // Convert UTC date to local date
+          bool DST = convertToLocal (&hour, &year, &month,
+                                     &day, GPSData.lon, true); // true means date conversion
+#endif // #ifdef CONVERT_TO_LOCAL
+          if (month < 10) lcd.print("0");
+          lcd.print(month);
+          lcd.print("/");
+          if (day < 10) lcd.print("0");
+          lcd.print(day);
+          lcd.print("/");
+          lcd.print(year);
+          printDay (dayOfWeek (year, month, day));
+        } // if (!dateTimeToggle)
       } // if (now - prevDateTime > TOGGLETIME_INTERVAL)
     } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
 #endif //------------------------------------------------------------
