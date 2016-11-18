@@ -120,8 +120,8 @@ void loop()
 #else // #ifndef DATA_VALID_OVERRIDE
     // Store the fake GPS data (for debugging)
     GPSData.satellites = 0; // Invalid satellites
-    GPSData.lat        = 39.16d; // East coast
-    GPSData.lon        = -77.07d; //   "
+    GPSData.lat        = 40.71d;  // East coast (NYC)
+    GPSData.lon        = -74.00d; //   "
     GPSData.speed      = 55.0d;
     GPSData.altitude   = 555.0d;
 #ifndef _16x2
