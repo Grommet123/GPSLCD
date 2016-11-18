@@ -7,7 +7,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "2.1"               // Version number
+#define VERSION  "2.2"               // Version number
 //#define _16x2                      // LCD type (20x4 or 16x2). Comment out for 20x4
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
                                      // It also feed fake GPS data to the system for debugging
