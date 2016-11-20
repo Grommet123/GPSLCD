@@ -15,17 +15,17 @@
         LCDs available.
 
    The MIT License (MIT)
-   
+
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights
    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
    copies of the Software, and to permit persons to whom the Software is
    furnished to do so, subject to the following conditions:
-   
+
    The above copyright notice and this permission notice shall be included in all
    copies or substantial portions of the Software.
-   
+
    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -54,6 +54,12 @@ void setup()
 #else
   // Selects either altitude or the date/time to be displayed
   pinMode(ALTITUDE_DATE_TIME_SW, INPUT);
+  // Select switches
+  pinMode(DISPLAY_12_HOUR_SW, INPUT);
+  pinMode(CONVERT_TO_LOCAL_SW, INPUT);
+  pinMode(DISPLAY_HDOP_SW, INPUT);
+  pinMode(CARDINAL_SW, INPUT);
+  pinMode(NOT_USED_YET_SW, INPUT);
 #endif
   pinMode (ON_BOARD_LED, OUTPUT); // Turn off on-board LED
   digitalWrite (ON_BOARD_LED, LOW); //       "
@@ -88,6 +94,11 @@ void loop()
   static bool dateTimeToggle = true;
   static bool headingToggle = true;
   static bool hdopToggle = true;
+  bool display12_24_Hour = !digitalRead(DISPLAY_12_HOUR_SW);
+  bool localUTCTimeDate = !digitalRead(CONVERT_TO_LOCAL_SW);
+  bool displayHdop = !digitalRead(DISPLAY_HDOP_SW);
+  bool cardinal8_16 = !digitalRead(CARDINAL_SW);
+  bool notUsedYet = !digitalRead(NOT_USED_YET_SW);
 #endif
 #ifdef DATA_VALID_OVERRIDE
   const bool dataValidOverride = true; // Set true to override data valid for debugging
@@ -261,79 +272,81 @@ void loop()
     lcd.setCursor (0, 1); // Go to 2nd line
     lcd.print("Lon: ");
     lcd.print(GPSData.lon);
-#ifndef CONVERT_TO_LOCAL
-    // Only display if time/date is selected
-    if (!(digitalRead(ALTITUDE_DATE_TIME_SW))) {
-      lcd.print("      "); // Clear the extra chars
-      uint8_t DOW = dayOfWeek(GPSData.year, GPSData.month, GPSData.day);
-      if (IsDST(GPSData.day, GPSData.month, DOW)) {
-        lcd.print("DST");
-      }
-      else {
-        lcd.print(" ST");
-      }
-    }
-    else {
-      lcd.print("         "); // Clear the extra chars
-    }
-#else // #ifndef CONVERT_TO_LOCAL
-#ifdef DISPLAY_HDOP
-    // Display Horizontal Dilution of Precision (Hdop) with the format X.X
-    // It comes in from the GPS module as XXX
-    // If you care how Hdop is computed (I don't :-(), see the following:
-    // http://www2.unb.ca/gge/Resources/gpsworld.may99.pdf
-    float Hdop = (float)GPSData.hdop / 100.0f; // Hdop in X.X format
-    lcd.print(" Hdop:");
-    if (Hdop < 10.0f) {
-      lcd.print(Hdop);
-    }
-    else {
-      // Hdop value too large for my LCD, so cross it out
-      // Toggle Hdop indicator every TOGGLETIME_INTERVAL seconds
-      if (now - prevHdopTime > TOGGLETIME_INTERVAL / 3) {
-        prevHdopTime = now;
-        if (hdopToggle) {
-          hdopToggle = false;
-          lcd.print("XXX");
+    if ((digitalRead(ALTITUDE_DATE_TIME_SW))) {
+      // Only display if time/date is selected
+      if (!localUTCTimeDate) {
+        lcd.print("      "); // Clear the extra chars
+        uint8_t DOW = dayOfWeek(GPSData.year, GPSData.month, GPSData.day);
+        if (IsDST(GPSData.day, GPSData.month, DOW)) {
+          lcd.print("DST");
         }
         else {
-          hdopToggle = true;
-          lcd.print("   ");
-        } // if (hdopToggle)
-      } // if (now - prevHdopTime > TOGGLETIME_INTERVAL)
-    } // if (Hdop < 10.0f)
-#else // #ifdef DISPLAY_HDOP
-    // Display horizontal position error in feet
-    float hError = (float)GPSData.hdop / 100.0f; // Error in X.X format
-    hError *= GPS_RECEIVER_ERROR; // Error in meters
-    hError *= _GPS_FEET_PER_METER; // Error in feet
-    lcd.print(" Err: ");
-    if (hError < 100.0f) {
-      lcd.print((uint8_t)hError);
-      if (hError < 10.0f) {
-        lcd.print("f "); // feet
+          lcd.print(" ST");
+        }
       }
       else {
-        lcd.print("f"); // feet
+        lcd.print("         "); // Clear the extra chars
       }
-    }
-    else { // if (hError < 100.0f)
-      // horizontal position error value too large for my LCD, so cross it out
-      // Toggle Hdop indicator every TOGGLETIME_INTERVAL seconds
-      if (now - prevHdopTime > TOGGLETIME_INTERVAL / 3) {
-        prevHdopTime = now;
-        if (hdopToggle) {
-          hdopToggle = false;
-          lcd.print("XXX");
+    } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
+    else {
+      if (!displayHdop) {
+        // Display Horizontal Dilution of Precision (Hdop) with the format X.X
+        // It comes in from the GPS module as XXX
+        // If you care how Hdop is computed (I don't :-(), see the following:
+        // http://www2.unb.ca/gge/Resources/gpsworld.may99.pdf
+        float Hdop = (float)GPSData.hdop / 100.0f; // Hdop in X.X format
+        lcd.print(" Hdop:");
+        if (Hdop < 10.0f) {
+          lcd.print(Hdop);
         }
         else {
-          hdopToggle = true;
-          lcd.print("   ");
-        } // if (hdopToggle)
-      } // if (now - prevHdopTime > TOGGLETIME_INTERVAL)
-    } // if (hError < 100.0f)
-#endif // #ifdef DISPLAY_HDOP
-#endif // #ifndef CONVERT_TO_LOCAL
+          // Hdop value too large for my LCD, so cross it out
+          // Toggle Hdop indicator every TOGGLETIME_INTERVAL seconds
+          if (now - prevHdopTime > TOGGLETIME_INTERVAL / 3) {
+            prevHdopTime = now;
+            if (hdopToggle) {
+              hdopToggle = false;
+              lcd.print("XXX");
+            }
+            else {
+              hdopToggle = true;
+              lcd.print("   ");
+            } // if (hdopToggle)
+          } // if (now - prevHdopTime > TOGGLETIME_INTERVAL)
+        } // if (Hdop < 10.0f)
+      }
+      else { // if (!displayHdop)
+        // Display horizontal position error in feet
+        float hError = (float)GPSData.hdop / 100.0f; // Error in X.X format
+        hError *= GPS_RECEIVER_ERROR; // Error in meters
+        hError *= _GPS_FEET_PER_METER; // Error in feet
+        lcd.print(" Err: ");
+        if (hError < 100.0f) {
+          lcd.print((uint8_t)hError);
+          if (hError < 10.0f) {
+            lcd.print("f "); // feet
+          }
+          else {
+            lcd.print("f"); // feet
+          }
+        }
+        else { // if (hError < 100.0f)
+          // horizontal position error value too large for my LCD, so cross it out
+          // Toggle Hdop indicator every TOGGLETIME_INTERVAL seconds
+          if (now - prevHdopTime > TOGGLETIME_INTERVAL / 3) {
+            prevHdopTime = now;
+            if (hdopToggle) {
+              hdopToggle = false;
+              lcd.print("XXX");
+            }
+            else {
+              hdopToggle = true;
+              lcd.print("   ");
+            } // if (hdopToggle)
+          } // if (now - prevHdopTime > TOGGLETIME_INTERVAL)
+        } // if (hError < 100.0f)
+      } // if (displayHdop)
+    } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
     lcd.setCursor (0, 2); // Go to 3rd line
     lcd.print("Spd: ");
     if (GPSData.speed < SPEED_CUTOUT) {
@@ -354,7 +367,7 @@ void loop()
         prevHeadingTime = now;
         if (headingToggle) { // Display cardinal heading
           headingToggle = false;
-          lcd.print(cardinal(GPSData.heading));
+          lcd.print(cardinal(GPSData.heading, cardinal8_16));
         }
         else { // Display degrees heading
           headingToggle = true;
@@ -393,24 +406,26 @@ void loop()
           uint8_t day  = GPSData.day;
           uint8_t month = GPSData.month;
           uint16_t year = GPSData.year;
-#ifdef CONVERT_TO_LOCAL
-          // Convert UTC time to local time (no need to convert the date)
-          bool DST = convertToLocal (&hour, &year, &month,
-                                     &day, GPSData.lon, false); // false means no date conversion
-#else // #ifdef CONVERT_TO_LOCAL
-#ifdef DISPLAY_12_HOUR
-          if (hour == 0) { // 12 hour clocks don't display 0
-            hour = 12;
+          bool DST = false;
+          if (localUTCTimeDate) {
+            // Convert UTC time to local time (no need to convert the date)
+            DST = convertToLocal (&hour, &year, &month,
+                                  &day, GPSData.lon, false); // false means no date conversion
           }
-#endif // #ifdef DISPLAY_12_HOUR
-#endif // #ifdef CONVERT_TO_LOCAL
-#ifdef DISPLAY_12_HOUR
+          else { // if (localUTCTimeDate)
+            if (display12_24_Hour) {
+              if (hour == 0) { // 12 hour clocks don't display 0
+                hour = 12;
+              }
+            } // if (display12_24_Hour)
+          } // if (localUTCTimeDate)
           char AMPM[] = "am";
-          if (hour >= 12) { // Convert to 12 hour format
-            if (hour > 12) hour -= 12;
-            strcpy (AMPM, "pm");
-          }
-#endif
+          if (display12_24_Hour) {
+            if (hour >= 12) { // Convert to 12 hour format
+              if (hour > 12) hour -= 12;
+              strcpy (AMPM, "pm");
+            }
+          } // if (display12_24_Hour)
           if (hour < 10) lcd.print("0");
           lcd.print(hour);
           lcd.print(":");
@@ -419,23 +434,25 @@ void loop()
           lcd.print(":");
           if (GPSData.second < 10) lcd.print("0");
           lcd.print(GPSData.second);
-#ifdef DISPLAY_12_HOUR
-          lcd.print(AMPM);
-#endif // #ifdef DISPLAY_12_HOUR
-#ifdef CONVERT_TO_LOCAL
-#ifdef DISPLAY_12_HOUR
-          (DST) ? lcd.print(" DST") : lcd.print("  ST");
-#else // #ifdef DISPLAY_12_HOUR
-          (DST) ? lcd.print("   DST") : lcd.print("    ST");
-#endif // #ifdef DISPLAY_12_HOUR
-#endif // #ifndef CONVERT_TO_LOCAL
-#ifndef CONVERT_TO_LOCAL
-#ifdef DISPLAY_12_HOUR
-          lcd.print(" UTC");
-#else // #ifdef DISPLAY_12_HOUR
-          lcd.print("   UTC");
-#endif // #ifdef DISPLAY_12_HOUR
-#endif // #ifndef CONVERT_TO_LOCAL
+          if (display12_24_Hour) {
+            lcd.print(AMPM);
+          }
+          if (localUTCTimeDate) {
+            if (display12_24_Hour) {
+              (DST) ? lcd.print(" DST") : lcd.print("  ST");
+            }
+            else {
+              (DST) ? lcd.print("   DST") : lcd.print("    ST");
+            } // if (display12_24_Hour)
+          } // if (localUTCTimeDate)
+          if (!localUTCTimeDate) {
+            if (display12_24_Hour) {
+              lcd.print(" UTC");
+            }
+            else {
+              lcd.print("   UTC");
+            } // if (display12_24_Hour)
+          } // if (!localUTCTimeDate)
         } // if (dateTimeToggle)
         else {
           // Display date
@@ -445,11 +462,12 @@ void loop()
           uint8_t day  = GPSData.day;
           uint8_t month = GPSData.month;
           uint16_t year = GPSData.year;
-#ifdef CONVERT_TO_LOCAL
-          // Convert UTC date to local date
-          bool DST = convertToLocal (&hour, &year, &month,
-                                     &day, GPSData.lon, true); // true means date conversion
-#endif // #ifdef CONVERT_TO_LOCAL
+          bool DST = false;
+          if (localUTCTimeDate) {
+            // Convert UTC date to local date
+            DST = convertToLocal (&hour, &year, &month,
+                                  &day, GPSData.lon, true); // true means date conversion
+          } // if (localUTCTimeDate)
           if (month < 10) lcd.print("0");
           lcd.print(month);
           lcd.print("/");
@@ -558,19 +576,22 @@ void printDay(uint8_t day)
 }
 
 // Compute the cardinal points of the compass
-const char* cardinal(double course)
+const char* cardinal(double course, bool cardinalSelect)
 {
-#ifdef _16CARDINAL
-  const char* directions[] = {"N  ", "NNE", "NE ", "ENE", "E  ", "ESE", "SE ", "SSE",
-                              "S  ", "SSW", "SW ", "WSW", "W  ", "WNW", "NW ", "NNW"
-                             };
-#else
-  const char* directions[] = {"N  ", "N  ", "NE ", "NE ", "E  ", "E  ", "SE ", "SE ",
-                              "S  ", "S  ", "SW ", "SW ", "W  ", "W  ", "NW ", "NW "
-                             };
-#endif // #ifdef _16CARDINAL
-  uint8_t direction = (uint8_t)((course + 11.25d) / 22.5d);
-  return directions[direction % 16];
+  if (!cardinalSelect) {
+    const char* directions[] = {"N  ", "NNE", "NE ", "ENE", "E  ", "ESE", "SE ", "SSE",
+                                "S  ", "SSW", "SW ", "WSW", "W  ", "WNW", "NW ", "NNW"
+                               };
+    uint8_t direction = (uint8_t)((course + 11.25d) / 22.5d);
+    return directions[direction % 16];
+  }
+  else {
+    const char* directions[] = {"N  ", "N  ", "NE ", "NE ", "E  ", "E  ", "SE ", "SE ",
+                                "S  ", "S  ", "SW ", "SW ", "W  ", "W  ", "NW ", "NW "
+                               };
+    uint8_t direction = (uint8_t)((course + 11.25d) / 22.5d);
+    return directions[direction % 16];
+  } // if (!cardinalSelect)
 }
 
 /* Ripped off from Stackoverflow
@@ -611,7 +632,6 @@ bool IsDST(uint8_t day, uint8_t month , uint8_t DOW)
   return previousSunday <= 0;
 }
 
-#ifdef CONVERT_TO_LOCAL
 /* Convert UTC time and date to local time and date
    Difference between UTC time/date (at Greenwich) and local time/date is 15 minutes
    per 1 degree of longitude. See the following:
@@ -672,5 +692,4 @@ bool convertToLocal (uint8_t* hour, uint16_t* year, uint8_t* month,
   } // if (convertDate)
   return (DST);
 }
-#endif // #ifdef CONVERT_TO_LOCAL
 #endif // #ifndef _16x2
