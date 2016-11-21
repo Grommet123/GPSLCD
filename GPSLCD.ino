@@ -41,7 +41,8 @@
 
 TinyGPSPlus gps; // This is the GPS object that will pretty much do all the grunt work with the NMEA data
 SoftwareSerial GPSModule(10, 11); // RX, TX
-LiquidCrystal_I2C lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin); // Initializes class variables and defines the I2C address of the LCD
+LiquidCrystal_I2C lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin); 
+                  // Initializes class variables and defines the I2C address of the LCD
 
 // The setup (runs once at start up)
 void setup()
@@ -157,7 +158,7 @@ void loop()
     GPSData.altitude   = 555.0d;
 #ifndef _16x2
     GPSData.heading    = 60.0d; // ENE or NE (16 cardinal points or 8 cardinal points)
-    GPSData.hdop       = 150;
+    GPSData.hdop       = 1500; // Invalid Hdop
     GPSData.year       = 2017;
     GPSData.month      = 11; // Day before ST starts
     GPSData.day        = 5;  //      "
@@ -272,8 +273,8 @@ void loop()
     lcd.setCursor (0, 1); // Go to 2nd line
     lcd.print("Lon: ");
     lcd.print(GPSData.lon);
+    // Only display if time/date is selected
     if ((digitalRead(ALTITUDE_DATE_TIME_SW))) {
-      // Only display if time/date is selected
       if (!localUTCTimeDate) {
         lcd.print("      "); // Clear the extra chars
         uint8_t DOW = dayOfWeek(GPSData.year, GPSData.month, GPSData.day);
@@ -284,68 +285,14 @@ void loop()
           lcd.print(" ST");
         }
       }
-      else {
-        lcd.print("         "); // Clear the extra chars
-      }
+      else { // if (!localUTCTimeDate)
+        displayHdopOnLCD (GPSData.hdop, displayHdop, now,
+                          &prevHdopTime, &hdopToggle);
+      } // if (!localUTCTimeDate)
     } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
     else {
-      if (!displayHdop) {
-        // Display Horizontal Dilution of Precision (Hdop) with the format X.X
-        // It comes in from the GPS module as XXX
-        // If you care how Hdop is computed (I don't :-(), see the following:
-        // http://www2.unb.ca/gge/Resources/gpsworld.may99.pdf
-        float Hdop = (float)GPSData.hdop / 100.0f; // Hdop in X.X format
-        lcd.print(" Hdop:");
-        if (Hdop < 10.0f) {
-          lcd.print(Hdop);
-        }
-        else {
-          // Hdop value too large for my LCD, so cross it out
-          // Toggle Hdop indicator every TOGGLETIME_INTERVAL seconds
-          if (now - prevHdopTime > TOGGLETIME_INTERVAL / 3) {
-            prevHdopTime = now;
-            if (hdopToggle) {
-              hdopToggle = false;
-              lcd.print("XXX");
-            }
-            else {
-              hdopToggle = true;
-              lcd.print("   ");
-            } // if (hdopToggle)
-          } // if (now - prevHdopTime > TOGGLETIME_INTERVAL)
-        } // if (Hdop < 10.0f)
-      }
-      else { // if (!displayHdop)
-        // Display horizontal position error in feet
-        float hError = (float)GPSData.hdop / 100.0f; // Error in X.X format
-        hError *= GPS_RECEIVER_ERROR; // Error in meters
-        hError *= _GPS_FEET_PER_METER; // Error in feet
-        lcd.print(" Err: ");
-        if (hError < 100.0f) {
-          lcd.print((uint8_t)hError);
-          if (hError < 10.0f) {
-            lcd.print("f "); // feet
-          }
-          else {
-            lcd.print("f"); // feet
-          }
-        }
-        else { // if (hError < 100.0f)
-          // horizontal position error value too large for my LCD, so cross it out
-          // Toggle Hdop indicator every TOGGLETIME_INTERVAL seconds
-          if (now - prevHdopTime > TOGGLETIME_INTERVAL / 3) {
-            prevHdopTime = now;
-            if (hdopToggle) {
-              hdopToggle = false;
-              lcd.print("XXX");
-            }
-            else {
-              hdopToggle = true;
-              lcd.print("   ");
-            } // if (hdopToggle)
-          } // if (now - prevHdopTime > TOGGLETIME_INTERVAL)
-        } // if (hError < 100.0f)
-      } // if (displayHdop)
+      displayHdopOnLCD (GPSData.hdop, displayHdop, now,
+                        &prevHdopTime, &hdopToggle);
     } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
     lcd.setCursor (0, 2); // Go to 3rd line
     lcd.print("Spd: ");
@@ -355,7 +302,7 @@ void loop()
     else {
       lcd.print((int16_t)GPSData.speed);
       lcd.print(" "); // Clear the extra chars
-    }
+    } // if (GPSData.speed < SPEED_CUTOUT)
     lcd.setCursor (12, 2);
     lcd.print("Hdg: ");
     if (GPSData.speed < SPEED_CUTOUT) {
@@ -692,4 +639,67 @@ bool convertToLocal (uint8_t* hour, uint16_t* year, uint8_t* month,
   } // if (convertDate)
   return (DST);
 }
+
+// Dislpays Hdop or horizontal position error on the LCD
+void displayHdopOnLCD (uint32_t Hdop, bool HdopSelect, unsigned long now,
+                       unsigned long* prevHdopTime, bool* hdopToggle) {
+  if (!HdopSelect) {
+    // Display Horizontal Dilution of Precision (Hdop) with the format X.X
+    // It comes in from the GPS module as XXX
+    // If you care how Hdop is computed (I don't :-)), see the following:
+    // http://www2.unb.ca/gge/Resources/gpsworld.may99.pdf
+    Hdop = (float)Hdop / 100.0f; // Hdop in X.X format
+    lcd.print(" Hdop:");
+    if (Hdop < 10.0f) {
+      lcd.print((float)Hdop);
+    }
+    else {
+      // Hdop value too large for my LCD, so cross it out
+      // Toggle Hdop indicator every TOGGLETIME_INTERVAL seconds
+      if (now - *prevHdopTime > TOGGLETIME_INTERVAL / 3) {
+        *prevHdopTime = now;
+        if (*hdopToggle) {
+          *hdopToggle = false;
+          lcd.print("XXX");
+        }
+        else {
+          *hdopToggle = true;
+          lcd.print("   ");
+        } // if (hdopToggle)
+      } // if (now - prevHdopTime > TOGGLETIME_INTERVAL)
+    } // if (Hdop < 10.0f)
+  }
+  else { // if (!displayHdop)
+    // Display horizontal position error in feet
+    float hError = Hdop / 100.0f; // Error in X.X format
+    hError *= GPS_RECEIVER_ERROR; // Error in meters
+    hError *= _GPS_FEET_PER_METER; // Error in feet
+    lcd.print(" Err: ");
+    if (hError < 100.0f) {
+      lcd.print((uint8_t)hError);
+      if (hError < 10.0f) {
+        lcd.print("f "); // feet
+      }
+      else {
+        lcd.print("f"); // feet
+      }
+    }
+    else { // if (hError < 100.0f)
+      // horizontal position error value too large for my LCD, so cross it out
+      // Toggle Hdop indicator every TOGGLETIME_INTERVAL seconds
+      if (now - *prevHdopTime > TOGGLETIME_INTERVAL / 3) {
+        *prevHdopTime = now;
+        if (*hdopToggle) {
+          *hdopToggle = false;
+          lcd.print("XXX");
+        }
+        else {
+          *hdopToggle = true;
+          lcd.print("   ");
+        } // if (hdopToggle)
+      } // if (now - prevHdopTime > TOGGLETIME_INTERVAL)
+    } // if (hError < 100.0f)
+  } // if (displayHdop)
+}
+
 #endif // #ifndef _16x2
