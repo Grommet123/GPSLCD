@@ -60,7 +60,7 @@ void setup()
   pinMode(CONVERT_TO_LOCAL_SW, INPUT);
   pinMode(DISPLAY_HDOP_SW, INPUT);
   pinMode(CARDINAL_SW, INPUT);
-  pinMode(NOT_USED_YET_SW, INPUT);
+  pinMode(LOW_SPEED_OVERRIDE, INPUT);
 #endif
   pinMode (ON_BOARD_LED, OUTPUT); // Turn off on-board LED
   digitalWrite (ON_BOARD_LED, LOW); //       "
@@ -99,7 +99,7 @@ void loop()
   bool localUTCTimeDate = !digitalRead(CONVERT_TO_LOCAL_SW);
   bool displayHdop = !digitalRead(DISPLAY_HDOP_SW);
   bool cardinal8_16 = !digitalRead(CARDINAL_SW);
-  bool notUsedYet = !digitalRead(NOT_USED_YET_SW);
+  bool lowSpeedOverride = !digitalRead(LOW_SPEED_OVERRIDE);
 #endif
 #ifdef DATA_VALID_OVERRIDE
   const bool dataValidOverride = true; // Set true to override data valid for debugging
@@ -154,11 +154,11 @@ void loop()
     GPSData.satellites = 0; // Invalid satellites
     GPSData.lat        = 40.71d;  // East coast (NYC)
     GPSData.lon        = -74.00d; //   "
-    GPSData.speed      = 55.0d;
+    GPSData.speed      = 5.0d;
     GPSData.altitude   = 555.0d;
 #ifndef _16x2
     GPSData.heading    = 60.0d; // ENE or NE (16 cardinal points or 8 cardinal points)
-    GPSData.hdop       = 1500; // Invalid Hdop
+    GPSData.hdop       = 150; // 1.5
     GPSData.year       = 2017;
     GPSData.month      = 11; // Day before ST starts
     GPSData.day        = 5;  //      "
@@ -209,7 +209,7 @@ void loop()
     lcd.print(GPSData.lon);
     if ((digitalRead(SPEED_ALTITUDE_SW))) {
       lcd.setCursor (12, 1);
-      if (GPSData.speed < SPEED_CUTOUT) {
+      if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride)) {
         lcd.print("0  ");
       }
       else {
@@ -296,16 +296,16 @@ void loop()
     } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
     lcd.setCursor (0, 2); // Go to 3rd line
     lcd.print("Spd: ");
-    if (GPSData.speed < SPEED_CUTOUT) {
+    if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride)) {
       lcd.print("0  ");
     }
     else {
       lcd.print((int16_t)GPSData.speed);
       lcd.print(" "); // Clear the extra chars
-    } // if (GPSData.speed < SPEED_CUTOUT)
+    } // if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride))
     lcd.setCursor (12, 2);
     lcd.print("Hdg: ");
-    if (GPSData.speed < SPEED_CUTOUT) {
+    if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride)) {
       lcd.print("0  ");
     }
     else {
@@ -322,7 +322,7 @@ void loop()
           if (GPSData.heading <= 99.9) lcd.print(" "); // Clear the extra char
         } // if (headingToggle)
       } // if (now - prevHeadingTime > TOGGLETIME_INTERVAL)
-    } // if (GPSData.speed < SPEED_CUTOUT)
+    } // if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride))
     lcd.setCursor (0, 3); // Go to 4th line
     if ((digitalRead(ALTITUDE_DATE_TIME_SW))) {
       lcd.print("Alt: ");
@@ -648,10 +648,10 @@ void displayHdopOnLCD (uint32_t Hdop, bool HdopSelect, unsigned long now,
     // It comes in from the GPS module as XXX
     // If you care how Hdop is computed (I don't :-)), see the following:
     // http://www2.unb.ca/gge/Resources/gpsworld.may99.pdf
-    Hdop = (float)Hdop / 100.0f; // Hdop in X.X format
+    float hdop = (float)Hdop / 100.0f; // Hdop in X.X format
     lcd.print(" Hdop:");
-    if (Hdop < 10.0f) {
-      lcd.print((float)Hdop);
+    if (hdop < 10.0f) {
+      lcd.print(hdop);
     }
     else {
       // Hdop value too large for my LCD, so cross it out
@@ -667,7 +667,7 @@ void displayHdopOnLCD (uint32_t Hdop, bool HdopSelect, unsigned long now,
           lcd.print("   ");
         } // if (hdopToggle)
       } // if (now - prevHdopTime > TOGGLETIME_INTERVAL)
-    } // if (Hdop < 10.0f)
+    } // if (hdop < 10.0f)
   }
   else { // if (!displayHdop)
     // Display horizontal position error in feet
