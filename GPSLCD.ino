@@ -34,6 +34,7 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 */
+
 #include "GPSLCD.h"
 #include <TinyGPS++.h>
 #include <SoftwareSerial.h>
@@ -41,8 +42,8 @@
 
 TinyGPSPlus gps; // This is the GPS object that will pretty much do all the grunt work with the NMEA data
 SoftwareSerial GPSModule(10, 11); // RX, TX
-LiquidCrystal_I2C lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin); 
-                  // Initializes class variables and defines the I2C address of the LCD
+LiquidCrystal_I2C lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin);
+// Initializes class variables and defines the I2C address of the LCD
 
 // The setup (runs once at start up)
 void setup()
@@ -286,11 +287,13 @@ void loop()
         }
       }
       else { // if (!localUTCTimeDate)
+        // Display Hdop
         displayHdopOnLCD (GPSData.hdop, displayHdop, now,
                           &prevHdopTime, &hdopToggle);
       } // if (!localUTCTimeDate)
     } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
     else {
+      // Display Hdop
       displayHdopOnLCD (GPSData.hdop, displayHdop, now,
                         &prevHdopTime, &hdopToggle);
     } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
@@ -669,9 +672,9 @@ void displayHdopOnLCD (uint32_t Hdop, bool HdopSelect, unsigned long now,
       } // if (now - prevHdopTime > TOGGLETIME_INTERVAL)
     } // if (hdop < 10.0f)
   }
-  else { // if (!displayHdop)
+  else { // if (!HdopSelect)
     // Display horizontal position error in feet
-    float hError = Hdop / 100.0f; // Error in X.X format
+    float hError = (float)Hdop / 100.0f; // Error in X.X format
     hError *= GPS_RECEIVER_ERROR; // Error in meters
     hError *= _GPS_FEET_PER_METER; // Error in feet
     lcd.print(" Err: ");
@@ -699,7 +702,7 @@ void displayHdopOnLCD (uint32_t Hdop, bool HdopSelect, unsigned long now,
         } // if (hdopToggle)
       } // if (now - prevHdopTime > TOGGLETIME_INTERVAL)
     } // if (hError < 100.0f)
-  } // if (displayHdop)
+  } // if (!HdopSelect)
 }
 
 #endif // #ifndef _16x2
