@@ -27,7 +27,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "5.1"               // Version number
+#define VERSION  "5.2"               // Version number
 //#define _16x2                      // LCD type (20x4 or 16x2). Comment out for 20x4
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
                                      // It also feed fake GPS data to the system for debugging
@@ -67,8 +67,8 @@
 #define DISPLAY_12_HOUR_SW 2         // 12 or 24 hour time switch
 #define CONVERT_TO_LOCAL_SW 3        // UTC time/date or local time/date switch
 #define DISPLAY_HDOP_SW 4            // Hdop or horizontal position error switch
-#define CARDINAL_SW 7                // 16 or 8 cardinal heading points switch
-#define LOW_SPEED_OVERRIDE  8        // Low speed override switch
+#define CARDINAL_SW 8                // 16 or 8 cardinal heading points switch
+#define LOW_SPEED_OVERRIDE  7        // Low speed override switch
 #define GPS_RECEIVER_ERROR 2.5f      // Receiver error (in meters) for the GPS module (Ublox NEO-6M)
 
 // Function Prototypes
