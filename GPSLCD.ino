@@ -5,14 +5,11 @@
 
   This program communicate with the u-blox NEO-6M GPS module
   through a software serial interface. It then displays certain GPS
-  parameters on a I2C 16x2 (or 20x4) character LCD display module. The
+  parameters on a I2C 20x4 character LCD display module. The
   GPS messages are received by the on-board Arduino UART circuit using
   the SoftwareSerial library. It then uses the TinyGPS++ library to
   decode the GPS NMEA messages. The parameters are then displayed on a
-  16x4 (or 20x4) LCD using the LiquidCrystal_I2C library.
-
-  Note: Both the 16x2 and 20x4 LCDs are supported as these are the most popular
-        LCDs available.
+  20x4 LCD using the LiquidCrystal_I2C library.
 
    The MIT License (MIT)
 
@@ -42,27 +39,21 @@
 
 TinyGPSPlus gps; // This is the GPS object that will pretty much do all the grunt work with the NMEA data
 SoftwareSerial GPSModule(10, 11); // RX, TX
-LiquidCrystal_I2C lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin);
 // Initializes class variables and defines the I2C address of the LCD
+LiquidCrystal_I2C lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin);
 
 // The setup (runs once at start up)
 void setup()
 {
-  pinMode(BACKLIGHT_SW, INPUT);
-
-#ifdef _16x2
-  // Selects either speed or heading to be displayed
-  pinMode(SPEED_ALTITUDE_SW, INPUT);
-#else
+  pinMode (BACKLIGHT_SW, INPUT);
   // Selects either altitude or the date/time to be displayed
-  pinMode(ALTITUDE_DATE_TIME_SW, INPUT);
+  pinMode (ALTITUDE_DATE_TIME_SW, INPUT);
   // Select switches
-  pinMode(DISPLAY_12_HOUR_SW, INPUT);
-  pinMode(CONVERT_TO_LOCAL_SW, INPUT);
-  pinMode(DISPLAY_HDOP_SW, INPUT);
-  pinMode(CARDINAL_SW, INPUT);
-  pinMode(LOW_SPEED_OVERRIDE, INPUT);
-#endif
+  pinMode (DISPLAY_12_HOUR_SW, INPUT);
+  pinMode (CONVERT_TO_LOCAL_SW, INPUT);
+  pinMode (DISPLAY_HDOP_SW, INPUT);
+  pinMode (CARDINAL_SW, INPUT);
+  pinMode (LOW_SPEED_OVERRIDE, INPUT);
   pinMode (ON_BOARD_LED, OUTPUT); // Turn off on-board LED
   digitalWrite (ON_BOARD_LED, LOW); //       "
 
@@ -70,9 +61,9 @@ void setup()
   GPSModule.flush();
 
   lcd.begin (COLUMN, ROW); // Defines LCD type
-  lcd.setBacklightPin(BACKLIGHT_PIN, POSITIVE); // Sets the pin to control the backlight
+  lcd.setBacklightPin (BACKLIGHT_PIN, POSITIVE); // Sets the pin to control the backlight
   lcd.clear(); // Clear the LCD
-  lcd.home (); // Go to the home position on the LCD
+  lcd.home(); // Go to the home position on the LCD
 } // setup
 
 // The loop (runs forever and a day :-))
@@ -89,37 +80,37 @@ void loop()
   bool dataValid; // Data valid from the GPS module
   GPSStruct GPSData; // Holds the GPS data coming from the GPS module
   unsigned long now = millis(); // The time "now"
-#ifndef _16x2
   static unsigned long prevDateTime = TOGGLETIME_INTERVAL;
   static unsigned long prevHeadingTime = TOGGLETIME_INTERVAL;
   static unsigned long prevHdopTime = TOGGLETIME_INTERVAL;
   static bool dateTimeToggle = true;
   static bool headingToggle = true;
   static bool hdopToggle = true;
-  bool display12_24_Hour = !digitalRead(DISPLAY_12_HOUR_SW);
-  bool localUTCTimeDate = !digitalRead(CONVERT_TO_LOCAL_SW);
-  bool displayHdop = !digitalRead(DISPLAY_HDOP_SW);
-  bool cardinal8_16 = !digitalRead(CARDINAL_SW);
-  bool lowSpeedOverride = !digitalRead(LOW_SPEED_OVERRIDE);
-#endif
+  bool display12_24_Hour = !digitalRead (DISPLAY_12_HOUR_SW);
+  bool localUTCTimeDate = !digitalRead (CONVERT_TO_LOCAL_SW);
+  bool displayHdop = !digitalRead (DISPLAY_HDOP_SW);
+  bool cardinal8_16 = !digitalRead (CARDINAL_SW);
+  bool lowSpeedOverride = !digitalRead (LOW_SPEED_OVERRIDE);
+
 #ifdef DATA_VALID_OVERRIDE
   const bool dataValidOverride = true; // Set true to override data valid for debugging
 #else
   const bool dataValidOverride = false; // Set false not to override data valid
 #endif
+
 #ifdef BACKLIGHT_OVERRIDE
   // Override LCD backlight switch
   // Force LCD backlight on/off
-  lcd.setBacklight(BACKLIGHT_ONOFF);
+  lcd.setBacklight (BACKLIGHT_ONOFF);
 #else
   // Turn LCD backlight on/off
-  lcd.setBacklight(digitalRead(BACKLIGHT_SW));
+  lcd.setBacklight (digitalRead (BACKLIGHT_SW));
 #endif
 
   // Get the data from the GPS module
   while (GPSModule.available()) // While there are characters coming from the GPS module
   {
-    bool b = gps.encode(GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
+    bool b = gps.encode (GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
   }
   // Get the GPS data valid flags
   dataValid =
@@ -140,7 +131,6 @@ void loop()
     GPSData.lon        = gps.location.lng();
     GPSData.speed      = gps.speed.mph();
     GPSData.altitude   = gps.altitude.feet();
-#ifndef _16x2
     GPSData.heading    = gps.course.deg();
     GPSData.hdop       = gps.hdop.value();
     GPSData.year       = gps.date.year();
@@ -149,7 +139,6 @@ void loop()
     GPSData.hour       = gps.time.hour();
     GPSData.minute     = gps.time.minute();
     GPSData.second     = gps.time.second();
-#endif // #ifndef _16x2
 #else // #ifndef DATA_VALID_OVERRIDE
     // Store the fake GPS data (for debugging)
     GPSData.satellites = 0; // Invalid satellites
@@ -157,7 +146,6 @@ void loop()
     GPSData.lon        = -74.00d; //   "
     GPSData.speed      = 5.0d;
     GPSData.altitude   = 555.0d;
-#ifndef _16x2
     GPSData.heading    = 60.0d; // ENE or NE (16 cardinal points or 8 cardinal points)
     GPSData.hdop       = 150; // 1.5
     GPSData.year       = 2017;
@@ -166,87 +154,22 @@ void loop()
     GPSData.hour       = 23; // 7pm my local time
     GPSData.minute     = 10;
     GPSData.second     = 25;
-#endif // #ifndef _16x2
 #endif // #ifndef DATA_VALID_OVERRIDE
+
     // Clear the screen once when leaving initialization
     if (!leftInitialization) {
       leftInitialization = true;
       lcd.clear(); // Clear the LCD
     }
-    // Display the latest info from the gps object which it derived from the data sent by the GPS unit
+    
+    // Display the latest info from the gps object
+    // which it derived from the data sent by the GPS unit
     // Send data to the LCD
-#ifdef _16x2 //------------------------------------------------------
-    lcd.home (); // Go to 1st line
-    lcd.print("Lat: ");
-    lcd.print(GPSData.lat);
-    lcd.setCursor (11, 0);
-    lcd.print("SV:");
-    if ((pastSatellites != GPSData.satellites) || (GPSData.satellites == 0)) {
-      pastSatellites = GPSData.satellites;
-      if (GPSData.satellites == 0) {
-        // Toggle invalid satellites indicator every TOGGLETIME_INTERVAL seconds
-        if (now - prevInvalidSatellitesTime > TOGGLETIME_INTERVAL / 4) {
-          prevInvalidSatellitesTime = now;
-          if (invalidSatellitesToggle) {
-            invalidSatellitesToggle = false;
-            lcd.print("XX");
-          }
-          else {
-            invalidSatellitesToggle = true;
-            lcd.print("  ");
-          } // if (invalidSatellitesToggle)
-        } // if (now - prevInvalidSatellitesTime > TOGGLETIME_INTERVAL)
-      } // if (GPSData.satellites == 0)
-      else if (GPSData.satellites <= 9) {
-        lcd.print(" "); // Blank leading char
-        lcd.print(GPSData.satellites);
-      }
-      else {
-        lcd.print(GPSData.satellites);
-      }
-    } // if ((pastSatellites != GPSData.satellites) || (GPSData.satellites == 0))
-    lcd.setCursor (0, 1); // Go to 2nd line
-    lcd.print("Lon: ");
-    lcd.print(GPSData.lon);
-    if ((digitalRead(SPEED_ALTITUDE_SW))) {
-      lcd.setCursor (12, 1);
-      if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride)) {
-        lcd.print("0  ");
-      }
-      else {
-        lcd.print((int16_t)GPSData.speed);
-        lcd.print(" "); // Clear the extra char
-      }
-    }
-    else {
-      lcd.print("     "); // Clear the extra chars
-      if (GPSData.altitude <= 99.9) {
-        lcd.setCursor (14, 1);
-      }
-      else {
-        lcd.setCursor (13, 1);
-      }
-      lcd.print((int16_t)GPSData.altitude); // Altitude
-      // Toggle credit every TOGGLETIME_INTERVAL seconds
-      if (now - prevCreditTime > (TOGGLETIME_INTERVAL / 2)) {
-        prevCreditTime = now;
-        if (creditToggle) { // Display credit
-          creditToggle = false;
-          lcd.print("     "); // Clear the extra chars
-          lcd.print(CREDIT); // Yours truly :-)
-        }
-        else {
-          creditToggle = true;
-          lcd.print("        "); // Clear the extra chars
-        }
-      } // if (now - prevCreditTime > TOGGLETIME_INTERVAL)
-    } // if ((digitalRead(SPEED_ALTITUDE_SW)))
-#else // 20x4 ----------------------------------------------------
-    lcd.home (); // Go to 1st line
-    lcd.print("Lat: ");
-    lcd.print(GPSData.lat);
+    lcd.home(); // Go to 1st line
+    lcd.print ("Lat: ");
+    lcd.print (GPSData.lat);
     lcd.setCursor (15, 0);
-    lcd.print("SV:");
+    lcd.print ("SV:");
     if ((pastSatellites != GPSData.satellites) || (GPSData.satellites == 0)) {
       pastSatellites = GPSData.satellites;
       if (GPSData.satellites == 0) {
@@ -255,35 +178,35 @@ void loop()
           prevInvalidSatellitesTime = now;
           if (invalidSatellitesToggle) {
             invalidSatellitesToggle = false;
-            lcd.print("XX");
+            lcd.print ("XX");
           }
           else {
             invalidSatellitesToggle = true;
-            lcd.print("  ");
+            lcd.print ("  ");
           } // if (invalidSatellitesToggle)
         } // if (now - prevInvalidSatellitesTime > TOGGLETIME_INTERVAL)
       } // if (GPSData.satellites == 0)
       else if (GPSData.satellites <= 9) {
-        lcd.print(" "); // Blank leading char
-        lcd.print(GPSData.satellites);
+        lcd.print (" "); // Blank leading char
+        lcd.print (GPSData.satellites);
       }
       else {
-        lcd.print(GPSData.satellites);
+        lcd.print (GPSData.satellites);
       }
     } // if ((pastSatellites != GPSData.satellites) || (GPSData.satellites == 0))
     lcd.setCursor (0, 1); // Go to 2nd line
-    lcd.print("Lon: ");
-    lcd.print(GPSData.lon);
+    lcd.print ("Lon: ");
+    lcd.print (GPSData.lon);
     // Only display if time/date is selected
-    if ((digitalRead(ALTITUDE_DATE_TIME_SW))) {
+    if ((digitalRead (ALTITUDE_DATE_TIME_SW))) {
       if (!localUTCTimeDate) {
-        lcd.print("      "); // Clear the extra chars
-        uint8_t DOW = dayOfWeek(GPSData.year, GPSData.month, GPSData.day);
-        if (IsDST(GPSData.day, GPSData.month, DOW)) {
-          lcd.print("DST");
+        lcd.print ("      "); // Clear the extra chars
+        uint8_t DOW = dayOfWeek (GPSData.year, GPSData.month, GPSData.day);
+        if (IsDST (GPSData.day, GPSData.month, DOW)) {
+          lcd.print ("DST");
         }
         else {
-          lcd.print(" ST");
+          lcd.print (" ST");
         }
       }
       else { // if (!localUTCTimeDate)
@@ -291,25 +214,25 @@ void loop()
         displayHdopOnLCD (GPSData.hdop, displayHdop, now,
                           &prevHdopTime, &hdopToggle);
       } // if (!localUTCTimeDate)
-    } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
+    } // if ((digitalRead (ALTITUDE_DATE_TIME_SW)))
     else {
       // Display Hdop
       displayHdopOnLCD (GPSData.hdop, displayHdop, now,
                         &prevHdopTime, &hdopToggle);
-    } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
+    } // if ((digitalRead (ALTITUDE_DATE_TIME_SW)))
     lcd.setCursor (0, 2); // Go to 3rd line
-    lcd.print("Spd: ");
+    lcd.print ("Spd: ");
     if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride)) {
-      lcd.print("0  ");
+      lcd.print ("0  ");
     }
     else {
-      lcd.print((int16_t)GPSData.speed);
-      lcd.print(" "); // Clear the extra chars
+      lcd.print ((int16_t)GPSData.speed);
+      lcd.print (" "); // Clear the extra chars
     } // if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride))
     lcd.setCursor (12, 2);
-    lcd.print("Hdg: ");
+    lcd.print ("Hdg: ");
     if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride)) {
-      lcd.print("0  ");
+      lcd.print ("0  ");
     }
     else {
       // Toggle heading every TOGGLETIME_INTERVAL seconds
@@ -317,33 +240,33 @@ void loop()
         prevHeadingTime = now;
         if (headingToggle) { // Display cardinal heading
           headingToggle = false;
-          lcd.print(cardinal(GPSData.heading, cardinal8_16));
+          lcd.print (cardinal (GPSData.heading, cardinal8_16));
         }
         else { // Display degrees heading
           headingToggle = true;
-          lcd.print((int16_t)GPSData.heading);
-          if (GPSData.heading <= 99.9) lcd.print(" "); // Clear the extra char
+          lcd.print ((int16_t)GPSData.heading);
+          if (GPSData.heading <= 99.9) lcd.print (" "); // Clear the extra char
         } // if (headingToggle)
       } // if (now - prevHeadingTime > TOGGLETIME_INTERVAL)
     } // if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride))
     lcd.setCursor (0, 3); // Go to 4th line
-    if ((digitalRead(ALTITUDE_DATE_TIME_SW))) {
-      lcd.print("Alt: ");
-      lcd.print((int16_t)GPSData.altitude);
+    if ((digitalRead (ALTITUDE_DATE_TIME_SW))) {
+      lcd.print ("Alt: ");
+      lcd.print ((int16_t)GPSData.altitude);
       // Toggle credit every TOGGLETIME_INTERVAL seconds
       if (now - prevCreditTime > (TOGGLETIME_INTERVAL / 2)) {
         prevCreditTime = now;
         if (creditToggle) { // Display credit
           creditToggle = false;
-          lcd.print("         "); // Clear the extra chars
-          lcd.print(CREDIT); // Yours truly :-)
+          lcd.print ("         "); // Clear the extra chars
+          lcd.print (CREDIT); // Yours truly :-)
         }
         else {
           creditToggle = true;
-          lcd.print("            "); // Clear the extra chars
+          lcd.print ("            "); // Clear the extra chars
         }
       } // if (now - prevCreditTime > TOGGLETIME_INTERVAL)
-    } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
+    } // if ((digitalRead (ALTITUDE_DATE_TIME_SW)))
     else {
       // Toggle date/time every TOGGLETIME_INTERVAL seconds
       if (now - prevDateTime > TOGGLETIME_INTERVAL) {
@@ -351,7 +274,7 @@ void loop()
         if (dateTimeToggle) {
           // Display time
           dateTimeToggle = false;
-          lcd.print("Time: ");
+          lcd.print ("Time: ");
           uint8_t hour = GPSData.hour;
           uint8_t day  = GPSData.day;
           uint8_t month = GPSData.month;
@@ -376,104 +299,83 @@ void loop()
               strcpy (AMPM, "pm");
             }
           } // if (display12_24_Hour)
-          if (hour < 10) lcd.print("0");
-          lcd.print(hour);
-          lcd.print(":");
-          if (GPSData.minute < 10) lcd.print("0");
-          lcd.print(GPSData.minute);
-          lcd.print(":");
-          if (GPSData.second < 10) lcd.print("0");
-          lcd.print(GPSData.second);
+          if (hour < 10) lcd.print ("0");
+          lcd.print (hour);
+          lcd.print (":");
+          if (GPSData.minute < 10) lcd.print ("0");
+          lcd.print (GPSData.minute);
+          lcd.print (":");
+          if (GPSData.second < 10) lcd.print ("0");
+          lcd.print (GPSData.second);
           if (display12_24_Hour) {
-            lcd.print(AMPM);
+            lcd.print (AMPM);
           }
           if (localUTCTimeDate) {
             if (display12_24_Hour) {
-              (DST) ? lcd.print(" DST") : lcd.print("  ST");
+              (DST) ? lcd.print (" DST") : lcd.print ("  ST");
             }
             else {
-              (DST) ? lcd.print("   DST") : lcd.print("    ST");
+              (DST) ? lcd.print ("   DST") : lcd.print ("    ST");
             } // if (display12_24_Hour)
           } // if (localUTCTimeDate)
           if (!localUTCTimeDate) {
             if (display12_24_Hour) {
-              lcd.print(" UTC");
+              lcd.print (" UTC");
             }
             else {
-              lcd.print("   UTC");
+              lcd.print ("   UTC");
             } // if (display12_24_Hour)
           } // if (!localUTCTimeDate)
         } // if (dateTimeToggle)
         else {
           // Display date
           dateTimeToggle = true;
-          lcd.print("Date: ");
+          lcd.print ("Date: ");
           uint8_t hour = GPSData.hour;
           uint8_t day  = GPSData.day;
           uint8_t month = GPSData.month;
           uint16_t year = GPSData.year;
-          bool DST = false;
           if (localUTCTimeDate) {
             // Convert UTC date to local date
-            DST = convertToLocal (&hour, &year, &month,
-                                  &day, GPSData.lon, true); // true means date conversion
+            bool DST = convertToLocal (&hour, &year, &month,
+                                       &day, GPSData.lon, true); // true means date conversion
           } // if (localUTCTimeDate)
-          if (month < 10) lcd.print("0");
-          lcd.print(month);
-          lcd.print("/");
-          if (day < 10) lcd.print("0");
-          lcd.print(day);
-          lcd.print("/");
-          lcd.print(year);
-          printDay (dayOfWeek (year, month, day));
+          if (month < 10) lcd.print ("0");
+          lcd.print (month);
+          lcd.print ("/");
+          if (day < 10) lcd.print ("0");
+          lcd.print (day);
+          lcd.print ("/");
+          lcd.print (year);
+          displayDayOnLCD (dayOfWeek (year, month, day));
         } // if (dateTimeToggle)
       } // if (now - prevDateTime > TOGGLETIME_INTERVAL)
-    } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
-#endif //------------------------------------------------------------
+    } // if ((digitalRead (ALTITUDE_DATE_TIME_SW)))
   } // if (dataValid)
   else {
     // GPS data is not valid, so it must be initializing
-#ifdef _16x2 //------------------------------------------------------
-    // Display initialization screen once every INITIALIZATION_INTERVAL
-    if (now - prevInitializationTime > INITIALIZATION_INTERVAL) {
-      prevInitializationTime = now;
-      lcd.setCursor (6, 0); // Go to 1st line
-      lcd.print("GPS");
-      lcd.setCursor (11, 0);
-      lcd.print("v");
-      lcd.print(VERSION);
-      lcd.setCursor (2, 1); // Go to 2nd line
-      lcd.print("Initializing");
-      lcd.setCursor (15, 1);
-      if (++initializingCounter > 9) initializingCounter = 1; // Limit 1 - 9
-      lcd.print(initializingCounter);
-      leftInitialization = false;
-    }
-#else // 20x4 -------------------------------------------------------
     // Display initialization screen once every INITIALIZATION_INTERVAL
     if (now - prevInitializationTime > INITIALIZATION_INTERVAL) {
       prevInitializationTime = now;
       lcd.setCursor (8, 0); // Go to 1st line
-      lcd.print("GPS");
+      lcd.print ("GPS");
       lcd.setCursor (14, 0);
-      lcd.print("v");
-      lcd.print(VERSION);
+      lcd.print ("v");
+      lcd.print (VERSION);
       lcd.setCursor (4, 1); // Go to 2nd line
-      lcd.print("Initializing");
+      lcd.print ("Initializing");
       lcd.setCursor (6, 2); // Go to 3rd line
-      lcd.print("Data Not");
+      lcd.print ("Data Not");
       lcd.setCursor (7, 3); // Go to 4th line
-      lcd.print("Valid");
+      lcd.print ("Valid");
       lcd.setCursor (19, 3);
       if (++initializingCounter > 9) initializingCounter = 1; // Limit 1 - 9
-      lcd.print(initializingCounter);
+      lcd.print (initializingCounter);
       leftInitialization = false;
     }
-#endif //------------------------------------------------------------
   } // GPS data is not valid
 } // loop
 
-#ifndef _16x2
 /* Helper functions start here
 
   Ripped off from Electrical Engineering Stack Exchange
@@ -509,24 +411,24 @@ uint8_t dayOfWeek (uint16_t year, uint8_t month, uint8_t day)
 //----------------------------------------------------------
 
 // Print the day of the week on the LCD
-void printDay(uint8_t day)
+void displayDayOnLCD (uint8_t day)
 {
   if (day == 7) day = 0;
   switch (day)
   {
-    case 0:  lcd.print(" Mon"); break;
-    case 1:  lcd.print(" Tue"); break;
-    case 2:  lcd.print(" Wed"); break;
-    case 3:  lcd.print(" Thu"); break;
-    case 4:  lcd.print(" Fri"); break;
-    case 5:  lcd.print(" Sat"); break;
-    case 6:  lcd.print(" Sun"); break;
-    default: lcd.print(" Err");
+    case 0:  lcd.print (" Mon"); break;
+    case 1:  lcd.print (" Tue"); break;
+    case 2:  lcd.print (" Wed"); break;
+    case 3:  lcd.print (" Thu"); break;
+    case 4:  lcd.print (" Fri"); break;
+    case 5:  lcd.print (" Sat"); break;
+    case 6:  lcd.print (" Sun"); break;
+    default: lcd.print (" Err");
   }
 }
 
 // Compute the cardinal points of the compass
-const char* cardinal(double course, bool cardinalSelect)
+const char* cardinal (double course, bool cardinalSelect)
 {
   if (!cardinalSelect) {
     const char* directions[] = {"N  ", "NNE", "NE ", "ENE", "E  ", "ESE", "SE ", "SSE",
@@ -549,7 +451,7 @@ const char* cardinal(double course, bool cardinalSelect)
 
   Check to see if it's Daylight Savings Time (DST)
 */
-bool IsDST(uint8_t day, uint8_t month , uint8_t DOW)
+bool IsDST (uint8_t day, uint8_t month , uint8_t DOW)
 {
   // Make Day of Week (DOW) match with what Stackoverflow suggests
   // for DOW (Sunday = 0 to Saturday = 6)
@@ -593,9 +495,9 @@ bool convertToLocal (uint8_t* hour, uint16_t* year, uint8_t* month,
   uint8_t DaysAMonth [] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
   // Get Day of Week (DOW)
-  uint8_t DOW = dayOfWeek(*year, *month, *day);
+  uint8_t DOW = dayOfWeek (*year, *month, *day);
   // Get Daylight Saving Time (DST) or Standard Time (ST)
-  bool DST = IsDST(*day, *month, DOW);
+  bool DST = IsDST (*day, *month, DOW);
   // Compute local time (hours)
   int8_t UTCOffset = (int8_t)(lon / 15.0d); // UTC offset
   if (UTCOffset < 0) {
@@ -652,9 +554,9 @@ void displayHdopOnLCD (uint32_t Hdop, bool HdopSelect, unsigned long now,
     // If you care how Hdop is computed (I don't :-)), see the following:
     // http://www2.unb.ca/gge/Resources/gpsworld.may99.pdf
     float hdop = (float)Hdop / 100.0f; // Hdop in X.X format
-    lcd.print(" Hdop:");
+    lcd.print (" Hdop:");
     if (hdop < 10.0f) {
-      lcd.print(hdop);
+      lcd.print (hdop);
     }
     else {
       // Hdop value too large for my LCD, so cross it out
@@ -663,11 +565,11 @@ void displayHdopOnLCD (uint32_t Hdop, bool HdopSelect, unsigned long now,
         *prevHdopTime = now;
         if (*hdopToggle) {
           *hdopToggle = false;
-          lcd.print("XXX");
+          lcd.print ("XXX");
         }
         else {
           *hdopToggle = true;
-          lcd.print("   ");
+          lcd.print ("   ");
         } // if (hdopToggle)
       } // if (now - prevHdopTime > TOGGLETIME_INTERVAL)
     } // if (hdop < 10.0f)
@@ -677,14 +579,14 @@ void displayHdopOnLCD (uint32_t Hdop, bool HdopSelect, unsigned long now,
     float hError = (float)Hdop / 100.0f; // Error in X.X format
     hError *= GPS_RECEIVER_ERROR; // Error in meters
     hError *= _GPS_FEET_PER_METER; // Error in feet
-    lcd.print(" Err: ");
+    lcd.print (" Err: ");
     if (hError < 100.0f) {
-      lcd.print((uint8_t)hError);
+      lcd.print ((uint8_t)hError);
       if (hError < 10.0f) {
-        lcd.print("f "); // feet
+        lcd.print ("f "); // feet
       }
       else {
-        lcd.print("f"); // feet
+        lcd.print ("f"); // feet
       }
     }
     else { // if (hError < 100.0f)
@@ -694,15 +596,13 @@ void displayHdopOnLCD (uint32_t Hdop, bool HdopSelect, unsigned long now,
         *prevHdopTime = now;
         if (*hdopToggle) {
           *hdopToggle = false;
-          lcd.print("XXX");
+          lcd.print ("XXX");
         }
         else {
           *hdopToggle = true;
-          lcd.print("   ");
+          lcd.print ("   ");
         } // if (hdopToggle)
       } // if (now - prevHdopTime > TOGGLETIME_INTERVAL)
     } // if (hError < 100.0f)
   } // if (!HdopSelect)
 }
-
-#endif // #ifndef _16x2
