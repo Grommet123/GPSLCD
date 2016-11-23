@@ -603,13 +603,13 @@ bool convertToLocal (uint8_t* hour, uint16_t* year, uint8_t* month,
     UTCOffset = abs(UTCOffset); // Make offset positive
     if (DST) --UTCOffset; // Compensate for DST
     if (*hour <= UTCOffset) *hour += 24;
-    *hour = *hour - UTCOffset; // Subtract offset
+    *hour -= UTCOffset; // Subtract offset
   }
   else {
     // East of Greenwich, add
     if (DST) ++UTCOffset; // Compensate for DST
     if (*hour <= UTCOffset) *hour += 24;
-    *hour = *hour + UTCOffset; // Add offset
+    *hour += UTCOffset; // Add offset
   }
   // Convert date if convertDate flag is set
   // Portions of the following code (with some modifications) ripped off from Instructables
