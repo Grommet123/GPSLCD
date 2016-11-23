@@ -27,7 +27,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "6.0"               // Version number
+#define VERSION  "6.1"               // Version number
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
                                      // It also feed fake GPS data to the system for debugging
 
@@ -62,15 +62,15 @@
 #define GPS_RECEIVER_ERROR 2.5f      // Receiver error (in meters) for the GPS module (Ublox NEO-6M)
 
 // Function Prototypes
-uint16_t leap (uint16_t year);
-uint16_t zeller (uint16_t year, uint8_t month, uint8_t day);
-uint8_t dayOfWeek (uint16_t year, uint8_t month, uint8_t day);
-void displayDayOnLCD (uint8_t day);
-const char* cardinal (double course, bool cardinalSelect);
-bool IsDST (uint8_t day, uint8_t month, uint8_t DOW);
-bool convertToLocal (uint8_t* hour, uint16_t* year, uint8_t* month,
+uint16_t leap(uint16_t year);
+uint16_t zeller(uint16_t year, uint8_t month, uint8_t day);
+uint8_t dayOfWeek(uint16_t year, uint8_t month, uint8_t day);
+void displayDayOnLCD(uint8_t day);
+const char* cardinal(double course, bool cardinalSelect);
+bool IsDST(uint8_t day, uint8_t month, uint8_t DOW);
+bool convertToLocal(uint8_t* hour, uint16_t* year, uint8_t* month,
                      uint8_t* day, const double lon, bool convertDate);
-void displayHdopOnLCD (uint32_t Hdop, bool HdopSelect, unsigned long now,
+void displayHdopOnLCD(uint32_t Hdop, bool HdopSelect, unsigned long now,
                       unsigned long* prevHdopTime, bool* hdopToggle);
 
 struct GPSStruct {
