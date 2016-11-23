@@ -27,8 +27,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "5.2"               // Version number
-//#define _16x2                      // LCD type (20x4 or 16x2). Comment out for 20x4
+#define VERSION  "6.0"               // Version number
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
                                      // It also feed fake GPS data to the system for debugging
 
@@ -51,15 +50,6 @@
 #define BACKLIGHT_ONOFF LOW          // Works with BACKLIGHT_OVERRIDE to force on/off the LCD backlight
 #endif
 
-#ifdef _16x2 //------------------------------------------------------
-#define COLUMN 16                    // Number of Columns
-#define ROW 2                        // Number of rows
-#define SPEED_ALTITUDE_SW 5          // Speed/Altitude select switch
-#define I2C_ADDR    0x27             // Address of my 16x2 LCD (yours might be different)
-
-// Function Prototypes
-//     Nada
-#else // _20x4 ------------------------------------------------------
 #define COLUMN 20                    // Number of Columns
 #define ROW 4                        // Number of rows
 #define ALTITUDE_DATE_TIME_SW 5      // Altitude/Date time select switch
@@ -75,14 +65,13 @@
 uint16_t leap (uint16_t year);
 uint16_t zeller (uint16_t year, uint8_t month, uint8_t day);
 uint8_t dayOfWeek (uint16_t year, uint8_t month, uint8_t day);
-void printDay(uint8_t day);
-const char* cardinal(double course, bool cardinalSelect);
-bool IsDST(uint8_t day, uint8_t month, uint8_t DOW);
+void displayDayOnLCD (uint8_t day);
+const char* cardinal (double course, bool cardinalSelect);
+bool IsDST (uint8_t day, uint8_t month, uint8_t DOW);
 bool convertToLocal (uint8_t* hour, uint16_t* year, uint8_t* month,
                      uint8_t* day, const double lon, bool convertDate);
 void displayHdopOnLCD (uint32_t Hdop, bool HdopSelect, unsigned long now,
                       unsigned long* prevHdopTime, bool* hdopToggle);
-#endif //------------------------------------------------------------
 
 struct GPSStruct {
   double   lat;           // Degrees
@@ -90,7 +79,6 @@ struct GPSStruct {
   double   speed;         // MPH
   double   altitude;      // Feet
   uint32_t satellites;
-#ifndef _16x2
   double   heading;       // Degrees
   uint32_t hdop;
   uint16_t year;
@@ -99,7 +87,6 @@ struct GPSStruct {
   uint8_t  hour;
   uint8_t  minute;
   uint8_t  second;
-#endif // #ifndef _16x2
 };
 
 #endif // #define GPSLCD_h
