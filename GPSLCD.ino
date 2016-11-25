@@ -11,25 +11,25 @@
   decode the GPS NMEA messages. The parameters are then displayed on a
   20x4 LCD using the LiquidCrystal_I2C library.
 
-   The MIT License (MIT)
+  The MIT License (MIT)
 
-   Permission is hereby granted, free of charge, to any person obtaining a copy
-   of this software and associated documentation files (the "Software"), to deal
-   in the Software without restriction, including without limitation the rights
-   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-   copies of the Software, and to permit persons to whom the Software is
-   furnished to do so, subject to the following conditions:
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
 
-   The above copyright notice and this permission notice shall be included in all
-   copies or substantial portions of the Software.
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
 
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-   SOFTWARE.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
 */
 
 #include "GPSLCD.h"
@@ -77,9 +77,6 @@ void loop()
   static bool leftInitialization = false;
   static bool creditToggle = true;
   static bool invalidSatellitesToggle = true;
-  bool dataValid; // Data valid from the GPS module
-  GPSStruct GPSData; // Holds the GPS data coming from the GPS module
-  unsigned long now = millis(); // The time "now"
   static unsigned long prevDateTime = TOGGLETIME_INTERVAL;
   static unsigned long prevHeadingTime = TOGGLETIME_INTERVAL;
   static unsigned long prevHdopTime = TOGGLETIME_INTERVAL;
@@ -91,6 +88,9 @@ void loop()
   bool displayHdop = !digitalRead(DISPLAY_HDOP_SW);
   bool cardinal8_16 = !digitalRead(CARDINAL_SW);
   bool lowSpeedOverride = !digitalRead(LOW_SPEED_OVERRIDE);
+  bool dataValid; // Data valid from the GPS module
+  GPSStruct GPSData; // Holds the GPS data coming from the GPS module
+  unsigned long now = millis(); // The time "now"
 
 #ifdef DATA_VALID_OVERRIDE
   const bool dataValidOverride = true; // Set true to override data valid for debugging
@@ -161,7 +161,7 @@ void loop()
       leftInitialization = true;
       lcd.clear(); // Clear the LCD
     }
-    
+
     // Display the latest info from the gps object
     // which it derived from the data sent by the GPS unit
     // Send data to the LCD
@@ -188,11 +188,8 @@ void loop()
       } // if (GPSData.satellites == 0)
       else if (GPSData.satellites <= 9) {
         lcd.print(" "); // Blank leading char
-        lcd.print(GPSData.satellites);
       }
-      else {
-        lcd.print(GPSData.satellites);
-      }
+      lcd.print(GPSData.satellites);
     } // if ((pastSatellites != GPSData.satellites) ||(GPSData.satellites == 0))
     lcd.setCursor(0, 1); // Go to 2nd line
     lcd.print("Lon: ");
@@ -212,13 +209,13 @@ void loop()
       else { // if (!localUTCTimeDate)
         // Display Hdop
         displayHdopOnLCD(GPSData.hdop, displayHdop, now,
-                          &prevHdopTime, &hdopToggle);
+                         &prevHdopTime, &hdopToggle);
       } // if (!localUTCTimeDate)
     } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
     else {
       // Display Hdop
       displayHdopOnLCD(GPSData.hdop, displayHdop, now,
-                        &prevHdopTime, &hdopToggle);
+                       &prevHdopTime, &hdopToggle);
     } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
     lcd.setCursor(0, 2); // Go to 3rd line
     lcd.print("Spd: ");
@@ -283,7 +280,7 @@ void loop()
           if (localUTCTimeDate) {
             // Convert UTC time to local time (no need to convert the date)
             DST = convertToLocal(&hour, &year, &month,
-                                  &day, GPSData.lon, false); // false means no date conversion
+                                 &day, GPSData.lon, false); // false means no date conversion
           }
           else { // if (localUTCTimeDate)
             if (display12_24_Hour) {
@@ -338,7 +335,7 @@ void loop()
           if (localUTCTimeDate) {
             // Convert UTC date to local date
             bool DST = convertToLocal(&hour, &year, &month,
-                                       &day, GPSData.lon, true); // true means date conversion
+                                      &day, GPSData.lon, true); // true means date conversion
           } // if (localUTCTimeDate)
           if (month < 10) lcd.print("0");
           lcd.print(month);
@@ -406,7 +403,7 @@ uint16_t zeller(uint16_t year, uint8_t month, uint8_t day)
 // Returns the day of week for a given date.
 uint8_t dayOfWeek(uint16_t year, uint8_t month, uint8_t day)
 {
-  return(zeller(year, month, day) % 7) + 1;
+  return (zeller(year, month, day) % 7) + 1;
 }
 //----------------------------------------------------------
 
@@ -490,7 +487,7 @@ bool IsDST(uint8_t day, uint8_t month , uint8_t DOW)
    http://www.edaboard.com/thread101516.html
 */
 bool convertToLocal(uint8_t* hour, uint16_t* year, uint8_t* month,
-                     uint8_t* day, const double lon, bool convertDate) {
+                    uint8_t* day, const double lon, bool convertDate) {
 
   uint8_t DaysAMonth [] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
@@ -547,7 +544,7 @@ bool convertToLocal(uint8_t* hour, uint16_t* year, uint8_t* month,
 
 // Dislpays Hdop or horizontal position error on the LCD
 void displayHdopOnLCD(uint32_t Hdop, bool HdopSelect, unsigned long now,
-                       unsigned long* prevHdopTime, bool* hdopToggle) {
+                      unsigned long* prevHdopTime, bool* hdopToggle) {
   if (!HdopSelect) {
     // Display Horizontal Dilution of Precision (Hdop) with the format X.X
     // It comes in from the GPS module as XXX
