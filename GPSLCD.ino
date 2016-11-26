@@ -174,7 +174,7 @@ void loop()
       pastSatellites = GPSData.satellites;
       if (GPSData.satellites == 0) {
         // Toggle invalid satellites indicator every TOGGLETIME_INTERVAL seconds
-        if (now - prevInvalidSatellitesTime > TOGGLETIME_INTERVAL / 3) {
+        if (now - prevInvalidSatellitesTime > TOGGLETIME_INTERVAL / 4) {
           prevInvalidSatellitesTime = now;
           if (invalidSatellitesToggle) {
             invalidSatellitesToggle = false;
@@ -188,9 +188,12 @@ void loop()
       } // if (GPSData.satellites == 0)
       else if (GPSData.satellites <= 9) {
         lcd.print(" "); // Blank leading char
+        lcd.print(GPSData.satellites);
       }
-      lcd.print(GPSData.satellites);
-    } // if ((pastSatellites != GPSData.satellites) ||(GPSData.satellites == 0))
+      else {
+        lcd.print(GPSData.satellites);
+      }
+    } // if ((pastSatellites != GPSData.satellites) || (GPSData.satellites == 0))
     lcd.setCursor(0, 1); // Go to 2nd line
     lcd.print("Lon: ");
     lcd.print(GPSData.lon);
