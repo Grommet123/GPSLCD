@@ -27,7 +27,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "6.2"               // Version number
+#define VERSION  "6.3"               // Version number
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
                                      // It also feed fake GPS data to the system for debugging
 
@@ -69,7 +69,7 @@ void displayDayOnLCD(uint8_t day);
 const char* cardinal(double course, bool cardinalSelect);
 bool IsDST(uint8_t day, uint8_t month, uint8_t DOW);
 bool convertToLocal(uint8_t* hour, uint16_t* year, uint8_t* month,
-                     uint8_t* day, const double lon, bool convertDate);
+                    uint8_t* day, const double lon, bool convertDate);
 void displayHdopOnLCD(uint32_t Hdop, bool HdopSelect, unsigned long now,
                       unsigned long* prevHdopTime, bool* hdopToggle);
 
