@@ -378,9 +378,9 @@ void loop()
 
 /* Helper functions start here
 
-  Ripped off from Electrical Engineering Stack Exchange
+  The following three functions ripped off from Electrical Engineering Stack Exchange
   http://electronics.stackexchange.com/questions/66285/how-to-calculate-day-of-the-week-for-rtc
-  ------------------------------------------------------------
+
    Returns the number of days to the start of the specified year, taking leap
    years into account, but not the shift from the Julian calendar to the
    Gregorian calendar. Instead, it is as though the Gregorian calendar is
@@ -408,9 +408,8 @@ uint8_t dayOfWeek(uint16_t year, uint8_t month, uint8_t day)
 {
   return (zeller(year, month, day) % 7) + 1;
 }
-//----------------------------------------------------------
 
-// Print the day of the week on the LCD
+// Display the day of the week on the LCD
 void displayDayOnLCD(uint8_t day)
 {
   if (day == 7) day = 0;
@@ -427,7 +426,7 @@ void displayDayOnLCD(uint8_t day)
   }
 }
 
-// Compute the cardinal points of the compass
+// Compute the cardinal points of the compass (16 or 8 cardinal points)
 const char* cardinal(double course, bool cardinalSelect)
 {
   if (!cardinalSelect) {
@@ -556,7 +555,9 @@ void displayHdopOnLCD(uint32_t Hdop, bool HdopSelect, unsigned long now,
     float hdop = (float)Hdop / 100.0f; // Hdop in X.X format
     lcd.print(" Hdop:");
     if (hdop < 10.0f) {
-      lcd.print(hdop);
+      lcd.print((uint32_t)hdop);
+      lcd.print(".");
+      lcd.print((uint32_t)((hdop - (uint32_t)hdop) * 10.0f));
     }
     else {
       // Hdop value too large for my LCD, so cross it out
