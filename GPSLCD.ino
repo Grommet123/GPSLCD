@@ -11,6 +11,8 @@
   decode the GPS NMEA messages. The parameters are then displayed on a
   20x4 LCD using the LiquidCrystal_I2C library.
 
+  https://github.com/Grommet123/GPSLCD
+
   The MIT License (MIT)
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
