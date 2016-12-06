@@ -493,7 +493,7 @@ bool IsDST(uint8_t day, uint8_t month , uint8_t DOW)
 bool convertToLocal(uint8_t* hour, uint16_t* year, uint8_t* month,
                     uint8_t* day, const double lon, bool convertDate) {
 
-  uint8_t DaysAMonth [] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+  uint8_t DaysAMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
   // Get Day of Week (DOW)
   uint8_t DOW = dayOfWeek(*year, *month, *day);
@@ -534,7 +534,7 @@ bool convertToLocal(uint8_t* hour, uint16_t* year, uint8_t* month,
         } // if (*day < 1)
       } // if (*hour < 24)
       else if (*hour >= 24) {
-        day += 1;
+        *day += 1;
         if (*day > DaysAMonth[*month - 1]) {
           *day = 1;
           *month += 1;
