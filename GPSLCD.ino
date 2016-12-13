@@ -1,7 +1,7 @@
 /* GPS LCD
 
-    By GK Grotsky
-    8/30/16
+  By GK Grotsky
+  8/30/16
 
   This program communicate with the u-blox NEO-6M GPS module
   through a software serial interface. It then displays certain GPS
@@ -32,6 +32,7 @@
   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
+  
 */
 
 #include "GPSLCD.h"
@@ -361,7 +362,7 @@ void loop()
       prevInitializationTime = now;
       lcd.setCursor(8, 0); // Go to 1st line
       lcd.print("GPS");
-      lcd.setCursor(14, 0);
+      lcd.setCursor(16, 0);
       lcd.print("v");
       lcd.print(VERSION);
       lcd.setCursor(4, 1); // Go to 2nd line
