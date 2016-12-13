@@ -1,7 +1,7 @@
 /* GPS LCD
 
-    By GK Grotsky
-    8/30/16
+   By GK Grotsky
+   8/30/16
 
    The MIT License (MIT)
    
@@ -22,12 +22,13 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
+   
 */
 
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "6.5"               // Version number
+#define VERSION  "6.6"               // Version number
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
                                      // It also feed fake GPS data to the system for debugging
 
@@ -61,18 +62,6 @@
 #define LOW_SPEED_OVERRIDE  7        // Low speed override switch
 #define GPS_RECEIVER_ERROR 2.5f      // Receiver error (in meters) for the GPS module (Ublox NEO-6M)
 
-// Function Prototypes
-uint16_t leap(uint16_t year);
-uint16_t zeller(uint16_t year, uint8_t month, uint8_t day);
-uint8_t dayOfWeek(uint16_t year, uint8_t month, uint8_t day);
-void displayDayOnLCD(uint8_t day);
-const char* cardinal(double course, bool cardinalSelect);
-bool IsDST(uint8_t day, uint8_t month, uint8_t DOW);
-bool convertToLocal(uint8_t* hour, uint16_t* year, uint8_t* month,
-                    uint8_t* day, const double lon, bool convertDate);
-void displayHdopOnLCD(uint32_t Hdop, bool HdopSelect, unsigned long now,
-                      unsigned long* prevHdopTime, bool* hdopToggle);
-
 struct GPSStruct {
   double   lat;           // Degrees
   double   lon;           // Degrees
@@ -88,5 +77,17 @@ struct GPSStruct {
   uint8_t  minute;
   uint8_t  second;
 };
+
+// Function Prototypes
+uint16_t leap(uint16_t year);
+uint16_t zeller(uint16_t year, uint8_t month, uint8_t day);
+uint8_t dayOfWeek(uint16_t year, uint8_t month, uint8_t day);
+void displayDayOnLCD(uint8_t day);
+const char* cardinal(double course, bool cardinalSelect);
+bool IsDST(uint8_t day, uint8_t month, uint8_t DOW);
+bool convertToLocal(uint8_t* hour, uint16_t* year, uint8_t* month,
+                    uint8_t* day, const double lon, bool convertDate);
+void displayHdopOnLCD(uint32_t Hdop, bool HdopSelect, unsigned long now,
+                      unsigned long* prevHdopTime, bool* hdopToggle);
 
 #endif // #define GPSLCD_h
