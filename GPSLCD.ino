@@ -501,7 +501,7 @@ bool convertToLocal(uint8_t* hour, uint16_t* year, uint8_t* month,
   // Get Daylight Saving Time (DST) or Standard Time (ST)
   bool DST = IsDST(*day, *month, DOW);
   // Compute local time (hours)
-  int8_t UTCOffset = (int8_t)(lon / 15.0d); // UTC offset
+  int8_t UTCOffset = (int8_t)round((lon / 15.0d)); // UTC offset
   if (UTCOffset < 0) {
     // West of Greenwich, subtract
     UTCOffset = abs(UTCOffset); // Make offset positive
