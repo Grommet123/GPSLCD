@@ -144,7 +144,7 @@ void loop()
     GPSData.second     = gps.time.second();
 #else // #ifndef DATA_VALID_OVERRIDE
     // Store the fake GPS data (for debugging)
-    GPSData.satellites = 5; // Invalid satellites
+    GPSData.satellites = 5;
     GPSData.lat        = 40.71d;  // East coast (NYC)
     GPSData.lon        = -74.00d; //   "
     GPSData.speed      = 5.0d;
@@ -371,7 +371,10 @@ void loop()
       lcd.print("Data Not");
       lcd.setCursor(7, 3); // Go to 4th line
       lcd.print("Valid");
-      lcd.setCursor(19, 3);
+      lcd.setCursor(0, 3);
+      lcd.print("SV:"); // Desplay the number of satellites
+      lcd.print(gps.satellites.value());
+      lcd.setCursor(19, 3); // Display the initializing counter
       if (++initializingCounter > 9) initializingCounter = 1; // Limit 1 - 9
       lcd.print(initializingCounter);
       leftInitialization = false;
