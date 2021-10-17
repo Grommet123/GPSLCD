@@ -113,7 +113,7 @@ void loop()
 
   // Get the data from the GPS module
   while (GPSModule.available()) // While there are characters coming from the GPS module (using
-                                // the SoftwareSerial library)
+    // the SoftwareSerial library)
   {
     bool b = gps.encode(GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
   }
@@ -362,25 +362,49 @@ void loop()
     // Display initialization screen once every INITIALIZATION_INTERVAL
     if (now - prevInitializationTime > INITIALIZATION_INTERVAL) {
       prevInitializationTime = now;
-      lcd.setCursor(8, 0); // Go to 1st line
-      lcd.print("GPS");
-      lcd.setCursor(16, 0);
-      lcd.print("v");
-      lcd.print(VERSION);
-      lcd.setCursor(4, 1); // Go to 2nd line
-      lcd.print("Initializing");
-      lcd.setCursor(6, 2); // Go to 3rd line
-      lcd.print("Data Not");
-      lcd.setCursor(7, 3); // Go to 4th line
-      lcd.print("Valid");
-      lcd.setCursor(0, 3);
-      lcd.print("SV:"); // Display the number of satellites
-      lcd.print(gps.satellites.value());
+      if ((digitalRead(ALTITUDE_DATE_TIME_SW))) { // Display the valid flags
+        lcd.clear(); // Clear the LCD
+        lcd.home(); // Go to the home position on the LCD
+        lcd.print(gps.location.isValid());
+        lcd.print(gps.speed.isValid());
+        lcd.print(gps.altitude.isValid());
+        lcd.print(gps.course.isValid());
+        lcd.print(gps.date.isValid());
+        lcd.print(gps.time.isValid());
+        lcd.print(gps.satellites.isValid());
+        lcd.print(gps.hdop.isValid());
+        lcd.setCursor(0, 1); // Go to 2nd line
+        lcd.print("LSACDTSH"); // Data valid flags
+      } else {
+        lcd.setCursor(0, 0); // Go to 1st line
+        lcd.print("        ");
+        lcd.setCursor(8, 0);
+        lcd.print("GPS");
+        lcd.setCursor(16, 0);
+        lcd.print("v");
+        lcd.print(VERSION);
+        lcd.setCursor(0, 1); // Go to 2nd line
+        lcd.print("    ");
+        lcd.setCursor(4, 1);
+        lcd.print("Initializing");
+        lcd.setCursor(6, 2); // Go to 3rd line
+        lcd.print("Data Not");
+        lcd.setCursor(7, 3); // Go to 4th line
+        lcd.print("Valid");
+        lcd.setCursor(0, 3);
+        lcd.print("SV:"); // Display the number of satellites
+        if (gps.satellites.value() > 2) { // Need at least 3 satellites to navigate
+          lcd.print(gps.satellites.value());
+          lcd.print("n"); // n = navigate
+          delay(1000); // 1 second
+        } else {
+          lcd.print(gps.satellites.value());
+          lcd.print("i"); // i = initializing
+        }
+      } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
       lcd.setCursor(19, 3); // Display the initializing counter
       if (++initializingCounter > 9) initializingCounter = 1; // Limit 1 - 9
       lcd.print(initializingCounter);
-      if (gps.satellites.value() > 0) {
-      }
       leftInitialization = false;
     } // if (now - prevInitializationTime > INITIALIZATION_INTERVAL)
   } // GPS data is not valid
@@ -564,7 +588,7 @@ bool convertToLocal(uint8_t* hour, uint16_t* year, uint8_t* month,
 
 // Dislpays Hdop or horizontal position error on the LCD
 void displayHdopOnLCD(uint32_t Hdop, bool HdopSelect, unsigned long now,
-                      unsigned long* prevHdopTime, bool* hdopToggle) {
+                      unsigned long * prevHdopTime, bool * hdopToggle) {
   if (!HdopSelect) {
     // Display Horizontal Dilution of Precision (Hdop) with the format X.X
     // It comes in from the GPS module as XXX

@@ -28,14 +28,14 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "7.1"               // Version number
+#define VERSION  "8.0"               // Version number
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
                                      // It also feed fake GPS data to the system for debugging
 
 #define Rs_pin  0                    // Pin hook up for the LCD via the I2C interface
 #define Rw_pin  1                    //                   "
 #define En_pin  2                    //                   "
-#define BACKLIGHT_PIN 3        //                   "
+#define BACKLIGHT_PIN 3              //                   "
 #define D4_pin  4                    //                   "
 #define D5_pin  5                    //                   "
 #define D6_pin  6                    //                   "
