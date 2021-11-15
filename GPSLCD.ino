@@ -41,13 +41,14 @@
 #include <LiquidCrystal_I2C.h>
 
 TinyGPSPlus gps; // This is the GPS object that will pretty much do all the grunt work with the NMEA data
-SoftwareSerial GPSModule(10, 11); // RX, TX
+SoftwareSerial GPSModule(RXPin, TXPin);
 // Initializes class variables and defines the I2C address of the LCD
 LiquidCrystal_I2C lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin);
 
 // The setup (runs once at start up)
 void setup()
 {
+  Serial.begin(115200); // For debugging to the Serial Monitor (i.e. Serial.Println())
   pinMode(BACKLIGHT_SW, INPUT);
   // Selects either altitude or the date/time to be displayed
   pinMode(ALTITUDE_DATE_TIME_SW, INPUT);
@@ -91,7 +92,11 @@ void loop()
   bool localUTCTimeDate = !digitalRead(CONVERT_TO_LOCAL_SW);
   bool displayHdop = !digitalRead(DISPLAY_HDOP_SW);
   bool cardinal8_16 = !digitalRead(CARDINAL_SW);
+#ifdef DATA_VALID_OVERRIDE
+  bool lowSpeedOverride = HIGH;
+#else
   bool lowSpeedOverride = !digitalRead(LOW_SPEED_OVERRIDE);
+#endif
   bool dataValid; // Data valid from the GPS module
   GPSStruct GPSData; // Holds the GPS data coming from the GPS module
   unsigned long now = millis(); // The time "now"
@@ -111,9 +116,9 @@ void loop()
   lcd.setBacklight(digitalRead(BACKLIGHT_SW));
 #endif
 
-  // Get the data from the GPS module
-  while (GPSModule.available()) // While there are characters coming from the GPS module (using
-    // the SoftwareSerial library)
+  // ************ GPS processing starts here ************
+
+  while (GPSModule.available()) // While there are characters coming from the GPS module (using the SoftwareSerial library)
   {
     bool b = gps.encode(GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
   }
@@ -127,6 +132,7 @@ void loop()
     gps.time.isValid()       &&
     gps.satellites.isValid() &&
     gps.hdop.isValid();
+
   // Check if the GPS data is valid or data valid override is set (for debugging)
   if (dataValid || dataValidOverride) {
 #ifndef DATA_VALID_OVERRIDE
@@ -258,12 +264,13 @@ void loop()
     if ((digitalRead(ALTITUDE_DATE_TIME_SW))) {
       lcd.print("Alt: ");
       lcd.print((int16_t)GPSData.altitude);
+      lcd.print("ft");
       // Toggle credit every TOGGLETIME_INTERVAL seconds
       if (now - prevCreditTime > (TOGGLETIME_INTERVAL / 2)) {
         prevCreditTime = now;
         if (creditToggle) { // Display credit
           creditToggle = false;
-          lcd.print("         "); // Clear the extra chars
+          lcd.print("       "); // Clear the extra chars
           lcd.print(CREDIT); // Yours truly :-)
         }
         else {
@@ -365,6 +372,8 @@ void loop()
       if ((digitalRead(ALTITUDE_DATE_TIME_SW))) { // Display the valid flags
         lcd.clear(); // Clear the LCD
         lcd.home(); // Go to the home position on the LCD
+        lcd.print("    Valid Flags");
+        lcd.setCursor(0, 2); // Go to 3rd line
         lcd.print(gps.location.isValid());
         lcd.print(gps.speed.isValid());
         lcd.print(gps.altitude.isValid());
@@ -373,19 +382,17 @@ void loop()
         lcd.print(gps.time.isValid());
         lcd.print(gps.satellites.isValid());
         lcd.print(gps.hdop.isValid());
-        lcd.setCursor(0, 1); // Go to 2nd line
+        lcd.setCursor(0, 3); // Go to 4th line
         lcd.print("LSACDTSH"); // Data valid flags
       } else {
+        lcd.clear(); // Clear the LCD
         lcd.setCursor(0, 0); // Go to 1st line
-        lcd.print("        ");
         lcd.setCursor(8, 0);
         lcd.print("GPS");
         lcd.setCursor(16, 0);
         lcd.print("v");
         lcd.print(VERSION);
-        lcd.setCursor(0, 1); // Go to 2nd line
-        lcd.print("    ");
-        lcd.setCursor(4, 1);
+        lcd.setCursor(4, 1); // Go to 2nd line
         lcd.print("Initializing");
         lcd.setCursor(6, 2); // Go to 3rd line
         lcd.print("Data Not");

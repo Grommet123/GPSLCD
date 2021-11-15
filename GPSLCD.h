@@ -28,9 +28,9 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "8.0"               // Version number
+#define VERSION  "8.2"               // Version number
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
-                                     // It also feed fake GPS data to the system for debugging
+                                     // It also feeds fake GPS data to the system for debugging
 
 #define Rs_pin  0                    // Pin hook up for the LCD via the I2C interface
 #define Rw_pin  1                    //                   "
@@ -43,7 +43,11 @@
 #define ON_BOARD_LED 13              // On-board LED
 #define BACKLIGHT_SW 6               // LCD backlight select switch
 #define INITIALIZATION_INTERVAL 1000 // Initialization display interval
+#ifdef DATA_VALID_OVERRIDE  
+#define SPEED_CUTOUT 0.0             // Set to 0 for debug
+#else
 #define SPEED_CUTOUT 10.0            // Value where the speed & heading are set to 0
+#endif
 #define TOGGLETIME_INTERVAL 6000     // Toggle display interval
 #define CREDIT "GKG"                 // Yours truly :-)
 //#define BACKLIGHT_OVERRIDE         // Override the LCD backlight switch (comment out to disable)
@@ -53,14 +57,16 @@
 
 #define COLUMN 20                    // Number of Columns (On-board LED)
 #define ROW 4                        // Number of rows (On-board LED)
+#define I2C_ADDR 0x27                // Address of my 20x4 On-board LED (yours might be different)
 #define ALTITUDE_DATE_TIME_SW 5      // Altitude/Date time select switch
-#define I2C_ADDR    0x3F             // Address of my 20x4 LCD (yours might be different)
 #define DISPLAY_12_HOUR_SW 2         // 12 or 24 hour time switch
 #define CONVERT_TO_LOCAL_SW 3        // UTC time/date or local time/date switch
 #define DISPLAY_HDOP_SW 4            // Hdop or horizontal position error switch
 #define CARDINAL_SW 8                // 16 or 8 cardinal heading points switch
 #define LOW_SPEED_OVERRIDE  7        // Low speed override switch
 #define GPS_RECEIVER_ERROR 2.5f      // Receiver error (in meters) for the GPS module (Ublox NEO-6M)
+#define RXPin 10                     // Receive pin for the GPS SoftwareSerial interface
+#define TXPin 11                     // Transmit pin for the GPS SoftwareSerial interface
 
 struct GPSStruct {
   double   lat;           // Degrees
