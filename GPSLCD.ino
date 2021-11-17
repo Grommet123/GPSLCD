@@ -44,6 +44,7 @@ TinyGPSPlus gps; // This is the GPS object that will pretty much do all the grun
 SoftwareSerial GPSModule(RXPin, TXPin);
 // Initializes class variables and defines the I2C address of the LCD
 LiquidCrystal_I2C lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin);
+GPSStruct GPSData; // Holds the GPS data coming from the GPS module
 
 // The setup (runs once at start up)
 void setup()
@@ -92,14 +93,13 @@ void loop()
   bool localUTCTimeDate = !digitalRead(CONVERT_TO_LOCAL_SW);
   bool displayHdop = !digitalRead(DISPLAY_HDOP_SW);
   bool cardinal8_16 = !digitalRead(CARDINAL_SW);
+  bool dataAvailable;
 #ifdef DATA_VALID_OVERRIDE
   bool lowSpeedOverride = HIGH;
 #else
   bool lowSpeedOverride = !digitalRead(LOW_SPEED_OVERRIDE);
 #endif
   bool dataValid; // Data valid from the GPS module
-  bool dataAvailable;
-  GPSStruct GPSData; // Holds the GPS data coming from the GPS module
   unsigned long now = millis(); // The time "now"
 
 #ifdef DATA_VALID_OVERRIDE
@@ -135,6 +135,7 @@ void loop()
     GPSData.timeisValid        = gps.time.isValid();
     GPSData.satellitesisValid  = gps.satellites.isValid();
     GPSData.hdopisValid        = gps.hdop.isValid();
+    GPSData.dataAvailable      = dataAvailable;
   } else {
     GPSData.locationisValid    = false;
     GPSData.speedisValid       = false;
@@ -144,6 +145,7 @@ void loop()
     GPSData.timeisValid        = false;
     GPSData.satellitesisValid  = false;
     GPSData.hdopisValid        = false;
+    GPSData.dataAvailable      = false;
   }
 
   // Get the GPS data valid flags
@@ -196,7 +198,6 @@ void loop()
       leftInitialization = true;
       lcd.clear(); // Clear the LCD
     }
-
     // Display the latest info from the gps object
     // which is derived from the data sent by the GPS unit
     // Send data to the LCD
@@ -394,22 +395,7 @@ void loop()
     if (now - prevInitializationTime > INITIALIZATION_INTERVAL) {
       prevInitializationTime = now;
       if ((digitalRead(ALTITUDE_DATE_TIME_SW))) { // Display the valid flags
-        lcd.clear(); // Clear the LCD
-        lcd.home(); // Go to the home position on the LCD
-        lcd.print("    Valid Flags");
-        lcd.setCursor(0, 2); // Go to 3rd line
-        lcd.print(GPSData.locationisValid);
-        lcd.print(GPSData.speedisValid);
-        lcd.print(GPSData.altitudeisValid);
-        lcd.print(GPSData.courseisValid);
-        lcd.print(GPSData.dateisValid);
-        lcd.print(GPSData.timeisValid);
-        lcd.print(GPSData.satellitesisValid);
-        lcd.print(GPSData.hdopisValid);
-        lcd.print("   ");
-        lcd.print(dataAvailable);
-        lcd.setCursor(0, 3); // Go to 4th line
-        lcd.print("LSACDTSH   DA"); // Data valid flags
+        displayValidFlags();
       } else {
         lcd.clear(); // Clear the LCD
         lcd.setCursor(0, 0); // Go to 1st line
@@ -443,9 +429,30 @@ void loop()
   } // GPS data is not valid
 } // loop
 
-/* Helper functions start here
+// Helper functions start here
 
-  The following three functions ripped off from Electrical Engineering Stack Exchange
+// Display the valid flags on the LCD
+void displayValidFlags(void) {
+  lcd.clear(); // Clear the LCD
+  lcd.home(); // Go to the home position on the LCD
+  lcd.print("    Valid Flags");
+  lcd.setCursor(0, 2); // Go to 3rd line
+  lcd.print(GPSData.locationisValid);
+  lcd.print(GPSData.speedisValid);
+  lcd.print(GPSData.altitudeisValid);
+  lcd.print(GPSData.courseisValid);
+  lcd.print(GPSData.dateisValid);
+  lcd.print(GPSData.timeisValid);
+  lcd.print(GPSData.satellitesisValid);
+  lcd.print(GPSData.hdopisValid);
+  lcd.print("   ");
+  lcd.print(GPSData.dataAvailable);
+  lcd.setCursor(0, 3); // Go to 4th line
+  lcd.print("LSACDTSH   DA"); // Data valid flags
+  return;
+}
+
+/*  The following three functions ripped off from Electrical Engineering Stack Exchange
   http://electronics.stackexchange.com/questions/66285/how-to-calculate-day-of-the-week-for-rtc
 
    Returns the number of days to the start of the specified year, taking leap

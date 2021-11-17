@@ -28,7 +28,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "9.1"               // Version number
+#define VERSION  "9.2"               // Version number
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
 // It also feeds fake GPS data to the system for debugging
 
@@ -67,6 +67,8 @@
 // Pin 9 not used
 #define RXPin 10                     // Receive pin for the GPS SoftwareSerial interface
 #define TXPin 11                     // Transmit pin for the GPS SoftwareSerial interface
+// Pin 12 not used
+// Pin 13 not used
 #define GPS_RECEIVER_ERROR 2.5f      // Receiver error (in meters) for the GPS module (Ublox NEO-6M)
 
 struct GPSStruct {
@@ -91,6 +93,7 @@ struct GPSStruct {
   bool     timeisValid;
   bool     satellitesisValid;
   bool     hdopisValid;
+  bool     dataAvailable;
 };
 
 // Function Prototypes
