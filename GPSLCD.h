@@ -28,7 +28,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "9.2"               // Version number
+#define VERSION  "9.3"               // Version number
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
 // It also feeds fake GPS data to the system for debugging
 
@@ -93,7 +93,7 @@ struct GPSStruct {
   bool     timeisValid;
   bool     satellitesisValid;
   bool     hdopisValid;
-  bool     dataAvailable;
+  uint8_t  dataAvailable;
 };
 
 // Function Prototypes

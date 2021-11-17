@@ -93,7 +93,7 @@ void loop()
   bool localUTCTimeDate = !digitalRead(CONVERT_TO_LOCAL_SW);
   bool displayHdop = !digitalRead(DISPLAY_HDOP_SW);
   bool cardinal8_16 = !digitalRead(CARDINAL_SW);
-  bool dataAvailable;
+  uint8_t dataAvailable;
 #ifdef DATA_VALID_OVERRIDE
   bool lowSpeedOverride = HIGH;
 #else
@@ -119,14 +119,17 @@ void loop()
 
   // ************ GPS processing starts here ************
 
-  dataAvailable = false;
+  dataAvailable = 0;
   while (GPSModule.available()) // While there are characters coming from the GPS module (using the SoftwareSerial library)
   {
-    dataAvailable = gps.encode(GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
+    bool b = gps.encode(GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
+    if (b) {
+      dataAvailable = 1;
+    }
   }
 
   // Set valid flags for initialization
-  if (dataAvailable) {
+  if (dataAvailable > 0 ) {
     GPSData.locationisValid    = gps.location.isValid();
     GPSData.speedisValid       = gps.speed.isValid();
     GPSData.altitudeisValid    = gps.altitude.isValid();
@@ -145,7 +148,7 @@ void loop()
     GPSData.timeisValid        = false;
     GPSData.satellitesisValid  = false;
     GPSData.hdopisValid        = false;
-    GPSData.dataAvailable      = false;
+    GPSData.dataAvailable      = 0;
   }
 
   // Get the GPS data valid flags
