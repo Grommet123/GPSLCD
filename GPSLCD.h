@@ -4,17 +4,17 @@
    8/30/16
 
    The MIT License (MIT)
-   
+
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights
    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
    copies of the Software, and to permit persons to whom the Software is
    furnished to do so, subject to the following conditions:
-   
+
    The above copyright notice and this permission notice shall be included in all
    copies or substantial portions of the Software.
-   
+
    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,15 +22,15 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
-   
+
 */
 
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "8.3"               // Version number
+#define VERSION  "9.0"               // Version number
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
-                                     // It also feeds fake GPS data to the system for debugging
+// It also feeds fake GPS data to the system for debugging
 
 #define Rs_pin  0                    // Pin hook up for the LCD via the I2C interface
 #define Rw_pin  1                    //                   "
@@ -42,7 +42,7 @@
 #define D7_pin  7                    //                   "
 #define ON_BOARD_LED 13              // On-board LED
 #define INITIALIZATION_INTERVAL 1000 // Initialization display interval
-#ifdef DATA_VALID_OVERRIDE  
+#ifdef DATA_VALID_OVERRIDE
 #define SPEED_CUTOUT 0.0             // Set to 0 for debug
 #else
 #define SPEED_CUTOUT 10.0            // Value where the speed & heading are set to 0
@@ -83,6 +83,14 @@ struct GPSStruct {
   uint8_t  hour;
   uint8_t  minute;
   uint8_t  second;
+  bool     locationisValid; // Valid flags
+  bool     speedisValid;
+  bool     altitudeisValid;
+  bool     courseisValid;
+  bool     dateisValid;
+  bool     timeisValid;
+  bool     satellitesisValid;
+  bool     hdopisValid;
 };
 
 // Function Prototypes

@@ -92,6 +92,7 @@ void loop()
   bool localUTCTimeDate = !digitalRead(CONVERT_TO_LOCAL_SW);
   bool displayHdop = !digitalRead(DISPLAY_HDOP_SW);
   bool cardinal8_16 = !digitalRead(CARDINAL_SW);
+  bool goodDataAvailable;
 #ifdef DATA_VALID_OVERRIDE
   bool lowSpeedOverride = HIGH;
 #else
@@ -117,11 +118,36 @@ void loop()
 #endif
 
   // ************ GPS processing starts here ************
-
+  goodDataAvailable = false;
   while (GPSModule.available()) // While there are characters coming from the GPS module (using the SoftwareSerial library)
   {
     bool b = gps.encode(GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
+    if (b) {
+      goodDataAvailable = true;
+    }
   }
+
+  // Set valid flags for initialization
+  if (goodDataAvailable) {
+    GPSData.locationisValid    = gps.location.isValid();
+    GPSData.speedisValid       = gps.speed.isValid();
+    GPSData.altitudeisValid    = gps.altitude.isValid();
+    GPSData.courseisValid      = gps.course.isValid();
+    GPSData.dateisValid        = gps.date.isValid();
+    GPSData.timeisValid        = gps.time.isValid();
+    GPSData.satellitesisValid  = gps.satellites.isValid();
+    GPSData.hdopisValid        = gps.hdop.isValid();
+  } else {
+    GPSData.locationisValid    = false;
+    GPSData.speedisValid       = false;
+    GPSData.altitudeisValid    = false;
+    GPSData.courseisValid      = false;
+    GPSData.dateisValid        = false;
+    GPSData.timeisValid        = false;
+    GPSData.satellitesisValid  = false;
+    GPSData.hdopisValid        = false;
+  }
+
   // Get the GPS data valid flags
   dataValid =
     gps.location.isValid()   &&
@@ -137,19 +163,19 @@ void loop()
   if (dataValid || dataValidOverride) {
 #ifndef DATA_VALID_OVERRIDE
     // Store the real GPS data
-    GPSData.satellites = gps.satellites.value();
-    GPSData.lat        = gps.location.lat();
-    GPSData.lon        = gps.location.lng();
-    GPSData.speed      = gps.speed.mph();
-    GPSData.altitude   = gps.altitude.feet();
-    GPSData.heading    = gps.course.deg();
-    GPSData.hdop       = gps.hdop.value();
-    GPSData.year       = gps.date.year();
-    GPSData.month      = gps.date.month();
-    GPSData.day        = gps.date.day();
-    GPSData.hour       = gps.time.hour();
-    GPSData.minute     = gps.time.minute();
-    GPSData.second     = gps.time.second();
+    GPSData.satellites         = gps.satellites.value();
+    GPSData.lat                = gps.location.lat();
+    GPSData.lon                = gps.location.lng();
+    GPSData.speed              = gps.speed.mph();
+    GPSData.altitude           = gps.altitude.feet();
+    GPSData.heading            = gps.course.deg();
+    GPSData.hdop               = gps.hdop.value();
+    GPSData.year               = gps.date.year();
+    GPSData.month              = gps.date.month();
+    GPSData.day                = gps.date.day();
+    GPSData.hour               = gps.time.hour();
+    GPSData.minute             = gps.time.minute();
+    GPSData.second             = gps.time.second();
 #else // #ifndef DATA_VALID_OVERRIDE
     // Store the fake GPS data (for debugging)
     GPSData.satellites = 5;
@@ -374,16 +400,18 @@ void loop()
         lcd.home(); // Go to the home position on the LCD
         lcd.print("    Valid Flags");
         lcd.setCursor(0, 2); // Go to 3rd line
-        lcd.print(gps.location.isValid());
-        lcd.print(gps.speed.isValid());
-        lcd.print(gps.altitude.isValid());
-        lcd.print(gps.course.isValid());
-        lcd.print(gps.date.isValid());
-        lcd.print(gps.time.isValid());
-        lcd.print(gps.satellites.isValid());
-        lcd.print(gps.hdop.isValid());
+        lcd.print(GPSData.locationisValid);
+        lcd.print(GPSData.speedisValid);
+        lcd.print(GPSData.altitudeisValid);
+        lcd.print(GPSData.courseisValid);
+        lcd.print(GPSData.dateisValid);
+        lcd.print(GPSData.timeisValid);
+        lcd.print(GPSData.satellitesisValid);
+        lcd.print(GPSData.hdopisValid);
+        lcd.print("   ");
+        lcd.print(goodDataAvailable);
         lcd.setCursor(0, 3); // Go to 4th line
-        lcd.print("LSACDTSH"); // Data valid flags
+        lcd.print("LSACDTSH   G"); // Data valid flags
       } else {
         lcd.clear(); // Clear the LCD
         lcd.setCursor(0, 0); // Go to 1st line
