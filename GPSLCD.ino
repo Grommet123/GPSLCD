@@ -92,13 +92,13 @@ void loop()
   bool localUTCTimeDate = !digitalRead(CONVERT_TO_LOCAL_SW);
   bool displayHdop = !digitalRead(DISPLAY_HDOP_SW);
   bool cardinal8_16 = !digitalRead(CARDINAL_SW);
-  bool goodDataAvailable;
 #ifdef DATA_VALID_OVERRIDE
   bool lowSpeedOverride = HIGH;
 #else
   bool lowSpeedOverride = !digitalRead(LOW_SPEED_OVERRIDE);
 #endif
   bool dataValid; // Data valid from the GPS module
+  bool dataAvailable;
   GPSStruct GPSData; // Holds the GPS data coming from the GPS module
   unsigned long now = millis(); // The time "now"
 
@@ -118,17 +118,15 @@ void loop()
 #endif
 
   // ************ GPS processing starts here ************
-  goodDataAvailable = false;
+
+  dataAvailable = false;
   while (GPSModule.available()) // While there are characters coming from the GPS module (using the SoftwareSerial library)
   {
-    bool b = gps.encode(GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
-    if (b) {
-      goodDataAvailable = true;
-    }
+    dataAvailable = gps.encode(GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
   }
 
   // Set valid flags for initialization
-  if (goodDataAvailable) {
+  if (dataAvailable) {
     GPSData.locationisValid    = gps.location.isValid();
     GPSData.speedisValid       = gps.speed.isValid();
     GPSData.altitudeisValid    = gps.altitude.isValid();
@@ -409,9 +407,9 @@ void loop()
         lcd.print(GPSData.satellitesisValid);
         lcd.print(GPSData.hdopisValid);
         lcd.print("   ");
-        lcd.print(goodDataAvailable);
+        lcd.print(dataAvailable);
         lcd.setCursor(0, 3); // Go to 4th line
-        lcd.print("LSACDTSH   G"); // Data valid flags
+        lcd.print("LSACDTSH   DA"); // Data valid flags
       } else {
         lcd.clear(); // Clear the LCD
         lcd.setCursor(0, 0); // Go to 1st line
