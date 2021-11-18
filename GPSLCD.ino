@@ -49,7 +49,9 @@ GPSStruct GPSData; // Holds the GPS data coming from the GPS module
 // The setup (runs once at start up)
 void setup()
 {
-  Serial.begin(115200); // For debugging to the Serial Monitor (i.e. Serial.Println())
+#ifdef Debug
+  Serial.begin(9600); // For debugging the Serial Monitor (i.e. Serial.Println())
+#endif
   pinMode(BACKLIGHT_SW, INPUT);
   // Selects either altitude or the date/time to be displayed
   pinMode(ALTITUDE_DATE_TIME_SW, INPUT);
@@ -93,13 +95,13 @@ void loop()
   bool localUTCTimeDate = !digitalRead(CONVERT_TO_LOCAL_SW);
   bool displayHdop = !digitalRead(DISPLAY_HDOP_SW);
   bool cardinal8_16 = !digitalRead(CARDINAL_SW);
-  uint8_t dataAvailable;
 #ifdef DATA_VALID_OVERRIDE
   bool lowSpeedOverride = HIGH;
 #else
   bool lowSpeedOverride = !digitalRead(LOW_SPEED_OVERRIDE);
 #endif
   bool dataValid; // Data valid from the GPS module
+  bool dataAvailable; // Data is available from the GPS module
   unsigned long now = millis(); // The time "now"
 
 #ifdef DATA_VALID_OVERRIDE
@@ -119,17 +121,17 @@ void loop()
 
   // ************ GPS processing starts here ************
 
-  dataAvailable = 0;
+  dataAvailable = false;
   while (GPSModule.available()) // While there are characters coming from the GPS module (using the SoftwareSerial library)
   {
     bool b = gps.encode(GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
     if (b) {
-      dataAvailable = 1;
+      dataAvailable = true; // Good read
     }
   }
 
   // Set valid flags for initialization
-  if (dataAvailable > 0 ) {
+  if (dataAvailable) {
     GPSData.locationisValid    = gps.location.isValid();
     GPSData.speedisValid       = gps.speed.isValid();
     GPSData.altitudeisValid    = gps.altitude.isValid();
@@ -148,8 +150,21 @@ void loop()
     GPSData.timeisValid        = false;
     GPSData.satellitesisValid  = false;
     GPSData.hdopisValid        = false;
-    GPSData.dataAvailable      = 0;
+    GPSData.dataAvailable      = false;
   }
+
+#ifdef Debug
+  Serial.print(GPSData.locationisValid);
+  Serial.print(GPSData.speedisValid);
+  Serial.print(GPSData.altitudeisValid);
+  Serial.print(GPSData.courseisValid);
+  Serial.print(GPSData.dateisValid);
+  Serial.print(GPSData.timeisValid);
+  Serial.print(GPSData.satellitesisValid);
+  Serial.print(GPSData.hdopisValid);
+  Serial.print("   ");
+  Serial.println(GPSData.dataAvailable);
+#endif
 
   // Get the GPS data valid flags
   dataValid =
@@ -163,6 +178,7 @@ void loop()
     gps.hdop.isValid();
 
   // Check if the GPS data is valid or data valid override is set (for debugging)
+  //  if (dataValid || dataValidOverride) {
   if (dataValid || dataValidOverride) {
 #ifndef DATA_VALID_OVERRIDE
     // Store the real GPS data
