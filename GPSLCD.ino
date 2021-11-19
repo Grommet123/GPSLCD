@@ -50,7 +50,7 @@ GPSStruct GPSData; // Holds the GPS data coming from the GPS module
 void setup()
 {
 #ifdef Debug
-  Serial.begin(9600); // For debugging the Serial Monitor (i.e. Serial.Println())
+  Serial.begin(9600); // For debugging to the Serial Monitor (i.e. Serial.Println())
 #endif
   pinMode(BACKLIGHT_SW, INPUT);
   // Selects either altitude or the date/time to be displayed
@@ -124,7 +124,13 @@ void loop()
   dataAvailable = false;
   while (GPSModule.available()) // While there are characters coming from the GPS module (using the SoftwareSerial library)
   {
-    bool b = gps.encode(GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
+#ifdef Debug
+    char c;
+#endif
+    bool b = gps.encode(c = GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
+#ifdef Debug
+    Serial.write(c); // GPS data flow displaying the NMEA messages
+#endif
     if (b) {
       dataAvailable = true; // Good read
     }
@@ -153,7 +159,7 @@ void loop()
     GPSData.dataAvailable      = false;
   }
 
-#ifdef Debug
+#ifdef Debug // Print health data to the monitor
   Serial.print(GPSData.locationisValid);
   Serial.print(GPSData.speedisValid);
   Serial.print(GPSData.altitudeisValid);
@@ -163,7 +169,9 @@ void loop()
   Serial.print(GPSData.satellitesisValid);
   Serial.print(GPSData.hdopisValid);
   Serial.print("   ");
-  Serial.println(GPSData.dataAvailable);
+  Serial.print(GPSData.dataAvailable);
+  Serial.print("   ");
+  Serial.println(gps.satellites.value());
 #endif
 
   // Get the GPS data valid flags

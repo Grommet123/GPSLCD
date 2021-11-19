@@ -28,11 +28,11 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "9.4"               // Version number
+#define VERSION  "9.5"               // Version number
+//#define Debug                      // Comment out for debug
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
 // It also feeds fake GPS data to the system for debugging
 
-//#define Debug                        // Comment out for debug
 #define Rs_pin  0                    // Pin hook up for the LCD via the I2C interface
 #define Rw_pin  1                    //                   "
 #define En_pin  2                    //                   "
@@ -98,6 +98,7 @@ struct GPSStruct {
 };
 
 // Function Prototypes
+void displayValidFlags(void);
 uint16_t leap(uint16_t year);
 uint16_t zeller(uint16_t year, uint8_t month, uint8_t day);
 uint8_t dayOfWeek(uint16_t year, uint8_t month, uint8_t day);
