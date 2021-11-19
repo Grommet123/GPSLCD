@@ -124,12 +124,10 @@ void loop()
   dataAvailable = false;
   while (GPSModule.available()) // While there are characters coming from the GPS module (using the SoftwareSerial library)
   {
-#ifdef Debug
     char c;
-#endif
     bool b = gps.encode(c = GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
 #ifdef Debug
-    Serial.write(c); // GPS data flow displaying the NMEA messages
+    Serial.write(c); // GPS data flow displaying the NMEA data
 #endif
     if (b) {
       dataAvailable = true; // Good read
