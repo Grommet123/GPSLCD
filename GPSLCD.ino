@@ -127,7 +127,7 @@ void loop()
     char c;
     bool b = gps.encode(c = GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
 #ifdef Debug
-    Serial.write(c); // GPS data flow displaying the NMEA data
+    Serial.print(c); // GPS data flow displaying the NMEA data
 #endif
     if (b) {
       dataAvailable = true; // Good read
