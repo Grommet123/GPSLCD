@@ -133,6 +133,10 @@ void loop()
       dataAvailable = true; // Good read
     }
   }
+#ifdef Debug
+  Serial.flush();
+  Serial.println();
+#endif
 
   // Set valid flags for initialization
   if (dataAvailable) {
