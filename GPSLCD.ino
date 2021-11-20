@@ -50,7 +50,7 @@ GPSStruct GPSData; // Holds the GPS data coming from the GPS module
 void setup()
 {
 #ifdef Debug
-  Serial.begin(9600); // For debugging to the Serial Monitor (i.e. Serial.Println())
+  Serial.begin(115200); // For debugging to the Serial Monitor (i.e. Serial.Println())
 #endif
   pinMode(BACKLIGHT_SW, INPUT);
   // Selects either altitude or the date/time to be displayed
@@ -430,7 +430,7 @@ void loop()
         lcd.setCursor(0, 0); // Go to 1st line
         lcd.setCursor(8, 0);
         lcd.print("GPS");
-        lcd.setCursor(16, 0);
+        lcd.setCursor(14, 0);
         lcd.print("v");
         lcd.print(VERSION);
         lcd.setCursor(4, 1); // Go to 2nd line
