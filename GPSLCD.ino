@@ -228,11 +228,11 @@ void loop()
 #endif // #ifndef DATA_VALID_OVERRIDE
 
     // Turn on green LED
-    if (digitalRead(BACKLIGHT_SW)) {
+    if ((digitalRead(BACKLIGHT_SW)) && (GPSData.satellites > 0)) {
       analogWrite(RED_LED_PIN, 0);
-      analogWrite(GREEN_LED_PIN, 127);
+      analogWrite(GREEN_LED_PIN, 50);
       analogWrite(BLUE_LED_PIN, 0);
-    } else {
+    } else if (GPSData.satellites > 0) {
       analogWrite(RED_LED_PIN, 0);
       analogWrite(GREEN_LED_PIN, 0);
       analogWrite(BLUE_LED_PIN, 0);
@@ -253,11 +253,11 @@ void loop()
     if ((pastSatellites != GPSData.satellites) || (GPSData.satellites == 0)) {
       pastSatellites = GPSData.satellites;
       if (GPSData.satellites == 0) {
-        // Turn on blue LED
+        // Turn on yellow LED
         if (digitalRead(BACKLIGHT_SW)) {
-          analogWrite(RED_LED_PIN, 0);
-          analogWrite(GREEN_LED_PIN, 0);
-          analogWrite(BLUE_LED_PIN, 127);
+          analogWrite(RED_LED_PIN, 50);
+          analogWrite(GREEN_LED_PIN, 75);
+          analogWrite(BLUE_LED_PIN, 0);
         } else {
           analogWrite(RED_LED_PIN, 0);
           analogWrite(GREEN_LED_PIN, 0);
@@ -446,7 +446,7 @@ void loop()
   else {
     // Turn on red LED
     if (digitalRead(BACKLIGHT_SW)) {
-      analogWrite(RED_LED_PIN, 127);
+      analogWrite(RED_LED_PIN, 50);
       analogWrite(GREEN_LED_PIN, 0);
       analogWrite(BLUE_LED_PIN, 0);
     } else {
