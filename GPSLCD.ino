@@ -61,6 +61,9 @@ void setup()
   pinMode(DISPLAY_HDOP_SW, INPUT);
   pinMode(CARDINAL_SW, INPUT);
   pinMode(LOW_SPEED_OVERRIDE, INPUT);
+  pinMode(RED_LED_PIN, OUTPUT);
+  pinMode(GREEN_LED_PIN, OUTPUT);
+  pinMode(BLUE_LED_PIN, OUTPUT);
   pinMode(ON_BOARD_LED, OUTPUT); // Turn off on-board LED
   digitalWrite(ON_BOARD_LED, LOW); //       "
 
@@ -161,7 +164,7 @@ void loop()
     GPSData.dataAvailable      = false;
   }
 
-#ifdef Debug // Print health data to the monitor
+#ifdef Debug // Print health data to the serial monitor
   Serial.print(GPSData.locationisValid);
   Serial.print(GPSData.speedisValid);
   Serial.print(GPSData.altitudeisValid);
@@ -173,7 +176,9 @@ void loop()
   Serial.print("   ");
   Serial.print(GPSData.dataAvailable);
   Serial.print("   ");
-  Serial.println(gps.satellites.value());
+  Serial.print(gps.satellites.value());
+  Serial.print("   ");
+  Serial.println(gps.hdop.value());
 #endif
 
   // Get the GPS data valid flags
@@ -222,6 +227,16 @@ void loop()
     GPSData.second     = 25;
 #endif // #ifndef DATA_VALID_OVERRIDE
 
+    // Turn on green LED
+    if (digitalRead(BACKLIGHT_SW)) {
+      analogWrite(RED_LED_PIN, 0);
+      analogWrite(GREEN_LED_PIN, 127);
+      analogWrite(BLUE_LED_PIN, 0);
+    } else {
+      analogWrite(RED_LED_PIN, 0);
+      analogWrite(GREEN_LED_PIN, 0);
+      analogWrite(BLUE_LED_PIN, 0);
+    }
     // Clear the screen once when leaving initialization
     if (!leftInitialization) {
       leftInitialization = true;
@@ -238,6 +253,16 @@ void loop()
     if ((pastSatellites != GPSData.satellites) || (GPSData.satellites == 0)) {
       pastSatellites = GPSData.satellites;
       if (GPSData.satellites == 0) {
+        // Turn on blue LED
+        if (digitalRead(BACKLIGHT_SW)) {
+          analogWrite(RED_LED_PIN, 0);
+          analogWrite(GREEN_LED_PIN, 0);
+          analogWrite(BLUE_LED_PIN, 127);
+        } else {
+          analogWrite(RED_LED_PIN, 0);
+          analogWrite(GREEN_LED_PIN, 0);
+          analogWrite(BLUE_LED_PIN, 0);
+        }
         // Toggle invalid satellites indicator every TOGGLETIME_INTERVAL seconds
         if (now - prevInvalidSatellitesTime > TOGGLETIME_INTERVAL / 4) {
           prevInvalidSatellitesTime = now;
@@ -419,6 +444,16 @@ void loop()
     } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
   } // if (dataValid)
   else {
+    // Turn on red LED
+    if (digitalRead(BACKLIGHT_SW)) {
+      analogWrite(RED_LED_PIN, 127);
+      analogWrite(GREEN_LED_PIN, 0);
+      analogWrite(BLUE_LED_PIN, 0);
+    } else {
+      analogWrite(RED_LED_PIN, 0);
+      analogWrite(GREEN_LED_PIN, 0);
+      analogWrite(BLUE_LED_PIN, 0);
+    }
     // GPS data is not valid, so it must be initializing
     // Display initialization screen once every INITIALIZATION_INTERVAL
     if (now - prevInitializationTime > INITIALIZATION_INTERVAL) {
@@ -441,12 +476,10 @@ void loop()
         lcd.print("Valid");
         lcd.setCursor(0, 3);
         lcd.print("SV:"); // Display the number of satellites
+        lcd.print(gps.satellites.value());
         if (gps.satellites.value() > 2) { // Need at least 3 satellites to navigate
-          lcd.print(gps.satellites.value());
           lcd.print("n"); // n = navigate
-          delay(1000); // 1 second
         } else {
-          lcd.print(gps.satellites.value());
           lcd.print("i"); // i = initializing
         }
       } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))

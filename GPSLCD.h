@@ -28,10 +28,10 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "9.10"              // Version number
-//#define Debug                      // Comment out for debug
+#define VERSION  "10.0"              // Version number
+#define Debug                      // Comment out for debug
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
-// It also feeds fake GPS data to the system for debugging
+                                     // It also feeds fake GPS data to the system for debugging
 
 #define Rs_pin  0                    // Pin hook up for the LCD via the I2C interface
 #define Rw_pin  1                    //                   "
@@ -65,11 +65,11 @@
 #define BACKLIGHT_SW 6               // LCD backlight select switch
 #define LOW_SPEED_OVERRIDE  7        // Low speed override switch
 #define CARDINAL_SW 8                // 16 or 8 cardinal heading points switch
-// Pin 9 not used
-#define RXPin 10                     // Receive pin for the GPS SoftwareSerial interface
-#define TXPin 11                     // Transmit pin for the GPS SoftwareSerial interface
-// Pin 12 not used
-// Pin 13 not used
+#define RED_LED_PIN 9                // Red LED
+#define GREEN_LED_PIN 10             // Green LED
+#define BLUE_LED_PIN 11              // Blue LED
+#define RXPin 12                     // Receive pin for the GPS SoftwareSerial interface
+#define TXPin 13                     // Transmit pin for the GPS SoftwareSerial interface
 #define GPS_RECEIVER_ERROR 2.5f      // Receiver error (in meters) for the GPS module (Ublox NEO-6M)
 
 struct GPSStruct {
