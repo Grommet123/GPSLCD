@@ -229,13 +229,13 @@ void loop()
 
     // Turn on green LED
     if ((digitalRead(BACKLIGHT_SW)) && (GPSData.satellites > 0)) {
-      analogWrite(RED_LED_PIN, 0);
+      analogWrite(RED_LED_PIN, LED_OFF);
       analogWrite(GREEN_LED_PIN, 50);
-      analogWrite(BLUE_LED_PIN, 0);
+      analogWrite(BLUE_LED_PIN, LED_OFF);
     } else if (GPSData.satellites > 0) {
-      analogWrite(RED_LED_PIN, 0);
-      analogWrite(GREEN_LED_PIN, 0);
-      analogWrite(BLUE_LED_PIN, 0);
+      analogWrite(RED_LED_PIN, LED_OFF);
+      analogWrite(GREEN_LED_PIN, LED_OFF);
+      analogWrite(BLUE_LED_PIN, LED_OFF);
     }
     // Clear the screen once when leaving initialization
     if (!leftInitialization) {
@@ -257,11 +257,11 @@ void loop()
         if (digitalRead(BACKLIGHT_SW)) {
           analogWrite(RED_LED_PIN, 50);
           analogWrite(GREEN_LED_PIN, 75);
-          analogWrite(BLUE_LED_PIN, 0);
+          analogWrite(BLUE_LED_PIN, LED_OFF);
         } else {
-          analogWrite(RED_LED_PIN, 0);
-          analogWrite(GREEN_LED_PIN, 0);
-          analogWrite(BLUE_LED_PIN, 0);
+          analogWrite(RED_LED_PIN, LED_OFF);
+          analogWrite(GREEN_LED_PIN, LED_OFF);
+          analogWrite(BLUE_LED_PIN, LED_OFF);
         }
         // Toggle invalid satellites indicator every TOGGLETIME_INTERVAL seconds
         if (now - prevInvalidSatellitesTime > TOGGLETIME_INTERVAL / 4) {
@@ -447,12 +447,12 @@ void loop()
     // Turn on red LED
     if (digitalRead(BACKLIGHT_SW)) {
       analogWrite(RED_LED_PIN, 50);
-      analogWrite(GREEN_LED_PIN, 0);
-      analogWrite(BLUE_LED_PIN, 0);
+      analogWrite(GREEN_LED_PIN, LED_OFF);
+      analogWrite(BLUE_LED_PIN, LED_OFF);
     } else {
-      analogWrite(RED_LED_PIN, 0);
-      analogWrite(GREEN_LED_PIN, 0);
-      analogWrite(BLUE_LED_PIN, 0);
+      analogWrite(RED_LED_PIN, LED_OFF);
+      analogWrite(GREEN_LED_PIN, LED_OFF);
+      analogWrite(BLUE_LED_PIN, LED_OFF);
     }
     // GPS data is not valid, so it must be initializing
     // Display initialization screen once every INITIALIZATION_INTERVAL
