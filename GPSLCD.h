@@ -28,7 +28,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "10.3"              // Version number
+#define VERSION  "10.4"              // Version number
 //#define Debug                      // Comment out for debug
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
                                      // It also feeds fake GPS data to the system for debugging
