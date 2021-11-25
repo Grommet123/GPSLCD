@@ -49,7 +49,9 @@ GPSStruct GPSData; // Holds the GPS data coming from the GPS module
 // The setup (runs once at start up)
 void setup()
 {
+#ifdef Debug
   Serial.begin(115200); // For debugging to the Serial Monitor (i.e. Serial.Println())
+#endif
   pinMode(BACKLIGHT_SW, INPUT);
   // Selects either altitude or the date/time to be displayed
   pinMode(ALTITUDE_DATE_TIME_SW, INPUT);
