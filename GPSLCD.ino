@@ -228,7 +228,7 @@ void loop()
     GPSData.second     = 25;
 #endif // #ifndef DATA_VALID_OVERRIDE
 
-    // Turn on green LED
+    // Turn on green LED (all is well)
     if ((digitalRead(BACKLIGHT_SW)) && (GPSData.satellites > 0)) {
       analogWrite(RED_LED_PIN, LED_OFF);
       analogWrite(GREEN_LED_PIN, 255);
@@ -254,7 +254,7 @@ void loop()
     if ((pastSatellites != GPSData.satellites) || (GPSData.satellites == 0)) {
       pastSatellites = GPSData.satellites;
       if (GPSData.satellites == 0) {
-        // Turn on yellow LED(or something like it)
+        // Turn on yellow LED or something like it (all is not so well)
         if (digitalRead(BACKLIGHT_SW)) {
           analogWrite(RED_LED_PIN, 255);
           analogWrite(GREEN_LED_PIN, 255);
@@ -445,7 +445,7 @@ void loop()
     } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
   } // if (dataValid)
   else {
-    // Turn on red LED
+    // Turn on red LED (all is not well)
     if (digitalRead(BACKLIGHT_SW)) {
       analogWrite(RED_LED_PIN, 255);
       analogWrite(GREEN_LED_PIN, LED_OFF);

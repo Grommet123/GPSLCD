@@ -28,9 +28,9 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "10.9"              // Version number
+//#define VERSION  "10.10"              // Version number
 //#define Debug                      // Comment out for debug
-//#define Serial_Debug               // Comment out for serial monitor display (debug)
+#define Serial_Debug               // Comment out for serial monitor display debug
 #define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
                                      // It also feeds fake GPS data to the system for debugging
 
@@ -71,7 +71,7 @@
 #define BLUE_LED_PIN 11              // Blue LED
 #define RXPin 12                     // Receive pin for the GPS SoftwareSerial interface
 #define TXPin 13                     // Transmit pin for the GPS SoftwareSerial interface
-#define GPS_RECEIVER_ERROR 2.5f      // Receiver error (in meters) for the GPS module (Ublox NEO-6M)
+#define GPS_RECEIVER_ERROR 2.5f      // Receiver error (in meters) for the GPS module (u-blox NEO-6M)
 #define LED_OFF 0                    // Turns off the LEDs
 
 struct GPSStruct {
