@@ -137,7 +137,7 @@ void loop()
       dataAvailable = true; // Good read
     }
   }
-#ifdef Debug
+#ifdef Serial_Debug
   Serial.flush();
   Serial.println();
 #endif
@@ -165,7 +165,7 @@ void loop()
     GPSData.dataAvailable      = false;
   }
 
-#ifdef Debug // Print health data to the serial monitor
+#ifdef Serial_Debug // Print health data to the serial monitor
   Serial.print(GPSData.locationisValid);
   Serial.print(GPSData.speedisValid);
   Serial.print(GPSData.altitudeisValid);
