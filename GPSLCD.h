@@ -31,7 +31,7 @@
 #define VERSION  "10.10"              // Version number
 //#define Debug                      // Comment out for debug
 //#define Serial_Debug               // Comment out for serial monitor display debug
-#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
+//#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
                                      // It also feeds fake GPS data to the system for debugging
 
 #define Rs_pin  0                    // Pin hook up for the LCD via the I2C interface
