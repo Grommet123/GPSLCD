@@ -28,7 +28,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "10.7"              // Version number
+#define VERSION  "10.8"              // Version number
 //#define Debug                      // Comment out for debug
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
                                      // It also feeds fake GPS data to the system for debugging
@@ -72,9 +72,6 @@
 #define TXPin 13                     // Transmit pin for the GPS SoftwareSerial interface
 #define GPS_RECEIVER_ERROR 2.5f      // Receiver error (in meters) for the GPS module (Ublox NEO-6M)
 #define LED_OFF 0                    // Turns off the LEDs
-#define RED_LED_ON 255               // Turns on the red LED
-#define GREEN_LED_ON 255             // Turns on the green LED
-#define BLUE_LED_ON 205              // Turns on the blue LED
 
 struct GPSStruct {
   double   lat;           // Degrees
@@ -83,7 +80,7 @@ struct GPSStruct {
   double   altitude;      // Feet
   uint32_t satellites;
   double   heading;       // Degrees
-  uint32_t hdop;
+  uint32_t hdop;          // Horizontal Dilution of Precision (Hdop)
   uint16_t year;
   uint8_t  month;
   uint8_t  day;
