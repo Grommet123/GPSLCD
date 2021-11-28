@@ -254,26 +254,30 @@ void loop()
     if ((pastSatellites != GPSData.satellites) || (GPSData.satellites == 0)) {
       pastSatellites = GPSData.satellites;
       if (GPSData.satellites == 0) {
-        // Turn on yellow LED or something like it (all is not so well)
-        if (digitalRead(BACKLIGHT_SW)) {
-          analogWrite(RED_LED_PIN, 100);
-          analogWrite(GREEN_LED_PIN, 100);
-          analogWrite(BLUE_LED_PIN, 50);
-        } else {
-          analogWrite(RED_LED_PIN, LED_OFF);
-          analogWrite(GREEN_LED_PIN, LED_OFF);
-          analogWrite(BLUE_LED_PIN, LED_OFF);
-        }
         // Toggle invalid satellites indicator every TOGGLETIME_INTERVAL seconds
         if (now - prevInvalidSatellitesTime > TOGGLETIME_INTERVAL / 4) {
           prevInvalidSatellitesTime = now;
           if (invalidSatellitesToggle) {
             invalidSatellitesToggle = false;
             lcd.print("XX");
+            // Turn on magenta LED or something like it (all is not so well)
+            if (digitalRead(BACKLIGHT_SW)) {
+              analogWrite(RED_LED_PIN, 100);
+              analogWrite(GREEN_LED_PIN, 100);
+              analogWrite(BLUE_LED_PIN, 50);
+            } else {
+              analogWrite(RED_LED_PIN, LED_OFF);
+              analogWrite(GREEN_LED_PIN, LED_OFF);
+              analogWrite(BLUE_LED_PIN, LED_OFF);
+            }
           }
           else {
             invalidSatellitesToggle = true;
             lcd.print("  ");
+            // Flash magenta LED
+            analogWrite(RED_LED_PIN, LED_OFF);
+            analogWrite(GREEN_LED_PIN, LED_OFF);
+            analogWrite(BLUE_LED_PIN, LED_OFF);
           } // if (invalidSatellitesToggle)
         } // if (now - prevInvalidSatellitesTime > TOGGLETIME_INTERVAL)
       } // if (GPSData.satellites == 0)
