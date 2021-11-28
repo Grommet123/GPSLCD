@@ -132,6 +132,7 @@ void loop()
     bool b = gps.encode(c = GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
 #ifdef Debug
     Serial.print(c); // GPS data flow displaying the NMEA data
+    delay (1);
 #endif
     if (b) {
       dataAvailable = true; // Good read
@@ -447,7 +448,7 @@ void loop()
         } // if (dateTimeToggle)
       } // if (now - prevDateTime > TOGGLETIME_INTERVAL)
     } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
-  } // if (dataValid)
+  } // if (dataValid || dataValidOverride)
   else {
     // GPS data is not valid, so it must be initializing
     // Turn on red LED (all is not well)
