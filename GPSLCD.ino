@@ -260,7 +260,7 @@ void loop()
           if (invalidSatellitesToggle) {
             invalidSatellitesToggle = false;
             lcd.print("XX");
-            // Turn on magenta LED or something like it (all is not so well)
+            // Turn on magenta LED (all is not so well)
             if (digitalRead(BACKLIGHT_SW)) {
               analogWrite(RED_LED_PIN, 100);
               analogWrite(GREEN_LED_PIN, 100);
@@ -274,7 +274,7 @@ void loop()
           else {
             invalidSatellitesToggle = true;
             lcd.print("  ");
-            // Flash magenta LED
+            // Blink magenta LED
             analogWrite(RED_LED_PIN, LED_OFF);
             analogWrite(GREEN_LED_PIN, LED_OFF);
             analogWrite(BLUE_LED_PIN, LED_OFF);
@@ -449,6 +449,7 @@ void loop()
     } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
   } // if (dataValid)
   else {
+    // GPS data is not valid, so it must be initializing
     // Turn on red LED (all is not well)
     if (digitalRead(BACKLIGHT_SW)) {
       analogWrite(RED_LED_PIN, 100);
@@ -459,7 +460,6 @@ void loop()
       analogWrite(GREEN_LED_PIN, LED_OFF);
       analogWrite(BLUE_LED_PIN, LED_OFF);
     }
-    // GPS data is not valid, so it must be initializing
     // Display initialization screen once every INITIALIZATION_INTERVAL
     if (now - prevInitializationTime > INITIALIZATION_INTERVAL) {
       prevInitializationTime = now;
