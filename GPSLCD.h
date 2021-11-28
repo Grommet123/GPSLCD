@@ -28,7 +28,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "10.14"             // Version number
+#define VERSION  "10.15"             // Version number
 //#define Debug                      // Comment out for debug
 //#define Serial_Debug               // Comment out for serial monitor display debug
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
@@ -53,7 +53,7 @@
 #define CREDIT "GKG"                 // Yours truly :-)
 //#define BACKLIGHT_OVERRIDE         // Override the LCD backlight switch (comment out to disable)
 #ifdef BACKLIGHT_OVERRIDE
-#define BACKLIGHT_ONOFF HIGH         // Works with BACKLIGHT_OVERRIDE to force on the LCD backlight
+#define BACKLIGHT_ON HIGH            // Works with BACKLIGHT_OVERRIDE to force on the LCD backlight on
 #endif
 
 #define COLUMN 20                    // Number of Columns (On-board LED)

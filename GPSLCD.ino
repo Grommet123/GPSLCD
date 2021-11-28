@@ -116,8 +116,8 @@ void loop()
 
 #ifdef BACKLIGHT_OVERRIDE
   // Override LCD backlight switch
-  // Force LCD backlight on/off
-  lcd.setBacklight(BACKLIGHT_ONOFF);
+  // Force LCD backlight on
+  lcd.setBacklight(BACKLIGHT_ON);
 #else
   // Turn LCD backlight on/off
   lcd.setBacklight(digitalRead(BACKLIGHT_SW));
@@ -132,7 +132,7 @@ void loop()
     bool b = gps.encode(c = GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
 #ifdef Debug
     Serial.print(c); // GPS data flow displaying the NMEA data
-    delay (1);
+    delay (1); // 1 millisecond
 #endif
     if (b) {
       dataAvailable = true; // Good read
