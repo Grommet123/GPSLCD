@@ -56,11 +56,19 @@ void setup()
   // Selects either altitude or the date/time to be displayed
   pinMode(ALTITUDE_DATE_TIME_SW, INPUT);
   // Select switches
+#ifdef SELECT_SW_ON
+  pinMode(DISPLAY_12_HOUR_SW, INPUT_PULLUP);
+  pinMode(CONVERT_TO_LOCAL_SW, INPUT_PULLUP);
+  pinMode(DISPLAY_HDOP_SW, INPUT_PULLUP);
+  pinMode(CARDINAL_SW, INPUT_PULLUP);
+  pinMode(LOW_SPEED_OVERRIDE, INPUT_PULLUP);
+#else
   pinMode(DISPLAY_12_HOUR_SW, INPUT);
   pinMode(CONVERT_TO_LOCAL_SW, INPUT);
   pinMode(DISPLAY_HDOP_SW, INPUT);
   pinMode(CARDINAL_SW, INPUT);
   pinMode(LOW_SPEED_OVERRIDE, INPUT);
+#endif
   // Enable RGB LED
   pinMode(RED_LED_PIN, OUTPUT);
   pinMode(GREEN_LED_PIN, OUTPUT);

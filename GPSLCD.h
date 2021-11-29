@@ -28,11 +28,12 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "10.16"             // Version number
+#define VERSION  "10.17"             // Version number
 //#define Debug                      // Comment out for debug
 //#define Serial_Debug               // Comment out for serial monitor display debug
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
                                      // It also feeds fake GPS data to the system for debugging
+//#define SELECT_SW_ON               // Enables the select switches when not connected
 
 #define Rs_pin  0                    // Pin hook up for the LCD via the I2C interface
 #define Rw_pin  1                    //                   "
@@ -69,10 +70,10 @@
 #define RED_LED_PIN 9                // Red LED
 #define GREEN_LED_PIN 10             // Green LED
 #define BLUE_LED_PIN 11              // Blue LED
-#define LED_OFF 0                    // Turns off the LEDs
 #define RXPin 12                     // Receive pin for the GPS SoftwareSerial interface
 #define TXPin 13                     // Transmit pin for the GPS SoftwareSerial interface
 #define GPS_RECEIVER_ERROR 2.5f      // Receiver error (in meters) for the GPS module (u-blox NEO-6M)
+#define LED_OFF 0                    // Turns off the LEDs
 
 struct GPSStruct {
   double   lat;           // Degrees
@@ -96,7 +97,7 @@ struct GPSStruct {
   bool     timeisValid;
   bool     satellitesisValid;
   bool     hdopisValid;
-  bool  dataAvailable;
+  bool     dataAvailable;
 };
 
 // Function Prototypes
