@@ -28,7 +28,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "10.15"             // Version number
+#define VERSION  "10.16"             // Version number
 //#define Debug                      // Comment out for debug
 //#define Serial_Debug               // Comment out for serial monitor display debug
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
@@ -44,7 +44,7 @@
 #define D7_pin  7                    //                   "
 #define ON_BOARD_LED 13              // On-board LED
 #define INITIALIZATION_INTERVAL 1000 // Initialization display interval
-#ifdef DATA_VALID_OVERRIDE
+#ifdef  DATA_VALID_OVERRIDE
 #define SPEED_CUTOUT 0.0             // Set to 0 for debug
 #else
 #define SPEED_CUTOUT 10.0            // Value where the speed & heading are set to 0
@@ -52,7 +52,7 @@
 #define TOGGLETIME_INTERVAL 6000     // Toggle display interval
 #define CREDIT "GKG"                 // Yours truly :-)
 //#define BACKLIGHT_OVERRIDE         // Override the LCD backlight switch (comment out to disable)
-#ifdef BACKLIGHT_OVERRIDE
+#ifdef  BACKLIGHT_OVERRIDE
 #define BACKLIGHT_ON HIGH            // Works with BACKLIGHT_OVERRIDE to force on the LCD backlight on
 #endif
 
@@ -69,10 +69,10 @@
 #define RED_LED_PIN 9                // Red LED
 #define GREEN_LED_PIN 10             // Green LED
 #define BLUE_LED_PIN 11              // Blue LED
+#define LED_OFF 0                    // Turns off the LEDs
 #define RXPin 12                     // Receive pin for the GPS SoftwareSerial interface
 #define TXPin 13                     // Transmit pin for the GPS SoftwareSerial interface
 #define GPS_RECEIVER_ERROR 2.5f      // Receiver error (in meters) for the GPS module (u-blox NEO-6M)
-#define LED_OFF 0                    // Turns off the LEDs
 
 struct GPSStruct {
   double   lat;           // Degrees
