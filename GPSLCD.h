@@ -28,9 +28,9 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "10.18"             // Version number
+#define VERSION  "10.19"             // Version number
 #define Debug                      // Comment out for debug
-//#define Serial_Debug               // Comment out for serial monitor display debug
+#define Serial_Debug               // Comment out for serial monitor display debug
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
                                      // It also feeds fake GPS data to the system for debugging
 //#define SELECT_SW_ON               // Enables the select switches when not connected
@@ -43,7 +43,6 @@
 #define D5_pin  5                    //                   "
 #define D6_pin  6                    //                   "
 #define D7_pin  7                    //                   "
-#define ON_BOARD_LED 13              // On-board LED
 #define INITIALIZATION_INTERVAL 1000 // Initialization display interval
 #ifdef  DATA_VALID_OVERRIDE
 #define SPEED_CUTOUT 0.0             // Set to 0 for debug

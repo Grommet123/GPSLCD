@@ -73,8 +73,8 @@ void setup()
   pinMode(RED_LED_PIN, OUTPUT);
   pinMode(GREEN_LED_PIN, OUTPUT);
   pinMode(BLUE_LED_PIN, OUTPUT);
-  pinMode(ON_BOARD_LED, OUTPUT); // Turn off on-board LED
-  digitalWrite(ON_BOARD_LED, LOW); //       "
+  pinMode(LED_BUILTIN, OUTPUT);   // Turn off on-board LED
+  digitalWrite(LED_BUILTIN, LOW); //         "
 
   GPSModule.begin(9600); // This opens up communications to the software serial tx and rx lines
   GPSModule.flush();
