@@ -240,7 +240,7 @@ void loop()
     // Turn on green LED (all is well)
     if ((digitalRead(BACKLIGHT_SW)) && (GPSData.satellites > 0)) {
       analogWrite(RED_LED_PIN, LED_OFF);
-      analogWrite(GREEN_LED_PIN, 100);
+      analogWrite(GREEN_LED_PIN, 50);
       analogWrite(BLUE_LED_PIN, LED_OFF);
     } else if (GPSData.satellites > 0) {
       analogWrite(RED_LED_PIN, LED_OFF);
@@ -271,9 +271,9 @@ void loop()
             lcd.print("XX");
             // Turn on magenta LED (all is not so well)
             if (digitalRead(BACKLIGHT_SW)) {
-              analogWrite(RED_LED_PIN, 100);
-              analogWrite(GREEN_LED_PIN, 100);
-              analogWrite(BLUE_LED_PIN, 50);
+              analogWrite(RED_LED_PIN, 50);
+              analogWrite(GREEN_LED_PIN, 50);
+              analogWrite(BLUE_LED_PIN, 25);
             } else {
               analogWrite(RED_LED_PIN, LED_OFF);
               analogWrite(GREEN_LED_PIN, LED_OFF);
@@ -461,7 +461,7 @@ void loop()
     // GPS data is not valid, so it must be initializing
     // Turn on red LED (all is not well)
     if (digitalRead(BACKLIGHT_SW)) {
-      analogWrite(RED_LED_PIN, 100);
+      analogWrite(RED_LED_PIN, 50);
       analogWrite(GREEN_LED_PIN, LED_OFF);
       analogWrite(BLUE_LED_PIN, LED_OFF);
     } else {
