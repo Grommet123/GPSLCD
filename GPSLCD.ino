@@ -203,7 +203,6 @@ void loop()
     gps.hdop.isValid();
 
   // Check if the GPS data is valid or data valid override is set (for debugging)
-  //  if (dataValid || dataValidOverride) {
   if (dataValid || dataValidOverride) {
 #ifndef DATA_VALID_OVERRIDE
     // Store the real GPS data
