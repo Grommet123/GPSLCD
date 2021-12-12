@@ -509,8 +509,16 @@ void loop()
 // Display the valid flags on the LCD
 void displayValidFlags(void) {
   lcd.clear(); // Clear the LCD
-  lcd.home(); // Go to the home position on the LCD
-  lcd.print("    Valid Flags");
+  lcd.setCursor(2, 0); // Go to 1st line
+  lcd.print("Valid Flags");
+  lcd.setCursor(15, 0);
+  lcd.print("SV:");
+  lcd.print(gps.satellites.value());
+  if (gps.satellites.value() > 2) { // Need at least 3 satellites to navigate
+    lcd.print("n"); // n = navigate
+  } else {
+    lcd.print("i"); // i = initializing
+  }
   lcd.setCursor(0, 2); // Go to 3rd line
   lcd.print(GPSData.locationisValid);
   lcd.print(GPSData.speedisValid);
