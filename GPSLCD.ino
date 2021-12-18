@@ -256,12 +256,11 @@ void loop()
     // Send data to the LCD
     lcd.home(); // Go to 1st line
     lcd.print("Lat: ");
+    lcd.print(abs(GPSData.lat));
     if (GPSData.lat >= 0) {
-      lcd.print(GPSData.lat);
       lcd.print("N");
     }
     else {
-      lcd.print(abs(GPSData.lat));
       lcd.print("S");
     }
     lcd.setCursor(15, 0);
@@ -306,12 +305,11 @@ void loop()
     } // if ((pastSatellites != GPSData.satellites) || (GPSData.satellites == 0))
     lcd.setCursor(0, 1); // Go to 2nd line
     lcd.print("Lon: ");
+    lcd.print(abs(GPSData.lon));
     if (GPSData.lon >= 0) {
-      lcd.print(GPSData.lon);
       lcd.print("E");
     }
     else {
-      lcd.print(abs(GPSData.lon));
       lcd.print("W");
     }
     // Only display if time/date is selected
