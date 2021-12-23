@@ -531,20 +531,24 @@ void displayValidFlags(void) {
   } else {
     lcd.print("i"); // i = initializing
   }
-  lcd.setCursor(0, 2); // Go to 3rd line
-  lcd.print(GPSData.locationisValid);
-  lcd.print(GPSData.speedisValid);
-  lcd.print(GPSData.altitudeisValid);
-  lcd.print(GPSData.courseisValid);
-  lcd.print(GPSData.dateisValid);
-  lcd.print(GPSData.timeisValid);
-  lcd.print(GPSData.satellitesisValid);
-  lcd.print(GPSData.hdopisValid);
-  lcd.print("   ");
-  lcd.print(GPSData.dataAvailable);
+  if (GPSData.dataAvailable) {
+    lcd.setCursor(0, 2); // Go to 3rd line
+    lcd.print(GPSData.locationisValid);
+    lcd.print(GPSData.speedisValid);
+    lcd.print(GPSData.altitudeisValid);
+    lcd.print(GPSData.courseisValid);
+    lcd.print(GPSData.dateisValid);
+    lcd.print(GPSData.timeisValid);
+    lcd.print(GPSData.satellitesisValid);
+    lcd.print(GPSData.hdopisValid);
+    lcd.print("   ");
+    lcd.print(GPSData.dataAvailable);
+  } else {
+    lcd.setCursor(11, 2); // Go to 3rd line
+    lcd.print(GPSData.dataAvailable);
+  }
   lcd.setCursor(0, 3); // Go to 4th line
   lcd.print("LSACDTSH   DA"); // Data valid flags
-  return;
 }
 
 /*  The following three functions ripped off from Electrical Engineering Stack Exchange
