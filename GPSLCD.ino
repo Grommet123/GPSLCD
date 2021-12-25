@@ -151,7 +151,7 @@ void loop()
   Serial.println();
 #endif
 
-  // Set valid flags for initialization
+  // Set (good read) valid flags for initialization
   if (dataAvailable) {
     GPSData.locationisValid    = gps.location.isValid();
     GPSData.speedisValid       = gps.speed.isValid();
@@ -162,16 +162,6 @@ void loop()
     GPSData.satellitesisValid  = gps.satellites.isValid();
     GPSData.hdopisValid        = gps.hdop.isValid();
     GPSData.dataAvailable      = dataAvailable;
-  } else {
-    GPSData.locationisValid    = false;
-    GPSData.speedisValid       = false;
-    GPSData.altitudeisValid    = false;
-    GPSData.courseisValid      = false;
-    GPSData.dateisValid        = false;
-    GPSData.timeisValid        = false;
-    GPSData.satellitesisValid  = false;
-    GPSData.hdopisValid        = false;
-    GPSData.dataAvailable      = false;
   }
 
 #ifdef Serial_Debug // Print health data to the serial monitor
