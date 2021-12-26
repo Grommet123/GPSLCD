@@ -246,7 +246,7 @@ void loop()
     // Send data to the LCD
     lcd.home(); // Go to 1st line
     lcd.print("Lat: ");
-    lcd.print(abs(GPSData.lat));
+    lcd.print(abs(GPSData.lat), 2);
     if (GPSData.lat >= 0) {
       lcd.print("N");
     }
@@ -295,7 +295,7 @@ void loop()
     } // if ((pastSatellites != GPSData.satellites) || (GPSData.satellites == 0))
     lcd.setCursor(0, 1); // Go to 2nd line
     lcd.print("Lon: ");
-    lcd.print(abs(GPSData.lon));
+    lcd.print(abs(GPSData.lon), 2);
     if (GPSData.lon >= 0) {
       lcd.print("E");
     }

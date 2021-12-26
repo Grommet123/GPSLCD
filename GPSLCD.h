@@ -23,12 +23,14 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 
+  https://github.com/Grommet123/GPSLCD
+
 */
 
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "12.4"              // Version number
+#define VERSION  "12.5"              // Version number
 //#define Debug                      // Comment out for debug
 //#define Serial_Debug               // Comment out for serial monitor display debug
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
