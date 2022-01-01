@@ -73,6 +73,7 @@ void setup()
   pinMode(RED_LED_PIN, OUTPUT);
   pinMode(GREEN_LED_PIN, OUTPUT);
   pinMode(BLUE_LED_PIN, OUTPUT);
+  
   pinMode(LED_BUILTIN, OUTPUT);   // Turn off on-board LED
   digitalWrite(LED_BUILTIN, LOW); //         "
 
@@ -242,7 +243,7 @@ void loop()
       lcd.clear(); // Clear the LCD
     }
     // Display the latest info from the gps object
-    // which is derived from the data sent by the GPS unit
+    // which is derived from the data sent by the u-blox NEO-6M GPS module
     // Send data to the LCD
     lcd.home(); // Go to 1st line
     lcd.print("Lat: ");
