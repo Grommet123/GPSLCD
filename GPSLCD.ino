@@ -73,7 +73,7 @@ void setup()
   pinMode(RED_LED_PIN, OUTPUT);
   pinMode(GREEN_LED_PIN, OUTPUT);
   pinMode(BLUE_LED_PIN, OUTPUT);
-  
+
   pinMode(LED_BUILTIN, OUTPUT);   // Turn off on-board LED
   digitalWrite(LED_BUILTIN, LOW); //         "
 
@@ -179,7 +179,7 @@ void loop()
   Serial.print("   ");
   Serial.print(gps.satellites.value());
   Serial.print("   ");
-  Serial.println(gps.hdop.value());
+  Serial.print(gps.hdop.value());
 #endif
 
   // Get the GPS data valid flags
@@ -237,6 +237,11 @@ void loop()
       analogWrite(GREEN_LED_PIN, LED_OFF);
       analogWrite(BLUE_LED_PIN, LED_OFF);
     }
+#ifdef Serial_Debug // Print satellite health data to the serial monitor
+    if (GPSData.satellites > 0) {
+      Serial.println("   Green");
+    }
+#endif
     // Clear the screen once when leaving initialization
     if (!leftInitialization) {
       leftInitialization = true;
@@ -259,6 +264,9 @@ void loop()
     if ((pastSatellites != GPSData.satellites) || (GPSData.satellites == 0)) {
       pastSatellites = GPSData.satellites;
       if (GPSData.satellites == 0) {
+#ifdef Serial_Debug // Print satellite health data to the serial monitor
+        Serial.println("   Magenta");
+#endif
         // Toggle invalid satellites indicator every TOGGLETIME_INTERVAL seconds
         if (now - prevInvalidSatellitesTime > TOGGLETIME_INTERVAL / 4) {
           prevInvalidSatellitesTime = now;
@@ -471,6 +479,9 @@ void loop()
       analogWrite(GREEN_LED_PIN, LED_OFF);
       analogWrite(BLUE_LED_PIN, LED_OFF);
     }
+#ifdef Serial_Debug // Print satellite health data to the serial monitor
+    Serial.println("   Red");
+#endif
     // Display initialization screen once every INITIALIZATION_INTERVAL
     if (now - prevInitializationTime > INITIALIZATION_INTERVAL) {
       prevInitializationTime = now;
