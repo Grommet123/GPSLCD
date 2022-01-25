@@ -265,7 +265,7 @@ void loop()
       pastSatellites = GPSData.satellites;
       if (GPSData.satellites == 0) {
 #ifdef Serial_Debug // Print satellite health data to the serial monitor
-        Serial.println("   Magenta");
+        Serial.println("   Blue");
 #endif
         // Toggle invalid satellites indicator every TOGGLETIME_INTERVAL seconds
         if (now - prevInvalidSatellitesTime > TOGGLETIME_INTERVAL / 4) {
@@ -273,11 +273,11 @@ void loop()
           if (invalidSatellitesToggle) {
             invalidSatellitesToggle = false;
             lcd.print("XX");
-            // Turn on magenta LED (all is not so well)
+            // Turn on blue LED (all is not so well)
             if (digitalRead(BACKLIGHT_SW)) {
-              analogWrite(RED_LED_PIN, 50);
-              analogWrite(GREEN_LED_PIN, 50);
-              analogWrite(BLUE_LED_PIN, 25);
+              analogWrite(RED_LED_PIN, LED_OFF);
+              analogWrite(GREEN_LED_PIN, LED_OFF);
+              analogWrite(BLUE_LED_PIN, 50);
             } else {
               analogWrite(RED_LED_PIN, LED_OFF);
               analogWrite(GREEN_LED_PIN, LED_OFF);
@@ -287,7 +287,7 @@ void loop()
           else {
             invalidSatellitesToggle = true;
             lcd.print("  ");
-            // Blink magenta LED
+            // Blink blue LED
             analogWrite(RED_LED_PIN, LED_OFF);
             analogWrite(GREEN_LED_PIN, LED_OFF);
             analogWrite(BLUE_LED_PIN, LED_OFF);
