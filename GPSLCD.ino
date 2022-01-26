@@ -41,10 +41,10 @@
 #include <LiquidCrystal_I2C.h>
 
 TinyGPSPlus gps; // This is the GPS object that will pretty much do all the grunt work with the NMEA data
-SoftwareSerial GPSModule(RXPin, TXPin);
-// Initializes class variables and defines the I2C address of the LCD
-LiquidCrystal_I2C lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin);
-GPSStruct GPSData; // Holds the GPS data coming from the GPS module
+SoftwareSerial GPSModule(RXPin, TXPin); // Defines the communications to the software serial tx and rx lines
+LiquidCrystal_I2C lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin); // Defines the I2C address
+// and pins of the LCD
+GPSStruct GPSData; // Holds the local GPS data coming from the GPS module
 
 // The setup (runs once at start up)
 void setup()
@@ -77,7 +77,7 @@ void setup()
   pinMode(LED_BUILTIN, OUTPUT);   // Turn off on-board LED
   digitalWrite(LED_BUILTIN, LOW); //         "
 
-  GPSModule.begin(9600); // This opens up communications to the software serial tx and rx lines
+  GPSModule.begin(9600); // This opens up communications to the software serial tx and rx lines (TXPin, RXPin)
   GPSModule.flush();
 
   lcd.begin(COLUMN, ROW); // Defines LCD type
@@ -135,7 +135,8 @@ void loop()
   // ************ GPS processing starts here ************
 
   dataAvailable = false;
-  while (GPSModule.available()) // While there are characters coming from the GPS module (using the SoftwareSerial library)
+  while (GPSModule.available()) // While there are characters coming from the GPS module (using the
+    //                                                                                    SoftwareSerial library)
   {
     char c;
     bool b = gps.encode(c = GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
@@ -265,7 +266,7 @@ void loop()
       pastSatellites = GPSData.satellites;
       if (GPSData.satellites == 0) {
 #ifdef Serial_Debug // Print satellite health data to the serial monitor
-        Serial.println("   Blue");
+        Serial.println("   red");
 #endif
         // Toggle invalid satellites indicator every TOGGLETIME_INTERVAL seconds
         if (now - prevInvalidSatellitesTime > TOGGLETIME_INTERVAL / 4) {
@@ -273,11 +274,11 @@ void loop()
           if (invalidSatellitesToggle) {
             invalidSatellitesToggle = false;
             lcd.print("XX");
-            // Turn on blue LED (all is not so well)
+            // Turn on red LED (all is not well)
             if (digitalRead(BACKLIGHT_SW)) {
-              analogWrite(RED_LED_PIN, LED_OFF);
+              analogWrite(RED_LED_PIN, 50);
               analogWrite(GREEN_LED_PIN, LED_OFF);
-              analogWrite(BLUE_LED_PIN, 50);
+              analogWrite(BLUE_LED_PIN, LED_OFF);
             } else {
               analogWrite(RED_LED_PIN, LED_OFF);
               analogWrite(GREEN_LED_PIN, LED_OFF);
@@ -287,7 +288,7 @@ void loop()
           else {
             invalidSatellitesToggle = true;
             lcd.print("  ");
-            // Blink blue LED
+            // Blink red LED
             analogWrite(RED_LED_PIN, LED_OFF);
             analogWrite(GREEN_LED_PIN, LED_OFF);
             analogWrite(BLUE_LED_PIN, LED_OFF);
@@ -469,18 +470,18 @@ void loop()
   } // if (dataValid || dataValidOverride)
   else {
     // GPS data is not valid, so it must be initializing
-    // Turn on red LED (all is not well)
+    // Turn on blue LED (Initializing)
     if (digitalRead(BACKLIGHT_SW)) {
-      analogWrite(RED_LED_PIN, 50);
+      analogWrite(RED_LED_PIN, LED_OFF);
       analogWrite(GREEN_LED_PIN, LED_OFF);
-      analogWrite(BLUE_LED_PIN, LED_OFF);
+      analogWrite(BLUE_LED_PIN, 50);
     } else {
       analogWrite(RED_LED_PIN, LED_OFF);
       analogWrite(GREEN_LED_PIN, LED_OFF);
       analogWrite(BLUE_LED_PIN, LED_OFF);
     }
 #ifdef Serial_Debug // Print satellite health data to the serial monitor
-    Serial.println("   Red");
+    Serial.println("   blue");
 #endif
     // Display initialization screen once every INITIALIZATION_INTERVAL
     if (now - prevInitializationTime > INITIALIZATION_INTERVAL) {
