@@ -30,7 +30,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "12.9"              // Version number
+#define VERSION  "12.10"             // Version number
 #define Debug                      // Comment out for debug
 //#define Serial_Debug               // Comment out for serial monitor display debug
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
@@ -58,9 +58,9 @@
 #define BACKLIGHT_ON HIGH            // Works with BACKLIGHT_OVERRIDE to force on the LCD backlight on
 #endif
 
-#define COLUMN 20                    // Number of Columns (On-board LED)
-#define ROW 4                        // Number of rows (On-board LED)
-#define I2C_ADDR 0x27                // Address of my 20x4 On-board LED (yours might be different)
+#define COLUMN 20                    // Number of Columns (On-board LCD)
+#define ROW 4                        // Number of rows (On-board LCD)
+#define I2C_ADDR 0x27                // Address of my 20x4 On-board LCD (yours might be different)
 #define DISPLAY_12_HOUR_SW 2         // 12 or 24 hour time switch
 #define CONVERT_TO_LOCAL_SW 3        // UTC time/date or local time/date switch
 #define DISPLAY_HDOP_SW 4            // Hdop or horizontal position error switch

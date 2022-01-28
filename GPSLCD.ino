@@ -266,7 +266,7 @@ void loop()
       pastSatellites = GPSData.satellites;
       if (GPSData.satellites == 0) {
 #ifdef Serial_Debug // Print satellite health data to the serial monitor
-        Serial.println("   red");
+        Serial.println("   Red");
 #endif
         // Toggle invalid satellites indicator every TOGGLETIME_INTERVAL seconds
         if (now - prevInvalidSatellitesTime > TOGGLETIME_INTERVAL / 4) {
@@ -481,7 +481,7 @@ void loop()
       analogWrite(BLUE_LED_PIN, LED_OFF);
     }
 #ifdef Serial_Debug // Print satellite health data to the serial monitor
-    Serial.println("   blue");
+    Serial.println("   Blue");
 #endif
     // Display initialization screen once every INITIALIZATION_INTERVAL
     if (now - prevInitializationTime > INITIALIZATION_INTERVAL) {
