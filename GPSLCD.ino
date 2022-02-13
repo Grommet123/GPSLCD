@@ -474,7 +474,7 @@ void loop()
     if (digitalRead(BACKLIGHT_SW)) {
       analogWrite(RED_LED_PIN, LED_OFF);
       analogWrite(GREEN_LED_PIN, LED_OFF);
-      analogWrite(BLUE_LED_PIN, 10);
+      analogWrite(BLUE_LED_PIN, 50);
     } else {
       analogWrite(RED_LED_PIN, LED_OFF);
       analogWrite(GREEN_LED_PIN, LED_OFF);
