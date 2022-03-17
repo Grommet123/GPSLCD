@@ -628,6 +628,10 @@ const char* cardinal(double course, bool cardinalSelect)
 */
 bool IsDST(uint8_t day, uint8_t month , uint8_t DOW)
 {
+  // When permanent DST takes affect
+#ifdef PERMANENTDST
+  return true;
+#else
   // Make Day of Week (DOW) match with what Stackoverflow suggests
   // for DOW (Sunday = 0 to Saturday = 6)
   switch (DOW)
@@ -657,6 +661,7 @@ bool IsDST(uint8_t day, uint8_t month , uint8_t DOW)
   // In November we must be before the first Sunday to be DST
   // That means the previous Sunday must be before the 1st
   return previousSunday <= 0;
+#endif // #ifdef PERMANENTDTS
 }
 
 /* Convert UTC time and date to local time and date
