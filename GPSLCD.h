@@ -30,7 +30,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "13.14"             // Version number
+#define VERSION  "13.15"             // Version number
 #define Debug                      // Comment out for debug
 //#define Serial_Debug               // Comment out for serial monitor display debug
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
@@ -75,7 +75,7 @@
 #define TXPin 13                     // Transmit pin for the GPS SoftwareSerial interface
 #define GPS_RECEIVER_ERROR 2.5f      // Receiver error (in meters) for the GPS module (u-blox NEO-6M)
 #define LED_OFF 0                    // Turns off the LEDs
-//#define PERMANENT_DST                // Permanent DST (Comment out when and if this takes affect)
+//#define PERMANENT_DST                // Permanent DST (Comment out if and when this takes affect)
 
 struct GPSStruct {
   double   lat;           // Degrees
