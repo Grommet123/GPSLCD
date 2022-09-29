@@ -52,7 +52,7 @@ void setup()
 #ifdef Debug
   Serial.begin(115200); // For debugging to the Serial Monitor (i.e. Serial.Println())
 #endif
-  pinMode(Enhance_SW, INPUT);
+  pinMode(ENHANCE_SW, INPUT);
   pinMode(BACKLIGHT_SW, INPUT);
   // Selects either altitude or the date/time to be displayed
   pinMode(ALTITUDE_DATE_TIME_SW, INPUT);
@@ -92,7 +92,7 @@ void loop()
   static bool dateTimeToggle = true;
   static bool headingToggle = true;
   static bool hdopToggle = true;
-  bool Enhance_Display = digitalRead(Enhance_SW);
+  bool Enhance_Display = digitalRead(ENHANCE_SW);
   bool display12_24_Hour = !digitalRead(DISPLAY_12_HOUR_SW);
   bool localUTCTimeDate = !digitalRead(CONVERT_TO_LOCAL_SW);
   bool displayHdop = !digitalRead(DISPLAY_HDOP_SW);
@@ -101,7 +101,7 @@ void loop()
   bool dataAvailable; // Data is available from the GPS module
   bool dataValid; // Data valid from the GPS module
   uint8_t SpeedCutout = SPEED_CUTOUT; // Value where the speed is set to 0
-  uint8_t HeadingCutout = 10; // Value where the heading is set to 0
+  uint8_t HeadingCutout = SPEED_CUTOUT; // Value where the heading is set to 0
   unsigned long now = millis(); // The time "now"
 
 #ifdef DATA_VALID_OVERRIDE
