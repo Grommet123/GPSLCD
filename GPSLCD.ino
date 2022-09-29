@@ -100,6 +100,8 @@ void loop()
   bool lowSpeedOverride = !digitalRead(LOW_SPEED_OVERRIDE);
   bool dataAvailable; // Data is available from the GPS module
   bool dataValid; // Data valid from the GPS module
+  uint8_t SpeedCutout = SPEED_CUTOUT; // Value where the speed is set to 0
+  uint8_t HeadingCutout = 10; // Value where the heading is set to 0
   unsigned long now = millis(); // The time "now"
 
 #ifdef DATA_VALID_OVERRIDE
@@ -124,12 +126,17 @@ void loop()
     pinMode(DISPLAY_HDOP_SW, INPUT_PULLUP);
     pinMode(CARDINAL_SW, INPUT_PULLUP);
     pinMode(LOW_SPEED_OVERRIDE, INPUT_PULLUP);
+    SpeedCutout = 0;
+    HeadingCutout = 0;
+    bool lowSpeedOverride = !digitalRead(LOW_SPEED_OVERRIDE);
   } else {
     pinMode(DISPLAY_12_HOUR_SW, INPUT);
     pinMode(CONVERT_TO_LOCAL_SW, INPUT);
     pinMode(DISPLAY_HDOP_SW, INPUT);
     pinMode(CARDINAL_SW, INPUT);
     pinMode(LOW_SPEED_OVERRIDE, INPUT);
+    SpeedCutout = SPEED_CUTOUT;
+    HeadingCutout = SPEED_CUTOUT;
   }
   // ************ GPS processing starts here ************
 
@@ -336,7 +343,7 @@ void loop()
     } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
     lcd.setCursor(0, 2); // Go to 3rd line
     lcd.print("Spd: ");
-    if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride)) {
+    if ((GPSData.speed < SpeedCutout) && (lowSpeedOverride)) {
       lcd.print("0  ");
     }
     else {
@@ -345,7 +352,7 @@ void loop()
     } // if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride))
     lcd.setCursor(12, 2);
     lcd.print("Hdg: ");
-    if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride)) {
+    if ((GPSData.speed < HeadingCutout) && (lowSpeedOverride)) {
       lcd.print("0  ");
     }
     else {
@@ -354,6 +361,7 @@ void loop()
         prevHeadingTime = now;
         if (headingToggle) { // Display cardinal heading
           headingToggle = false;
+          //          lcd.print(cardinal(GPSData.heading, cardinal8_16));
           lcd.print(cardinal(GPSData.heading, cardinal8_16));
         }
         else { // Display degrees heading
