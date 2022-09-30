@@ -30,7 +30,8 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "14.2"              // Version number
+#define VERSION  "15.0"              // Version number
+#define DATE "8/30/16"               // Date initial release
 #define Debug                        // Uncomment out for debug
 #define Serial_Debug                 // Uncomment out for serial monitor display debug
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)

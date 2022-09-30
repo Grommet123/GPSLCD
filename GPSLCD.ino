@@ -496,27 +496,49 @@ void loop()
       if ((digitalRead(ALTITUDE_DATE_TIME_SW))) { // Display the valid flags
         displayValidFlags();
       } else {
-        lcd.clear(); // Clear the LCD
-        lcd.setCursor(0, 0); // Go to 1st line
-        lcd.setCursor(8, 0);
-        lcd.print("GPS");
-        lcd.setCursor(14, 0);
-        lcd.print("v");
-        lcd.print(VERSION);
-        lcd.setCursor(4, 1); // Go to 2nd line
-        lcd.print("Initializing");
-        lcd.setCursor(6, 2); // Go to 3rd line
-        lcd.print("Data Not");
-        lcd.setCursor(7, 3); // Go to 4th line
-        lcd.print("Valid");
-        lcd.setCursor(0, 3);
-        lcd.print("SV:"); // Display the number of satellites
-        lcd.print(gps.satellites.value());
-        if (gps.satellites.value() >= 4) { // Need at least 4 satellites to navigate
-          lcd.print("n"); // n = navigate
+        if (Enhance_Display) {
+          lcd.clear(); // Clear the LCD
+          lcd.setCursor(8,0); // Center text (Row, column)
+          lcd.print("Gary");
+          lcd.setCursor(7,1); // Center text
+          lcd.print("Grotsky");
+          lcd.setCursor(5,2); // Center text
+          lcd.print("Version ");
+          lcd.print(VERSION);
+          lcd.setCursor(6,3); // Center text
+          lcd.print("IR ");
+          lcd.print(DATE);
+          lcd.setCursor(15, 0);
+          lcd.print("SV:"); // Display the number of satellites
+          lcd.print(gps.satellites.value());
+          if (gps.satellites.value() >= 4) { // Need at least 4 satellites to navigate
+            lcd.print("n"); // n = navigate
+          } else {
+            lcd.print("i"); // i = initializing
+          }
         } else {
-          lcd.print("i"); // i = initializing
-        }
+          lcd.clear(); // Clear the LCD
+          lcd.setCursor(0, 0); // Go to 1st line
+          lcd.setCursor(8, 0);
+          lcd.print("GPS");
+          lcd.setCursor(14, 0);
+          lcd.print("v");
+          lcd.print(VERSION);
+          lcd.setCursor(4, 1); // Go to 2nd line
+          lcd.print("Initializing");
+          lcd.setCursor(6, 2); // Go to 3rd line
+          lcd.print("Data Not");
+          lcd.setCursor(7, 3); // Go to 4th line
+          lcd.print("Valid");
+          lcd.setCursor(0, 3);
+          lcd.print("SV:"); // Display the number of satellites
+          lcd.print(gps.satellites.value());
+          if (gps.satellites.value() >= 4) { // Need at least 4 satellites to navigate
+            lcd.print("n"); // n = navigate
+          } else {
+            lcd.print("i"); // i = initializing
+          }
+        } // if (Enhance_Display)
       } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
       lcd.setCursor(19, 3); // Display the initializing counter
       if (++initializingCounter > 9) initializingCounter = 1; // Limit 1 - 9
