@@ -30,12 +30,12 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "15.0"              // Version number
-#define DATE "8/30/16"               // Date initial release
+#define VERSION  "15.1"              // Version number
+#define DATE "8/30/16"               // Initial release date
 #define Debug                        // Uncomment out for debug
 #define Serial_Debug                 // Uncomment out for serial monitor display debug
 //#define DATA_VALID_OVERRIDE        // Override the data valid flag (comment out to turn off)
-                                     // It also feeds fake GPS data to the system for debugging
+// It also feeds fake GPS data to the system for debugging
 #define Rs_pin  0                    // Pin hook up for the LCD via the I2C interface
 #define Rw_pin  1                    //                   "
 #define En_pin  2                    //                   "
@@ -98,6 +98,7 @@ struct GPSStruct {
 };
 
 // Function Prototypes
+void displayVersionInfo(void);
 void displayValidFlags(void);
 uint16_t leap(uint16_t year);
 uint16_t zeller(uint16_t year, uint8_t month, uint8_t day);

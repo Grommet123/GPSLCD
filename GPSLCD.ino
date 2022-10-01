@@ -321,25 +321,23 @@ void loop()
     // Only display if time/date is selected
     if ((digitalRead(ALTITUDE_DATE_TIME_SW))) {
       if (!localUTCTimeDate) {
-        lcd.print("      "); // Clear the extra chars
-        uint8_t DOW = dayOfWeek(GPSData.year, GPSData.month, GPSData.day);
-        if (IsDST(GPSData.day, GPSData.month, DOW)) {
-          lcd.print("DST");
-        }
-        else {
-          lcd.print(" ST");
-        }
-      }
-      else { // if (!localUTCTimeDate)
         // Display Hdop
+        Serial.println("Here 1 ************");
         displayHdopOnLCD(GPSData.hdop, displayHdop, now,
                          &prevHdopTime, &hdopToggle);
       } // if (!localUTCTimeDate)
+      else {
+        if (localUTCTimeDate) {
+          // Display Hdop
+          displayHdopOnLCD(GPSData.hdop, displayHdop, now,
+                           &prevHdopTime, &hdopToggle);
+        }
+      } // if (!localUTCTimeDate)
     } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
     else {
-      // Display Hdop
       displayHdopOnLCD(GPSData.hdop, displayHdop, now,
                        &prevHdopTime, &hdopToggle);
+
     } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
     lcd.setCursor(0, 2); // Go to 3rd line
     lcd.print("Spd: ");
@@ -374,14 +372,20 @@ void loop()
     lcd.setCursor(0, 3); // Go to 4th line
     if ((digitalRead(ALTITUDE_DATE_TIME_SW))) {
       lcd.print("Alt: ");
-      lcd.print((int16_t)GPSData.altitude);
-      lcd.print("ft");
+      if (Enhance_Display) {
+        lcd.print((int16_t)GPSData.altitude * 0.30f);
+        lcd.print ("mtrs");
+        lcd.print("  "); // Clear the extra chars
+      } else {
+        lcd.print((int16_t)GPSData.altitude);
+        lcd.print("ft");
+        lcd.print("       "); // Clear the extra chars
+      }
       // Toggle credit every TOGGLETIME_INTERVAL seconds
       if (now - prevCreditTime > (TOGGLETIME_INTERVAL / 2)) {
         prevCreditTime = now;
         if (creditToggle) { // Display credit
           creditToggle = false;
-          lcd.print("       "); // Clear the extra chars
           lcd.print(CREDIT); // Yours truly :-)
         }
         else {
@@ -497,25 +501,7 @@ void loop()
         displayValidFlags();
       } else {
         if (Enhance_Display) {
-          lcd.clear(); // Clear the LCD
-          lcd.setCursor(8,0); // Center text (Row, column)
-          lcd.print("Gary");
-          lcd.setCursor(7,1); // Center text
-          lcd.print("Grotsky");
-          lcd.setCursor(5,2); // Center text
-          lcd.print("Version ");
-          lcd.print(VERSION);
-          lcd.setCursor(6,3); // Center text
-          lcd.print("IR ");
-          lcd.print(DATE);
-          lcd.setCursor(15, 0);
-          lcd.print("SV:"); // Display the number of satellites
-          lcd.print(gps.satellites.value());
-          if (gps.satellites.value() >= 4) { // Need at least 4 satellites to navigate
-            lcd.print("n"); // n = navigate
-          } else {
-            lcd.print("i"); // i = initializing
-          }
+          displayVersionInfo();
         } else {
           lcd.clear(); // Clear the LCD
           lcd.setCursor(0, 0); // Go to 1st line
@@ -550,6 +536,28 @@ void loop()
 
 // Helper functions start here
 
+// Display the Version info on the LCD
+void displayVersionInfo(void) {
+  lcd.clear(); // Clear the LCD
+  lcd.setCursor(7, 0); // Center text (Row, column)
+  lcd.print("Gary K");
+  lcd.setCursor(7, 1); // Center text
+  lcd.print("Grotsky");
+  lcd.setCursor(5, 2); // Center text
+  lcd.print("Version ");
+  lcd.print(VERSION);
+  lcd.setCursor(6, 3); // Center text
+  lcd.print("IR ");
+  lcd.print(DATE);
+  lcd.setCursor(0, 0);
+  lcd.print("SV:"); // Display the number of satellites
+  lcd.print(gps.satellites.value());
+  if (gps.satellites.value() >= 4) { // Need at least 4 satellites to navigate
+    lcd.print("n"); // n = navigate
+  } else {
+    lcd.print("i"); // i = initializing
+  }
+}
 // Display the valid flags on the LCD
 void displayValidFlags(void) {
   lcd.clear(); // Clear the LCD
