@@ -322,7 +322,6 @@ void loop()
     if ((digitalRead(ALTITUDE_DATE_TIME_SW))) {
       if (!localUTCTimeDate) {
         // Display Hdop
-        Serial.println("Here 1 ************");
         displayHdopOnLCD(GPSData.hdop, displayHdop, now,
                          &prevHdopTime, &hdopToggle);
       } // if (!localUTCTimeDate)
@@ -549,7 +548,7 @@ void displayVersionInfo(void) {
   lcd.setCursor(6, 3); // Center text
   lcd.print("IR ");
   lcd.print(DATE);
-  lcd.setCursor(0, 0);
+  lcd.setCursor(0, 3);
   lcd.print("SV:"); // Display the number of satellites
   lcd.print(gps.satellites.value());
   if (gps.satellites.value() >= 4) { // Need at least 4 satellites to navigate
