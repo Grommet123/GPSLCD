@@ -92,6 +92,7 @@ void loop()
   static bool dateTimeToggle = true;
   static bool headingToggle = true;
   static bool hdopToggle = true;
+  static bool OneTime = false;
   bool Enhance_Display = digitalRead(ENHANCE_SW);
   bool display12_24_Hour = !digitalRead(DISPLAY_12_HOUR_SW);
   bool localUTCTimeDate = !digitalRead(CONVERT_TO_LOCAL_SW);
@@ -257,6 +258,11 @@ void loop()
     // Display the latest info from the gps object
     // which is derived from the data sent by the u-blox NEO-6M GPS module
     // Send data to the LCD
+    if ((digitalRead(ALTITUDE_DATE_TIME_SW)) && (GPSData.satellites == 0)) {
+      OneTime = true;
+      displayValidFlags(OneTime);
+      goto end; // I hate doing this, but somtimes one has to do what one has to do :-(
+    }
     lcd.home(); // Go to 1st line
     lcd.print("Lat: ");
     lcd.print(abs(GPSData.lat), 2);
@@ -341,11 +347,11 @@ void loop()
     lcd.setCursor(0, 2); // Go to 3rd line
     lcd.print("Spd: ");
     if ((GPSData.speed < SpeedCutout) && (lowSpeedOverride)) {
-      lcd.print("0  ");
+      lcd.print("0      ");
     }
     else {
       lcd.print((int16_t)GPSData.speed);
-      lcd.print(" "); // Clear the extra chars
+      lcd.print("  "); // Clear the extra chars
     } // if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride))
     lcd.setCursor(12, 2);
     lcd.print("Hdg: ");
@@ -372,7 +378,7 @@ void loop()
     if ((digitalRead(ALTITUDE_DATE_TIME_SW))) {
       lcd.print("Alt: ");
       if (Enhance_Display) {
-        lcd.print((int16_t)GPSData.altitude * 0.30f);
+        lcd.print((int16_t)GPSData.altitude * 0.30f); // Convert to meters
         lcd.print ("mtrs");
         lcd.print("  "); // Clear the extra chars
       } else {
@@ -497,16 +503,16 @@ void loop()
     if (now - prevInitializationTime > INITIALIZATION_INTERVAL) {
       prevInitializationTime = now;
       if ((digitalRead(ALTITUDE_DATE_TIME_SW))) { // Display the valid flags
-        displayValidFlags();
+        OneTime = true;
+        displayValidFlags(OneTime);
       } else {
         if (Enhance_Display) {
           displayVersionInfo();
         } else {
           lcd.clear(); // Clear the LCD
-          lcd.setCursor(0, 0); // Go to 1st line
-          lcd.setCursor(8, 0);
+          lcd.setCursor(8, 0); // Go to 1st line
           lcd.print("GPS");
-          lcd.setCursor(14, 0);
+          lcd.setCursor(0, 3);
           lcd.print("v");
           lcd.print(VERSION);
           lcd.setCursor(4, 1); // Go to 2nd line
@@ -515,7 +521,7 @@ void loop()
           lcd.print("Data Not");
           lcd.setCursor(7, 3); // Go to 4th line
           lcd.print("Valid");
-          lcd.setCursor(0, 3);
+          lcd.setCursor(15, 0); // Go to 1st line
           lcd.print("SV:"); // Display the number of satellites
           lcd.print(gps.satellites.value());
           if (gps.satellites.value() >= 4) { // Need at least 4 satellites to navigate
@@ -531,6 +537,7 @@ void loop()
       leftInitialization = false;
     } // if (now - prevInitializationTime > INITIALIZATION_INTERVAL)
   } // GPS data is not valid
+end: (void)0; // goto end;
 } // loop
 
 // Helper functions start here
@@ -540,6 +547,14 @@ void displayVersionInfo(void) {
   lcd.clear(); // Clear the LCD
   lcd.setCursor(7, 0); // Center text (Row, column)
   lcd.print("Gary K");
+  lcd.setCursor(15, 0);
+  lcd.print("SV:"); // Display the number of satellites
+  lcd.print(gps.satellites.value());
+  if (gps.satellites.value() >= 4) { // Need at least 4 satellites to navigate
+    lcd.print("n"); // n = navigate
+  } else {
+    lcd.print("i"); // i = initializing
+  }
   lcd.setCursor(7, 1); // Center text
   lcd.print("Grotsky");
   lcd.setCursor(5, 2); // Center text
@@ -548,18 +563,13 @@ void displayVersionInfo(void) {
   lcd.setCursor(6, 3); // Center text
   lcd.print("IR ");
   lcd.print(DATE);
-  lcd.setCursor(0, 3);
-  lcd.print("SV:"); // Display the number of satellites
-  lcd.print(gps.satellites.value());
-  if (gps.satellites.value() >= 4) { // Need at least 4 satellites to navigate
-    lcd.print("n"); // n = navigate
-  } else {
-    lcd.print("i"); // i = initializing
-  }
 }
 // Display the valid flags on the LCD
-void displayValidFlags(void) {
-  lcd.clear(); // Clear the LCD
+void displayValidFlags(bool OneTime) {
+  if (OneTime) {
+    lcd.clear(); // Clear the LCD
+    OneTime = false;
+  }
   lcd.setCursor(2, 0); // Go to 1st line
   lcd.print("Valid Flags");
   lcd.setCursor(15, 0);

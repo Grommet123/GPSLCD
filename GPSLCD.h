@@ -30,7 +30,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "15.2"              // Version number
+#define VERSION  "16.0"              // Version number
 #define DATE "8/30/16"               // Initial release date
 #define Debug                        // Uncomment out for debug
 #define Serial_Debug                 // Uncomment out for serial monitor display debug
@@ -71,7 +71,7 @@
 #define GPS_RECEIVER_ERROR 2.5f      // Receiver error (in meters) for the GPS module (u-blox NEO-6M)
 #define LED_OFF 0                    // Turns off the LEDs
 #define SPEED_CUTOUT 10              // Value where the speed and heading are set to 0
-//#define PERMANENT_DST                // Permanent DST (Comment out if and when this takes affect)
+//#define PERMANENT_DST              // Permanent DST (Comment out if and when this takes affect)
 struct GPSStruct {
   double   lat;           // Degrees
   double   lon;           // Degrees
@@ -98,7 +98,7 @@ struct GPSStruct {
 };
 
 // Function Prototypes
-void displayVersionInfo(void);
+void displayVersionInfo(bool OneTime);
 void displayValidFlags(void);
 uint16_t leap(uint16_t year);
 uint16_t zeller(uint16_t year, uint8_t month, uint8_t day);
