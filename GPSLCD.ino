@@ -512,16 +512,7 @@ void loop()
           lcd.clear(); // Clear the LCD
           lcd.setCursor(8, 0); // Go to 1st line
           lcd.print("GPS");
-          lcd.setCursor(0, 3);
-          lcd.print("v");
-          lcd.print(VERSION);
-          lcd.setCursor(4, 1); // Go to 2nd line
-          lcd.print("Initializing");
-          lcd.setCursor(6, 2); // Go to 3rd line
-          lcd.print("Data Not");
-          lcd.setCursor(7, 3); // Go to 4th line
-          lcd.print("Valid");
-          lcd.setCursor(15, 0); // Go to 1st line
+          lcd.setCursor(15, 0);
           lcd.print("SV:"); // Display the number of satellites
           lcd.print(gps.satellites.value());
           if (gps.satellites.value() >= 4) { // Need at least 4 satellites to navigate
@@ -529,6 +520,12 @@ void loop()
           } else {
             lcd.print("i"); // i = initializing
           }
+          lcd.setCursor(4, 1); // Go to 2nd line
+          lcd.print("Initializing");
+          lcd.setCursor(6, 2); // Go to 3rd line
+          lcd.print("Data Not");
+          lcd.setCursor(7, 3); // Go to 4th line
+          lcd.print("Valid");
         } // if (Enhance_Display)
       } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
       lcd.setCursor(19, 3); // Display the initializing counter
