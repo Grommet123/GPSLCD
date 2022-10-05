@@ -93,7 +93,8 @@ void loop()
   static bool headingToggle = true;
   static bool hdopToggle = true;
   static bool OneTime = false;
-  bool Enhance_Display = digitalRead(ENHANCE_SW);
+  bool enhanceDisplay = digitalRead(ENHANCE_SW);
+  bool altitudeDateTime = digitalRead(ALTITUDE_DATE_TIME_SW);
   bool display12_24_Hour = !digitalRead(DISPLAY_12_HOUR_SW);
   bool localUTCTimeDate = !digitalRead(CONVERT_TO_LOCAL_SW);
   bool displayHdop = !digitalRead(DISPLAY_HDOP_SW);
@@ -121,7 +122,7 @@ void loop()
 #endif
 
   // Enhance display mode
-  if (Enhance_Display) {
+  if (enhanceDisplay) {
     pinMode(DISPLAY_12_HOUR_SW, INPUT_PULLUP);
     pinMode(CONVERT_TO_LOCAL_SW, INPUT_PULLUP);
     pinMode(DISPLAY_HDOP_SW, INPUT_PULLUP);
@@ -258,7 +259,7 @@ void loop()
     // Display the latest info from the gps object
     // which is derived from the data sent by the u-blox NEO-6M GPS module
     // Send data to the LCD
-    if ((digitalRead(ALTITUDE_DATE_TIME_SW)) && (GPSData.satellites == 0)) {
+    if ((altitudeDateTime) && (GPSData.satellites == 0)) {
       OneTime = true;
       displayValidFlags(OneTime);
       goto end; // I hate doing this, but somtimes one has to do what one has to do :-(
@@ -325,7 +326,7 @@ void loop()
       lcd.print("W");
     }
     // Only display if time/date is selected
-    if ((digitalRead(ALTITUDE_DATE_TIME_SW))) {
+    if (altitudeDateTime) {
       if (!localUTCTimeDate) {
         // Display Hdop
         displayHdopOnLCD(GPSData.hdop, displayHdop, now,
@@ -338,12 +339,11 @@ void loop()
                            &prevHdopTime, &hdopToggle);
         }
       } // if (!localUTCTimeDate)
-    } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
+    } // if (altitudeDateTime)
     else {
       displayHdopOnLCD(GPSData.hdop, displayHdop, now,
                        &prevHdopTime, &hdopToggle);
-
-    } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
+    } // if (altitudeDateTime)
     lcd.setCursor(0, 2); // Go to 3rd line
     lcd.print("Spd: ");
     if ((GPSData.speed < SpeedCutout) && (lowSpeedOverride)) {
@@ -375,9 +375,9 @@ void loop()
       } // if (now - prevHeadingTime > TOGGLETIME_INTERVAL)
     } // if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride))
     lcd.setCursor(0, 3); // Go to 4th line
-    if ((digitalRead(ALTITUDE_DATE_TIME_SW))) {
+    if (altitudeDateTime) {
       lcd.print("Alt: ");
-      if (Enhance_Display) {
+      if (enhanceDisplay) {
         lcd.print((int16_t)GPSData.altitude * 0.30f); // Convert to meters
         lcd.print ("mtrs");
         lcd.print("  "); // Clear the extra chars
@@ -398,7 +398,7 @@ void loop()
           lcd.print("            "); // Clear the extra chars
         }
       } // if (now - prevCreditTime > TOGGLETIME_INTERVAL)
-    } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
+    } // if (altitudeDateTime)
     else {
       // Toggle date/time every TOGGLETIME_INTERVAL seconds
       if (now - prevDateTime > TOGGLETIME_INTERVAL) {
@@ -482,7 +482,7 @@ void loop()
           displayDayOnLCD(dayOfWeek(year, month, day));
         } // if (dateTimeToggle)
       } // if (now - prevDateTime > TOGGLETIME_INTERVAL)
-    } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
+    } // if (altitudeDateTime)
   } // if (dataValid || dataValidOverride)
   else {
     // GPS data is not valid, so it must be initializing
@@ -502,11 +502,11 @@ void loop()
     // Display initialization screen once every INITIALIZATION_INTERVAL
     if (now - prevInitializationTime > INITIALIZATION_INTERVAL) {
       prevInitializationTime = now;
-      if ((digitalRead(ALTITUDE_DATE_TIME_SW))) { // Display the valid flags
+      if (altitudeDateTime) { // Display the valid flags
         OneTime = true;
         displayValidFlags(OneTime);
       } else {
-        if (Enhance_Display) {
+        if (enhanceDisplay) {
           displayVersionInfo();
         } else {
           lcd.clear(); // Clear the LCD
@@ -526,8 +526,8 @@ void loop()
           lcd.print("Data Not");
           lcd.setCursor(7, 3); // Go to 4th line
           lcd.print("Valid");
-        } // if (Enhance_Display)
-      } // if ((digitalRead(ALTITUDE_DATE_TIME_SW)))
+        } // if (enhanceDisplay)
+      } // if (altitudeDateTime)
       lcd.setCursor(19, 3); // Display the initializing counter
       if (++initializingCounter > 9) initializingCounter = 1; // Limit 1 - 9
       lcd.print(initializingCounter);
@@ -542,8 +542,8 @@ end: (void)0; // goto end;
 // Display the Version info on the LCD
 void displayVersionInfo(void) {
   lcd.clear(); // Clear the LCD
-  lcd.setCursor(7, 0); // Center text (Row, column)
-  lcd.print("Gary K");
+  lcd.setCursor(6, 0); // Center text (Row, column)
+  lcd.print("Gary K.");
   lcd.setCursor(15, 0);
   lcd.print("SV:"); // Display the number of satellites
   lcd.print(gps.satellites.value());
@@ -552,7 +552,7 @@ void displayVersionInfo(void) {
   } else {
     lcd.print("i"); // i = initializing
   }
-  lcd.setCursor(7, 1); // Center text
+  lcd.setCursor(6, 1); // Center text
   lcd.print("Grotsky");
   lcd.setCursor(5, 2); // Center text
   lcd.print("Version ");
