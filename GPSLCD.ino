@@ -348,14 +348,14 @@ void loop()
     lcd.print("Spd: ");
     if ((GPSData.speed < SpeedCutout) && (lowSpeedOverride)) {
       lcd.print("0");
-      lcd.print("m/h   "); // miles per hour
+      lcd.print("M/H   "); // miles per hour
     }
     else {
       lcd.print((int16_t)GPSData.speed); // miles
       if ((int16_t)GPSData.speed <= 99) {
-        lcd.print("m/h   "); // miles per hour
+        lcd.print("M/H   "); // miles per hour
       } else {
-        lcd.print("m/h ");
+        lcd.print("M/H ");
       }
       // Enhance display mode
       if (enhanceDisplay) {
@@ -364,9 +364,9 @@ void loop()
         lcd.setCursor(5, 2);
         lcd.print((unsigned long)KPH);
         if ((int16_t)GPSData.speed <= 99) {
-          lcd.print("k/h   "); // kilometers per hour
+          lcd.print("K/H   "); // kilometers per hour
         } else {
-          lcd.print("k/h ");
+          lcd.print("K/H ");
         }
       } // if (enhanceDisplay) {
     } // if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride))
