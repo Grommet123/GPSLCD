@@ -224,7 +224,7 @@ void loop()
     GPSData.satellites = 5;
     GPSData.lat        = 40.71d;  // East coast (NYC)
     GPSData.lon        = -74.00d; //   "
-    GPSData.speed      = 5.0d;
+    GPSData.speed      = 100.0d;
     GPSData.altitude   = 555.0d;
     GPSData.heading    = 60.0d; // ENE or NE (16 cardinal points or 8 cardinal points)
     GPSData.hdop       = 150; // 1.5
@@ -348,25 +348,25 @@ void loop()
     lcd.print("Spd: ");
     if ((GPSData.speed < SpeedCutout) && (lowSpeedOverride)) {
       lcd.print("0");
-      lcd.print("M/H   "); // miles per hour
+      lcd.print("m/h   "); // miles per hour
     }
     else {
-      lcd.print((int16_t)GPSData.speed); // miles
+      lcd.print((int16_t)GPSData.speed); // Miles
       if ((int16_t)GPSData.speed <= 99) {
-        lcd.print("M/H   "); // miles per hour
+        lcd.print("m/h   "); // Miles per hour
       } else {
-        lcd.print("M/H ");
+        lcd.print("m/h ");
       }
       // Enhance display mode
       if (enhanceDisplay) {
         unsigned long KPH;
-        KPH = (GPSData.speed * 1.61f); // kilometers
+        KPH = (GPSData.speed * 1.61f); // Kilometers
         lcd.setCursor(5, 2);
         lcd.print((unsigned long)KPH);
         if ((int16_t)GPSData.speed <= 99) {
-          lcd.print("K/H   "); // kilometers per hour
+          lcd.print("k/h   "); // Kilometers per hour
         } else {
-          lcd.print("K/H ");
+          lcd.print("k/h ");
         }
       } // if (enhanceDisplay) {
     } // if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride))
