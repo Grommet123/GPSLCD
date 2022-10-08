@@ -30,7 +30,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "16.6"              // Version number
+#define VERSION  "17.0"              // Version number
 #define DATE "8/30/16"               // Initial release date
 #define Debug                        // Uncomment out for debug
 #define Serial_Debug                 // Uncomment out for serial monitor display debug
@@ -57,6 +57,7 @@
 #define I2C_ADDR 0x27                // Address of my 20x4 On-board LCD (yours might be different)
 #define ENHANCE_SW 2                 // Enables the enhance display switches
 #define DISPLAY_12_HOUR_SW 2         // 12 or 24 hour time switch
+#define ENHANCE_2_SW 3               // Enables the second enhance displays
 #define CONVERT_TO_LOCAL_SW 3        // UTC time/date or local time/date switch
 #define DISPLAY_HDOP_SW 4            // Hdop or horizontal position error switch
 #define ALTITUDE_DATE_TIME_SW 5      // Altitude/Date time select switch

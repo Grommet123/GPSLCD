@@ -53,6 +53,7 @@ void setup()
   Serial.begin(115200); // For debugging to the Serial Monitor (i.e. Serial.Println())
 #endif
   pinMode(ENHANCE_SW, INPUT);
+  pinMode(ENHANCE_2_SW, INPUT);
   pinMode(BACKLIGHT_SW, INPUT);
   // Selects either altitude or the date/time to be displayed
   pinMode(ALTITUDE_DATE_TIME_SW, INPUT);
@@ -79,6 +80,7 @@ void loop()
 {
   static uint32_t pastSatellites = 0;
   static uint8_t initializingCounter = 0;
+  static uint8_t counter = 0;
   static uint8_t initializingTimeoutCounter = 0;
   static unsigned long prevInitializationTime = INITIALIZATION_INTERVAL;
   static unsigned long prevCreditTime = TOGGLETIME_INTERVAL;
@@ -94,6 +96,7 @@ void loop()
   static bool hdopToggle = true;
   static bool OneTime = false;
   bool enhanceDisplay = digitalRead(ENHANCE_SW);
+  bool enhanceDisplay2 = digitalRead(ENHANCE_2_SW);
   bool altitudeDateTime = digitalRead(ALTITUDE_DATE_TIME_SW);
   bool display12_24_Hour = !digitalRead(DISPLAY_12_HOUR_SW);
   bool localUTCTimeDate = !digitalRead(CONVERT_TO_LOCAL_SW);
@@ -141,7 +144,6 @@ void loop()
     HeadingCutout = SPEED_CUTOUT;
   }
   // ************ GPS processing starts here ************
-
   dataAvailable = false;
   while (GPSModule.available()) // While there are characters coming from the GPS module (using the
     //                                                                                    SoftwareSerial library)
@@ -235,7 +237,6 @@ void loop()
     GPSData.minute     = 10;
     GPSData.second     = 25;
 #endif // #ifndef DATA_VALID_OVERRIDE
-
     // Turn on green LED (all is well)
     if ((digitalRead(BACKLIGHT_SW)) && (GPSData.satellites > 0)) {
       analogWrite(RED_LED_PIN, LED_OFF);
@@ -251,6 +252,15 @@ void loop()
       Serial.println("   Green");
     }
 #endif
+    if (enhanceDisplay2) {
+      OneTime = true;
+      displayValidFlags(OneTime);
+      lcd.setCursor(19, 3); // Display the hdop counter
+      if (++counter > 9) counter = 1; // Limit 1 - 9
+      lcd.print(counter);
+      delay(1000); // 1 seconds
+      goto end; // I hate doing this, but somtimes a man has to do what a man has to do :-(
+    }
     // Clear the screen once when leaving initialization
     if (!leftInitialization) {
       leftInitialization = true;
@@ -262,7 +272,7 @@ void loop()
     if ((altitudeDateTime) && (GPSData.satellites == 0)) {
       OneTime = true;
       displayValidFlags(OneTime);
-      goto end; // I hate doing this, but somtimes one has to do what one has to do :-(
+      goto end; // I hate doing this, but somtimes a man has to do what a man has to do :-(
     }
     lcd.home(); // Go to 1st line
     lcd.print("Lat: ");
@@ -815,6 +825,7 @@ void displayHdopOnLCD(uint32_t Hdop, bool HdopSelect, unsigned long now,
         *prevHdopTime = now;
         if (*hdopToggle) {
           *hdopToggle = false;
+          lcd.print((uint32_t)hdop);
           lcd.print("XXX");
         }
         else {
