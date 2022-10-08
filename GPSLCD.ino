@@ -80,7 +80,8 @@ void loop()
 {
   static uint32_t pastSatellites = 0;
   static uint8_t initializingCounter = 0;
-  static uint8_t counter = 0;
+  static uint8_t enhanceCounter2 = 0;
+  static uint8_t altitudeDateTimeCounter = 0;
   static uint8_t initializingTimeoutCounter = 0;
   static unsigned long prevInitializationTime = INITIALIZATION_INTERVAL;
   static unsigned long prevCreditTime = TOGGLETIME_INTERVAL;
@@ -256,8 +257,8 @@ void loop()
       OneTime = true;
       displayValidFlags(OneTime);
       lcd.setCursor(19, 3); // Display the hdop counter
-      if (++counter > 9) counter = 1; // Limit 1 - 9
-      lcd.print(counter);
+      if (++enhanceCounter2 > 9) enhanceCounter2 = 1; // Limit 1 - 9
+      lcd.print(enhanceCounter2);
       delay(1000); // 1 seconds
       goto end; // I hate doing this, but somtimes a man has to do what a man has to do :-(
     }
@@ -272,6 +273,10 @@ void loop()
     if ((altitudeDateTime) && (GPSData.satellites == 0)) {
       OneTime = true;
       displayValidFlags(OneTime);
+      lcd.setCursor(19, 3); // Display the hdop counter
+      if (++altitudeDateTimeCounter > 9) altitudeDateTimeCounter = 1; // Limit 1 - 9
+      lcd.print(altitudeDateTimeCounter);
+      delay(1000); // 1 seconds
       goto end; // I hate doing this, but somtimes a man has to do what a man has to do :-(
     }
     lcd.home(); // Go to 1st line
