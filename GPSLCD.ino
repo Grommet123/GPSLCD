@@ -134,7 +134,6 @@ void loop()
     pinMode(LOW_SPEED_OVERRIDE, INPUT_PULLUP);
     SpeedCutout = 0;
     HeadingCutout = 0;
-    bool lowSpeedOverride = !digitalRead(LOW_SPEED_OVERRIDE);
   } else {
     pinMode(DISPLAY_12_HOUR_SW, INPUT);
     pinMode(CONVERT_TO_LOCAL_SW, INPUT);
@@ -444,7 +443,7 @@ void loop()
           uint8_t month = GPSData.month;
           uint16_t year = GPSData.year;
           bool DST = false;
-          if (localUTCTimeDate) {
+          if (!enhanceDisplay) {
             // Convert UTC time to local time (no need to convert the date)
             DST = convertToLocal(&hour, &year, &month,
                                  &day, GPSData.lon, false); // false means no date conversion
@@ -474,15 +473,15 @@ void loop()
           if (display12_24_Hour) {
             lcd.print(AMPM);
           }
-          if (localUTCTimeDate) {
+          if (!enhanceDisplay) {
             if (display12_24_Hour) {
               (DST) ? lcd.print(" DST") : lcd.print("  ST");
             }
             else {
               (DST) ? lcd.print("   DST") : lcd.print("    ST");
             } // if (display12_24_Hour)
-          } // if (localUTCTimeDate)
-          if (!localUTCTimeDate) {
+          } // if (!enhanceDisplay) {
+          if (localUTCTimeDate){
             if (display12_24_Hour) {
               lcd.print(" UTC");
             }
