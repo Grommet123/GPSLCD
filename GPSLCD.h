@@ -30,7 +30,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "17.2"              // Version number
+#define VERSION  "18.0"              // Version number
 #define DATE "8/30/16"               // Initial release date
 #define Debug                        // Uncomment out for debug
 #define Serial_Debug                 // Uncomment out for serial monitor display debug
@@ -98,6 +98,36 @@ struct GPSStruct {
   bool     dataAvailable;
 };
 
+/* A macro to compute the number of days elapsed since 2000 Jan 0.0 */
+/* (which is equal to 1999 Dec 31, 0h UT)                           */
+#define days_since_2000_Jan_0(y,m,d) \
+  (367L*(y)-((7*((y)+(((m)+9)/12)))/4)+((275*(m))/9)+(d)-730530L)
+
+/* Some conversion factors between radians and degrees */
+#ifndef PI
+#define PI        3.1415926535897932384
+#endif
+
+#define RADEG     ( 180.0 / PI )
+#define DEGRAD    ( PI / 180.0 )
+
+/* The trigonometric functions in degrees */
+#define sind(x)  sin((x)*DEGRAD)
+#define cosd(x)  cos((x)*DEGRAD)
+#define tand(x)  tan((x)*DEGRAD)
+
+#define atand(x)    (RADEG*atan(x))
+#define asind(x)    (RADEG*asin(x))
+#define acosd(x)    (RADEG*acos(x))
+#define atan2d(y,x) (RADEG*atan2(y,x))
+
+/* This macro computes times for sunrise/sunset.                      */
+/* Sunrise/set is considered to occur when the Sun's upper limb is    */
+/* 35 arc minutes below the horizon (this accounts for the refraction */
+/* of the Earth's atmosphere).                                        */
+#define sun_rise_set(year,month,day,lon,lat,rise,set)  \
+  __sunriset__( year, month, day, lon, lat, -35.0/60.0, 1, rise, set )
+
 // Function Prototypes
 void displayVersionInfo(bool OneTime);
 void displayValidFlags(void);
@@ -107,8 +137,8 @@ uint8_t dayOfWeek(uint16_t year, uint8_t month, uint8_t day);
 void displayDayOnLCD(uint8_t day);
 const char* cardinal(double course, bool cardinalSelect);
 bool IsDST(uint8_t day, uint8_t month, uint8_t DOW);
-bool convertToLocal(uint8_t* hour, uint16_t* year, uint8_t* month,
-                    uint8_t* day, const double lon, bool convertDate, bool doDST = true);
+bool convertToLocal(uint16_t* hour, uint16_t* year, uint16_t* month,
+                    uint16_t* day, const double lon, bool convertDate = true, bool sunset = false);
 void displayHdopOnLCD(uint32_t Hdop, bool HdopSelect, unsigned long now,
                       unsigned long* prevHdopTime, bool* hdopToggle);
 
