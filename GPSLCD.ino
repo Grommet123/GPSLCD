@@ -267,8 +267,8 @@ void loop()
       uint16_t riseI;
       uint16_t setI;
       double rise, set;
-      // Get sunrise and sunset time in UTC
-      int rs = sun_rise_set(year, month, day,
+      // Get sunrise and sunset time in UTC. Don't need DST
+      (void) sun_rise_set(year, month, day,
                             (double)GPSData.lon,
                             (double)GPSData.lat,
                             &rise, &set);
