@@ -264,14 +264,15 @@ void loop()
       uint16_t day  = GPSData.day;
       uint16_t month = GPSData.month;
       uint16_t year = GPSData.year;
+      uint16_t hour = GPSData.hour;
       uint16_t riseI;
       uint16_t setI;
-      double rise, set;
+      double rise, set, daylen;
       // Get sunrise and sunset time in UTC. Don't need sun rises/sets this day
       (void) sun_rise_set(year, month, day,
-                            (double)GPSData.lon,
-                            (double)GPSData.lat,
-                            &rise, &set);
+                          (double)GPSData.lon,
+                          (double)GPSData.lat,
+                          &rise, &set);
       riseI = (uint16_t)round(rise);
       setI = (uint16_t)round(set);
 
@@ -281,7 +282,20 @@ void loop()
       // Convert UTC "sunset" time to local "sunset" time
       (void) convertToLocal(&setI, &year, &month,
                             &day, (double)GPSData.lon, false, true); // false means no date and DST conversion, true means sunset
+      daylen  = day_length(year, month, day, GPSData.lon, GPSData.lat);
+
+      bool DST = convertToLocal(&hour, &year, &month,
+                                &day, GPSData.lon, true); // true means date conversion
       lcd.clear(); // Clear the LCD
+      lcd.setCursor(0, 0);
+      if (month < 10) lcd.print("0");
+      lcd.print(month);
+      lcd.print("/");
+      if (day < 10) lcd.print("0");
+      lcd.print(day);
+      lcd.print("/");
+      lcd.print(year);
+      displayDayOnLCD(dayOfWeek(year, month, day));
       lcd.setCursor(15, 0);
       lcd.print("SV:"); // Display the number of satellites
       lcd.print(gps.satellites.value());
@@ -300,6 +314,10 @@ void loop()
       if (setI > 12) setI -= 12;
       lcd.print(setI);
       lcd.print("pm");
+      lcd.setCursor(0, 3);
+      lcd.print("Day len: ");
+      lcd.print((uint16_t)daylen);
+      lcd.print("hours");
       lcd.setCursor(19, 3); // Display the counter
       if (++enhanceCounter2 > 9) enhanceCounter2 = 1; // Limit 1 - 9
       lcd.print(enhanceCounter2);
@@ -327,7 +345,7 @@ void loop()
     lcd.print("Lat: ");
     lcd.print(abs(GPSData.lat), 2);
     if (GPSData.lat >= 0) {
-      lcd.print("N  ");
+      lcd.print("N    ");
     }
     else {
       lcd.print("S  ");

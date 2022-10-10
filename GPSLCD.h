@@ -30,7 +30,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "18.3"              // Version number
+#define VERSION  "19.0"              // Version number
 #define DATE "8/30/16"               // Initial release date
 #define Debug                        // Uncomment out for debug
 #define Serial_Debug                 // Uncomment out for serial monitor display debug
@@ -127,6 +127,13 @@ struct GPSStruct {
 /* of the Earth's atmosphere).                                        */
 #define sun_rise_set(year,month,day,lon,lat,rise,set)  \
   __sunriset__( year, month, day, lon, lat, -35.0/60.0, 1, rise, set )
+
+/* This macro computes the length of the day, from sunrise to sunset. */
+/* Sunrise/set is considered to occur when the Sun's upper limb is    */
+/* 35 arc minutes below the horizon (this accounts for the refraction */
+/* of the Earth's atmosphere).                                        */
+#define day_length(year,month,day,lon,lat)  \
+    __daylen__( year, month, day, lon, lat, -35.0/60.0, 1 )
 
 // Function Prototypes
 void displayVersionInfo(bool OneTime);
