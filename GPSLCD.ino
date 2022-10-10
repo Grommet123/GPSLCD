@@ -615,16 +615,13 @@ end: (void)0; // goto end;
 
 // Helper functions start here
 
-/* Convert UTC time and date to local time and date
+/* Convert UTC time, date, sunrise, and sunset to local time, date, sunrise, and sunset
    Difference between UTC time/date (at Greenwich) and local time/date is 15 minutes
    per 1 degree of longitude. See the following:
    http://www.edaboard.com/thread101516.html
 */
 bool convertToLocal(uint16_t* hour, uint16_t* year, uint16_t* month,
                     uint16_t* day, const double lon, bool convertDate = true, bool sunset = false) {
-  ;
-  //bool convertToLocal(uint8_t* hour, uint16_t* year, uint8_t* month,
-  //                    uint8_t* day, const double lon, bool convertDate, bool sunset = false);
 
   uint8_t DaysAMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
@@ -640,7 +637,6 @@ bool convertToLocal(uint16_t* hour, uint16_t* year, uint16_t* month,
     if (DST && !sunset) UTCOffset -= 1; // Compensate for DST
     if (*hour <= UTCOffset) *hour += 24;
     *hour -= UTCOffset; // Subtract offset
-    delay(1000);
   }
   else {
     // East of Greenwich, add
