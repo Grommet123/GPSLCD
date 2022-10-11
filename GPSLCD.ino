@@ -273,6 +273,7 @@ void loop()
                           (double)GPSData.lon,
                           (double)GPSData.lat,
                           &rise, &set);
+                          
       riseI = (uint16_t)round(rise);
       setI = (uint16_t)round(set);
 
@@ -282,10 +283,11 @@ void loop()
       // Convert UTC "sunset" time to local "sunset" time
       (void) convertToLocal(&setI, &year, &month,
                             &day, (double)GPSData.lon, false, true); // false means no date and DST conversion, true means sunset
-      daylen  = day_length(year, month, day, GPSData.lon, GPSData.lat);
+      
+      daylen = day_length(year, month, day, (double)GPSData.lon, (double)GPSData.lat);
 
-      bool DST = convertToLocal(&hour, &year, &month,
-                                &day, GPSData.lon, true); // true means date conversion
+      (void) convertToLocal(&hour, &year, &month,
+                            &day, (double)GPSData.lon, true); // true means date conversion
       lcd.clear(); // Clear the LCD
       lcd.setCursor(0, 0);
       if (month < 10) lcd.print("0");
@@ -306,7 +308,7 @@ void loop()
       }
       lcd.setCursor(0, 1);
       lcd.print("Sunrise: ");
-      if (riseI > 12) riseI -= 12;
+      if (riseI > 12)  riseI -= 12;
       lcd.print(riseI);
       lcd.print("am");
       lcd.setCursor(0, 2);
