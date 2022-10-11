@@ -286,7 +286,7 @@ void loop()
       
       daylen = day_length(year, month, day, (double)GPSData.lon, (double)GPSData.lat);
 
-      (void) convertToLocal(&hour, &year, &month,
+      (void) convertToLocal((uint16_t)&daylen, &year, &month,
                             &day, (double)GPSData.lon, true); // true means date conversion
       lcd.clear(); // Clear the LCD
       lcd.setCursor(0, 0);
@@ -323,7 +323,7 @@ void loop()
       lcd.setCursor(19, 3); // Display the counter
       if (++enhanceCounter2 > 9) enhanceCounter2 = 1; // Limit 1 - 9
       lcd.print(enhanceCounter2);
-      delay(1000);
+      delay(1500);
       goto end; // I hate doing this, but somtimes a man has to do what a man has to do :-(
     } // } else if ((enhanceDisplay2 && (enhanceDisplay)) {
     // Clear the screen once when leaving initialization
