@@ -890,7 +890,6 @@ void displayHdopOnLCD(uint32_t Hdop, bool HdopSelect, unsigned long now,
         *prevHdopTime = now;
         if (*hdopToggle) {
           *hdopToggle = false;
-          lcd.print((uint32_t)hdop);
           lcd.print("XXX");
         }
         else {
