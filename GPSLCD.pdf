@@ -307,7 +307,7 @@ BT
 12.00 TL
 0.000 0.000 1.000 rg
 1106.00 73.60 Td
-(4.6) Tj
+(4.7) Tj
 ET
 10.00 w
 BT
@@ -4663,14 +4663,14 @@ BT
 12.00 TL
 0.000 0.000 1.000 rg
 810.00 325.60 Td
-(3. Switch S10 overrides switch S5.) Tj
+(3. Switch S10 overrides switch S4.) Tj
 ET
 10.00 w
 BT
 /F1 12 Tf
 12.00 TL
 0.000 0.000 1.000 rg
-810.00 295.60 Td
+810.00 305.60 Td
 (4. Switches S3 - S7 and R1 - R5 not used) Tj
 ET
 1 J
@@ -4688,7 +4688,7 @@ BT
 /F1 12 Tf
 12.00 TL
 0.000 0.000 1.000 rg
-820.00 275.60 Td
+820.00 285.60 Td
 (or wired in this version.) Tj
 ET
 0.80 0.00 0.00 rg
@@ -4966,7 +4966,7 @@ endobj
 10 0 obj
 <<
 /Producer (jsPDF 0.0.0)
-/CreationDate (D:20221011200845-04'00')
+/CreationDate (D:20221012065916-04'00')
 >>
 endobj
 11 0 obj
@@ -4996,7 +4996,7 @@ trailer
 /Size 12
 /Root 11 0 R
 /Info 10 0 R
-/ID [ <CDD527DED1FC10111DC58150C4EBBB24> <CDD527DED1FC10111DC58150C4EBBB24> ]
+/ID [ <BC0B54AAFC265474BB123C68DEFFD137> <BC0B54AAFC265474BB123C68DEFFD137> ]
 >>
 startxref
 60626
