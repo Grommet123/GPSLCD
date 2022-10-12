@@ -270,8 +270,8 @@ void loop()
       double rise, set, daylen;
       // Get sunrise and sunset time in UTC. Don't need sun rises/sets this day
       (void) sun_rise_set(year, month, day,
-                          (double)GPSData.lon,
-                          (double)GPSData.lat,
+                          GPSData.lon,
+                          GPSData.lat,
                           &rise, &set);
                           
       riseI = (uint16_t)round(rise);
@@ -279,15 +279,15 @@ void loop()
 
       // Convert UTC "sunrise" time to local "sunset" time
       (void) convertToLocal(&riseI, &year, &month,
-                            &day, (double)GPSData.lon, false); // false means no date and DST conversion
+                            &day, GPSData.lon, false); // false means no date and DST conversion
       // Convert UTC "sunset" time to local "sunset" time
       (void) convertToLocal(&setI, &year, &month,
-                            &day, (double)GPSData.lon, false, true); // false means no date and DST conversion, true means sunset
+                            &day, GPSData.lon, false, true); // false means no date and DST conversion, true means sunset
       
-      daylen = day_length(year, month, day, (double)GPSData.lon, (double)GPSData.lat);
+      daylen = day_length(year, month, day, GPSData.lon, GPSData.lat);
 
       (void) convertToLocal((uint16_t)&daylen, &year, &month,
-                            &day, (double)GPSData.lon, true); // true means date conversion
+                            &day, GPSData.lon, true); // true means date conversion
       lcd.clear(); // Clear the LCD
       lcd.setCursor(0, 0);
       if (month < 10) lcd.print("0");

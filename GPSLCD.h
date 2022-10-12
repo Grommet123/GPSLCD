@@ -30,7 +30,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "19.2"              // Version number
+#define VERSION  "19.3"              // Version number
 #define DATE "8/30/16"               // Initial release date
 #define Debug                        // Uncomment out for debug
 #define Serial_Debug                 // Uncomment out for serial monitor display debug
@@ -78,7 +78,7 @@ struct GPSStruct {
   double   lon;           // Degrees
   double   speed;         // MPH
   double   altitude;      // Feet
-  uint32_t satellites;
+  uint8_t satellites;
   double   heading;       // Degrees
   uint32_t hdop;          // Horizontal Dilution of Precision (Hdop)
   uint16_t year;
@@ -133,7 +133,7 @@ struct GPSStruct {
 /* 35 arc minutes below the horizon (this accounts for the refraction */
 /* of the Earth's atmosphere).                                        */
 #define day_length(year,month,day,lon,lat)  \
-    __daylen__( year, month, day, lon, lat, -35.0/60.0, 1 )
+  __daylen__( year, month, day, lon, lat, -35.0/60.0, 1 )
 
 // Function Prototypes
 void displayVersionInfo(bool OneTime);
