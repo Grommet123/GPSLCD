@@ -269,6 +269,10 @@ void loop()
       uint16_t setI;
       double rise, set, daylen;
 
+      // Convert UTC date to local date
+      (void) convertToLocal(&hour, &year, &month,
+                              &day, GPSData.lon, true); // true means date conversion
+
       // Get sunrise and sunset time in UTC. Don't need sun rises/sets this day (return value)
       (void) sun_rise_set(year, month, day,
                           GPSData.lon,
