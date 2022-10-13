@@ -285,12 +285,11 @@ void loop()
       // Compute fraction.  UTC is the best I can do. "sun_rise_set" dose not return minutes and seconds.
       double riseF = rise - (double)riseI;
       double setF = set - (double)setI;
-      // Put it into a String type for printing on the LCD to remove the leading 0.
-      String riseS(abs(riseF));
-      String setS(abs(setF));
-      riseS = riseS.substring(1, 6);
-      setS = setS.substring(1, 6);
-      
+      String riseFS(abs(riseF));
+      String setFS(abs(setF));
+      riseFS = riseFS.substring(1, 6);
+      setFS = setFS.substring(1, 6);
+
       // Convert UTC "sunrise" time to local "sunset" time
       (void) convertToLocal(&riseI, &year, &month,
                             &day, GPSData.lon, false); // false means no date and DST conversion
@@ -327,13 +326,13 @@ void loop()
       lcd.print("Sunrise: ");
       if (riseI > 12)  riseI -= 12;
       lcd.print(riseI);
-      lcd.print(riseS);
+      lcd.print(riseFS);
       lcd.print("am");
       lcd.setCursor(0, 2);
       lcd.print("Sunset:  ");
       if (setI > 12) setI -= 12;
       lcd.print(setI);
-      lcd.print(setS);
+      lcd.print(setFS);
       lcd.print("pm");
       lcd.setCursor(0, 3);
       lcd.print("Day len: ");
