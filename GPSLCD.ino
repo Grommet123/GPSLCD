@@ -271,7 +271,7 @@ void loop()
 
       // Convert UTC date to local date
       (void) convertToLocal(&hour, &year, &month,
-                              &day, GPSData.lon, true); // true means date conversion
+                            &day, GPSData.lon, true); // true means date conversion
 
       // Get sunrise and sunset time in UTC. Don't need sun rises/sets this day (return value)
       (void) sun_rise_set(year, month, day,
@@ -281,6 +281,10 @@ void loop()
 
       riseI = (uint16_t)round(rise);
       setI = (uint16_t)round(set);
+
+      // Compute fraction.  UTC is the best I can do. "sun_rise_set" dose not return minutes and seconds.
+      double riseF = rise - (double)riseI;
+      double setF = set - (double)setI;
 
       // Convert UTC "sunrise" time to local "sunset" time
       (void) convertToLocal(&riseI, &year, &month,
@@ -318,11 +322,13 @@ void loop()
       lcd.print("Sunrise: ");
       if (riseI > 12)  riseI -= 12;
       lcd.print(riseI);
+      lcd.print(abs(riseF));
       lcd.print("am");
       lcd.setCursor(0, 2);
       lcd.print("Sunset:  ");
       if (setI > 12) setI -= 12;
       lcd.print(setI);
+      lcd.print(abs(setF));
       lcd.print("pm");
       lcd.setCursor(0, 3);
       lcd.print("Day len: ");
