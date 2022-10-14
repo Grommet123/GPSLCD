@@ -336,8 +336,8 @@ void loop()
       lcd.print("pm");
       lcd.setCursor(0, 3);
       lcd.print("Day len: ");
-      lcd.print((uint16_t)daylen);
-      lcd.print("hours");
+      lcd.print(daylen, 2);
+      lcd.print("hrs");
       lcd.setCursor(19, 3); // Display the counter
       if (++enhanceCounter2 > 9) enhanceCounter2 = 1; // Limit 1 - 9
       lcd.print(enhanceCounter2);
