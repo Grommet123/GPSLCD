@@ -267,6 +267,7 @@ void loop()
       uint16_t hour = GPSData.hour;
       uint16_t riseI;
       uint16_t setI;
+      uint16_t daylenI;
       double rise, set, daylen;
 
       // Convert UTC date to local date
@@ -300,9 +301,12 @@ void loop()
       // Get day lenght hours in UTC.
       daylen = day_length(year, month, day, GPSData.lon, GPSData.lat);
 
-      // Convert UTC "day lenght hours" to local "day lenght hours".
-      (void) convertToLocal((uint16_t)&daylen, &year, &month,
-                            &day, GPSData.lon, true); // true means date conversion
+      daylenI = (uint16_t)round(daylen);
+
+      // Compute fraction.  UTC is the best I can do. "day_length" dose not return minutes and seconds.
+      double daylenF = daylen - (double)daylenI;
+      String daylenFS(abs(daylenF));
+      daylenFS = daylenFS.substring(1, 6);
 
       lcd.clear(); // Clear the LCD
       lcd.setCursor(0, 0);
@@ -336,7 +340,8 @@ void loop()
       lcd.print("pm");
       lcd.setCursor(0, 3);
       lcd.print("Day len: ");
-      lcd.print(daylen, 2);
+      lcd.print(daylenI);
+      lcd.print(daylenFS);
       lcd.print("hrs");
       lcd.setCursor(19, 3); // Display the counter
       if (++enhanceCounter2 > 9) enhanceCounter2 = 1; // Limit 1 - 9
@@ -581,11 +586,11 @@ void loop()
           uint16_t day  = GPSData.day;
           uint16_t month = GPSData.month;
           uint16_t year = GPSData.year;
-          if (localUTCTimeDate) {
+          if (!enhanceDisplay) {
             // Convert UTC date to local date
             bool DST = convertToLocal(&hour, &year, &month,
                                       &day, GPSData.lon, true); // true means date conversion
-          } // if (localUTCTimeDate)
+          } // if (!enhanceDisplay)
           if (month < 10) lcd.print("0");
           lcd.print(month);
           lcd.print("/");
