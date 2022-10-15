@@ -292,11 +292,11 @@ void loop()
       setFS = setFS.substring(1, 6);
 
       // Convert UTC "sunrise" time to local "sunset" time
-      bool DST = convertToLocal(&riseI, &year, &month,
-                                &day, GPSData.lon, false); // false means no date and DST conversion
+      (void) convertToLocal(&riseI, &year, &month,
+                            &day, GPSData.lon, false); // false means no date and DST conversion
       // Convert UTC "sunset" time to local "sunset" time
       (void) convertToLocal(&setI, &year, &month,
-                            &day, GPSData.lon, false, !DST); // false means no date and DST conversion, true means sunset
+                            &day, GPSData.lon, false); // false means no date and DST conversion
 
       // Get day lenght hours in UTC.
       daylen = day_length(year, month, day, GPSData.lon, GPSData.lat);
@@ -664,7 +664,7 @@ end: (void)0; // goto end;
    http://www.edaboard.com/thread101516.html
 */
 bool convertToLocal(uint16_t* hour, uint16_t* year, uint16_t* month,
-                    uint16_t* day, const double lon, bool convertDate = true, bool sunset = false) {
+                    uint16_t* day, const double lon, bool convertDate = true) {
 
   uint8_t DaysAMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
@@ -677,7 +677,7 @@ bool convertToLocal(uint16_t* hour, uint16_t* year, uint16_t* month,
   if (UTCOffset < 0) {
     // West of Greenwich, subtract
     UTCOffset = abs(UTCOffset); // Make offset positive
-    if (DST && !sunset) UTCOffset -= 1; // Compensate for DST
+    if (DST) UTCOffset -= 1; // Compensate for DST
     if (*hour <= UTCOffset) *hour += 24;
     *hour -= UTCOffset; // Subtract offset
   }
