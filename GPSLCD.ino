@@ -261,10 +261,10 @@ void loop()
       delay(1000); // 1 seconds
       goto end; // I hate doing this, but somtimes a man has to do what a man has to do :-(
     } else if ((enhanceDisplay2) && (enhanceDisplay)) {
-      uint16_t day  = GPSData.day;
-      uint16_t month = GPSData.month;
-      uint16_t year = GPSData.year;
-      uint16_t hour = GPSData.hour;
+      uint16_t day  = (uint16_t)GPSData.day;
+      uint16_t month =  (uint16_t)GPSData.month;
+      uint16_t year =  (uint16_t)GPSData.year;
+      uint16_t hour =  (uint16_t)GPSData.hour;
       uint16_t riseI;
       uint16_t setI;
       uint16_t daylenI;
@@ -297,10 +297,6 @@ void loop()
       // Convert UTC "sunset" time to local "sunset" time
       (void) convertToLocal(&setI, &year, &month,
                             &day, GPSData.lon, false, !DST); // false means no date and DST conversion, true means sunset
-      Serial.println("");
-      Serial.print("DST = ");
-      Serial.println(DST);
-      delay(1000);
 
       // Get day lenght hours in UTC.
       daylen = day_length(year, month, day, GPSData.lon, GPSData.lat);
