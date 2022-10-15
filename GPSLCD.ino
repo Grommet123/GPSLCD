@@ -292,11 +292,15 @@ void loop()
       setFS = setFS.substring(1, 6);
 
       // Convert UTC "sunrise" time to local "sunset" time
-      (void) convertToLocal(&riseI, &year, &month,
-                            &day, GPSData.lon, false); // false means no date and DST conversion
+      bool DST = convertToLocal(&riseI, &year, &month,
+                                &day, GPSData.lon, false); // false means no date and DST conversion
       // Convert UTC "sunset" time to local "sunset" time
       (void) convertToLocal(&setI, &year, &month,
-                            &day, GPSData.lon, false, true); // false means no date and DST conversion, true means sunset
+                            &day, GPSData.lon, false, !DST); // false means no date and DST conversion, true means sunset
+      Serial.println("");
+      Serial.print("DST = ");
+      Serial.println(DST);
+      delay(1000);
 
       // Get day lenght hours in UTC.
       daylen = day_length(year, month, day, GPSData.lon, GPSData.lat);
