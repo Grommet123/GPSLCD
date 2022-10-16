@@ -286,10 +286,6 @@ void loop()
       // Compute fraction.  UTC is the best I can do. "sun_rise_set" dose not return minutes and seconds.
       double riseF = rise - (double)riseI;
       double setF = set - (double)setI;
-      String riseFS(abs(riseF));
-      String setFS(abs(setF));
-      riseFS = riseFS.substring(1, 6);
-      setFS = setFS.substring(1, 6);
 
       // Convert UTC "sunrise" time to local "sunset" time
       (void) convertToLocal(&riseI, &year, &month,
@@ -297,6 +293,18 @@ void loop()
       // Convert UTC "sunset" time to local "sunset" time
       (void) convertToLocal(&setI, &year, &month,
                             &day, GPSData.lon, false); // false means no date and DST conversion.
+      // Convert UTC "sunrise" time to local "sunset" time
+      (void) convertToLocal((uint16_t)&riseF, &year, &month,
+                            &day, GPSData.lon, false); // false means no date and DST conversion.
+      // Convert UTC "sunset" time to local "sunset" time
+      (void) convertToLocal((uint16_t)&setF, &year, &month,
+                            &day, GPSData.lon, false); // false means no date and DST conversion.
+                            
+      String riseFS(abs(riseF));
+      String setFS(abs(setF));
+      riseFS = riseFS.substring(1, 6);
+      setFS = setFS.substring(1, 6);
+
 
       // Get day lenght hours in UTC.
       daylen = day_length(year, month, day, GPSData.lon, GPSData.lat);
