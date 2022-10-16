@@ -969,6 +969,10 @@ bool convertSToLocal(int* hour, int* year, int* month,
   if (UTCOffset < 0) {
     // West of Greenwich, subtract
     UTCOffset = abs(UTCOffset); // Make offset positive
+        Serial.println("   Red");
+        Serial.println("   Red");
+        Serial.println("   Red");
+        Serial.println("   Red");
     if (DST && convertDate) --UTCOffset; // Compensate for DST
     if (*hour <= UTCOffset) *hour += 24;
     *hour -= UTCOffset; // Subtract offset
