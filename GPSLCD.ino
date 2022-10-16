@@ -677,13 +677,13 @@ bool convertToLocal(uint16_t* hour, uint16_t* year, uint16_t* month,
   if (UTCOffset < 0) {
     // West of Greenwich, subtract
     UTCOffset = abs(UTCOffset); // Make offset positive
-//    if (DST) UTCOffset -= 1; // Compensate for DST
+    if (DST) UTCOffset -= 1; // Compensate for DST
     if (*hour <= UTCOffset) *hour += 24;
     *hour -= UTCOffset; // Subtract offset
   }
   else {
     // East of Greenwich, add
-//    if (DST) - UTCOffset; // Compensate for DST.
+    if (DST) - UTCOffset; // Compensate for DST.
     if (*hour <= UTCOffset) *hour += 24;
     *hour += UTCOffset; // Add offset
   }
