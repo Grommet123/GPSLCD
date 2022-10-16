@@ -293,10 +293,10 @@ void loop()
 
       // Convert UTC "sunrise" time to local "sunset" time
       (void) convertToLocal(&riseI, &year, &month,
-                            &day, GPSData.lon, false); // false means no date and DST conversion
+                            &day, GPSData.lon, false); // false means no date and DST conversion.
       // Convert UTC "sunset" time to local "sunset" time
       (void) convertToLocal(&setI, &year, &month,
-                            &day, GPSData.lon, false); // false means no date and DST conversion
+                            &day, GPSData.lon, false); // false means no date and DST conversion.
 
       // Get day lenght hours in UTC.
       daylen = day_length(year, month, day, GPSData.lon, GPSData.lat);
