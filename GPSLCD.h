@@ -30,7 +30,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "19.16"             // Version number
+#define VERSION  "19.17"             // Version number
 #define DATE "8/30/16"               // Initial release date
 #define Debug                        // Uncomment out for debug
 #define Serial_Debug                 // Uncomment out for serial monitor display debug

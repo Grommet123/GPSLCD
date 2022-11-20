@@ -329,11 +329,6 @@ void loop()
       lcd.setCursor(15, 0);
       lcd.print("SV:"); // Display the number of satellites
       lcd.print(gps.satellites.value());
-      if (gps.satellites.value() >= 4) { // Need at least 4 satellites to navigate
-        lcd.print("n"); // n = navigate
-      } else {
-        lcd.print("i"); // i = initializing
-      }
       lcd.setCursor(0, 1);
       lcd.print("Sunrise: ");
       if (riseI > 12)  riseI -= 12;
