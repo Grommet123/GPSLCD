@@ -30,7 +30,7 @@
 #ifndef GPSLCD_h
 #define GPSLCD_h
 
-#define VERSION  "19.17"             // Version number
+#define VERSION  "19.18"             // Version number
 #define DATE "8/30/16"               // Initial release date
 #define Debug                        // Uncomment out for debug
 #define Serial_Debug                 // Uncomment out for serial monitor display debug
@@ -137,7 +137,7 @@ struct GPSStruct {
 
 // Function Prototypes
 void displayVersionInfo(bool OneTime);
-void displayValidFlags(void);
+void displayValidFlags(bool OneTime, bool displayNavMode);
 uint16_t leap(uint16_t year);
 uint16_t zeller(uint16_t year, uint8_t month, uint8_t day);
 uint8_t dayOfWeek(uint16_t year, uint8_t month, uint8_t day);

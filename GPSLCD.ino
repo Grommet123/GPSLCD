@@ -40,17 +40,16 @@
 #include <SoftwareSerial.h>
 #include <LiquidCrystal_I2C.h>
 
-TinyGPSPlus gps; // This is the GPS object that will pretty much do all the grunt work with the NMEA data
-SoftwareSerial GPSModule(RXPin, TXPin); // Defines the communications to the software serial tx and rx lines
-LiquidCrystal_I2C lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin); // Defines the I2C address
+TinyGPSPlus gps;                                                                          // This is the GPS object that will pretty much do all the grunt work with the NMEA data
+SoftwareSerial GPSModule(RXPin, TXPin);                                                   // Defines the communications to the software serial tx and rx lines
+LiquidCrystal_I2C lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin);  // Defines the I2C address
 // and pins of the LCD
-GPSStruct GPSData; // Holds the local GPS data coming from the GPS module
+GPSStruct GPSData;  // Holds the local GPS data coming from the GPS module
 
 // The setup (runs once at start up)
-void setup()
-{
+void setup() {
 #ifdef Debug
-  Serial.begin(115200); // For debugging to the Serial Monitor (i.e. Serial.Println())
+  Serial.begin(115200);  // For debugging to the Serial Monitor (i.e. Serial.Println())
 #endif
   pinMode(ENHANCE_SW, INPUT);
   pinMode(ENHANCE_2_SW, INPUT);
@@ -63,21 +62,20 @@ void setup()
   pinMode(GREEN_LED_PIN, OUTPUT);
   pinMode(BLUE_LED_PIN, OUTPUT);
 
-  pinMode(LED_BUILTIN, OUTPUT);   // Turn off on-board LED
-  digitalWrite(LED_BUILTIN, LOW); //         "
+  pinMode(LED_BUILTIN, OUTPUT);    // Turn off on-board LED
+  digitalWrite(LED_BUILTIN, LOW);  //         "
 
-  GPSModule.begin(9600); // This opens up communications to the software serial tx and rx lines (TXPin, RXPin)
+  GPSModule.begin(9600);  // This opens up communications to the software serial tx and rx lines (TXPin, RXPin)
   GPSModule.flush();
 
-  lcd.begin(COLUMN, ROW); // Defines LCD type
-  lcd.setBacklightPin(BACKLIGHT_PIN, POSITIVE); // Sets the pin to control the backlight
-  lcd.clear(); // Clear the LCD
-  lcd.home(); // Go to the home position on the LCD
-} // setup
+  lcd.begin(COLUMN, ROW);                        // Defines LCD type
+  lcd.setBacklightPin(BACKLIGHT_PIN, POSITIVE);  // Sets the pin to control the backlight
+  lcd.clear();                                   // Clear the LCD
+  lcd.home();                                    // Go to the home position on the LCD
+}  // setup
 
 // The loop (runs forever and a day :-))
-void loop()
-{
+void loop() {
   static uint32_t pastSatellites = 0;
   static uint8_t initializingCounter = 0;
   static uint8_t enhanceCounter2 = 0;
@@ -104,16 +102,17 @@ void loop()
   bool displayHdop = !digitalRead(DISPLAY_HDOP_SW);
   bool cardinal8_16 = !digitalRead(CARDINAL_SW);
   bool lowSpeedOverride = !digitalRead(LOW_SPEED_OVERRIDE);
-  bool dataAvailable; // Data is available from the GPS module
-  bool dataValid; // Data valid from the GPS module
-  uint8_t SpeedCutout = SPEED_CUTOUT; // Value where the speed is set to 0
-  uint8_t HeadingCutout = SPEED_CUTOUT; // Value where the heading is set to 0
-  unsigned long now = millis(); // The time "now"
+  bool dataAvailable;                    // Data is available from the GPS module
+  bool dataValid;                        // Data valid from the GPS module
+  bool displayNavMode;                   // Displays nav mode(I or n)
+  uint8_t SpeedCutout = SPEED_CUTOUT;    // Value where the speed is set to 0
+  uint8_t HeadingCutout = SPEED_CUTOUT;  // Value where the heading is set to 0
+  unsigned long now = millis();          // The time "now"
 
 #ifdef DATA_VALID_OVERRIDE
-  const bool dataValidOverride = true; // Set true to override data valid for debugging
+  const bool dataValidOverride = true;  // Set true to override data valid for debugging
 #else
-  const bool dataValidOverride = false; // Set false not to override data valid
+  const bool dataValidOverride = false;  // Set false not to override data valid
 #endif
 
 #ifdef BACKLIGHT_OVERRIDE
@@ -145,17 +144,17 @@ void loop()
   }
   // ************ GPS processing starts here ************
   dataAvailable = false;
-  while (GPSModule.available()) // While there are characters coming from the GPS module (using the
-    //                                                                                    SoftwareSerial library)
+  while (GPSModule.available())  // While there are characters coming from the GPS module (using the
+  //                                                                                    SoftwareSerial library)
   {
     char c;
-    bool b = gps.encode(c = GPSModule.read()); // This feeds the serial NMEA data into the GPS library one char at a time
+    bool b = gps.encode(c = GPSModule.read());  // This feeds the serial NMEA data into the GPS library one char at a time
 #ifdef Debug
-    Serial.print(c); // GPS data flow displaying the NMEA data
-    delay (1); // 1 millisecond
+    Serial.print(c);  // GPS data flow displaying the NMEA data
+    delay(1);         // 1 millisecond
 #endif
     if (b) {
-      dataAvailable = true; // Good read
+      dataAvailable = true;  // Good read
     }
   }
 #ifdef Serial_Debug
@@ -165,18 +164,18 @@ void loop()
 
   // Set (good read) valid flags for initialization
   if (dataAvailable) {
-    GPSData.locationisValid    = gps.location.isValid();
-    GPSData.speedisValid       = gps.speed.isValid();
-    GPSData.altitudeisValid    = gps.altitude.isValid();
-    GPSData.courseisValid      = gps.course.isValid();
-    GPSData.dateisValid        = gps.date.isValid();
-    GPSData.timeisValid        = gps.time.isValid();
-    GPSData.satellitesisValid  = gps.satellites.isValid();
-    GPSData.hdopisValid        = gps.hdop.isValid();
-    GPSData.dataAvailable      = dataAvailable;
+    GPSData.locationisValid = gps.location.isValid();
+    GPSData.speedisValid = gps.speed.isValid();
+    GPSData.altitudeisValid = gps.altitude.isValid();
+    GPSData.courseisValid = gps.course.isValid();
+    GPSData.dateisValid = gps.date.isValid();
+    GPSData.timeisValid = gps.time.isValid();
+    GPSData.satellitesisValid = gps.satellites.isValid();
+    GPSData.hdopisValid = gps.hdop.isValid();
+    GPSData.dataAvailable = dataAvailable;
   }
 
-#ifdef Serial_Debug // Print health data to the serial monitor
+#ifdef Serial_Debug  // Print health data to the serial monitor
   Serial.print(GPSData.locationisValid);
   Serial.print(GPSData.speedisValid);
   Serial.print(GPSData.altitudeisValid);
@@ -195,48 +194,41 @@ void loop()
 
   // Get the GPS data valid flags
   dataValid =
-    gps.location.isValid()   &&
-    gps.speed.isValid()      &&
-    gps.altitude.isValid()   &&
-    gps.course.isValid()     &&
-    gps.date.isValid()       &&
-    gps.time.isValid()       &&
-    gps.satellites.isValid() &&
-    gps.hdop.isValid();
+    gps.location.isValid() && gps.speed.isValid() && gps.altitude.isValid() && gps.course.isValid() && gps.date.isValid() && gps.time.isValid() && gps.satellites.isValid() && gps.hdop.isValid();
 
   // Check if the GPS data is valid or data valid override is set (for debugging)
   if (dataValid || dataValidOverride) {
 #ifndef DATA_VALID_OVERRIDE
     // Store the real GPS data
-    GPSData.satellites         = gps.satellites.value();
-    GPSData.lat                = gps.location.lat();
-    GPSData.lon                = gps.location.lng();
-    GPSData.speed              = gps.speed.mph();
-    GPSData.altitude           = gps.altitude.feet();
-    GPSData.heading            = gps.course.deg();
-    GPSData.hdop               = gps.hdop.value();
-    GPSData.year               = gps.date.year();
-    GPSData.month              = gps.date.month();
-    GPSData.day                = gps.date.day();
-    GPSData.hour               = gps.time.hour();
-    GPSData.minute             = gps.time.minute();
-    GPSData.second             = gps.time.second();
-#else // #ifndef DATA_VALID_OVERRIDE
+    GPSData.satellites = gps.satellites.value();
+    GPSData.lat = gps.location.lat();
+    GPSData.lon = gps.location.lng();
+    GPSData.speed = gps.speed.mph();
+    GPSData.altitude = gps.altitude.feet();
+    GPSData.heading = gps.course.deg();
+    GPSData.hdop = gps.hdop.value();
+    GPSData.year = gps.date.year();
+    GPSData.month = gps.date.month();
+    GPSData.day = gps.date.day();
+    GPSData.hour = gps.time.hour();
+    GPSData.minute = gps.time.minute();
+    GPSData.second = gps.time.second();
+#else   // #ifndef DATA_VALID_OVERRIDE
     // Store the fake GPS data (for debugging)
     GPSData.satellites = 5;
-    GPSData.lat        = 40.71d;  // East coast (NYC)
-    GPSData.lon        = -74.00d; //   "
-    GPSData.speed      = 100.0d;
-    GPSData.altitude   = 555.0d;
-    GPSData.heading    = 60.0d; // ENE or NE (16 cardinal points or 8 cardinal points)
-    GPSData.hdop       = 150; // 1.5
-    GPSData.year       = 2017;
-    GPSData.month      = 11; // Day before ST starts
-    GPSData.day        = 5;  //      "
-    GPSData.hour       = 23; // 7pm my local time
-    GPSData.minute     = 10;
-    GPSData.second     = 25;
-#endif // #ifndef DATA_VALID_OVERRIDE
+    GPSData.lat = 40.71d;   // East coast (NYC)
+    GPSData.lon = -74.00d;  //   "
+    GPSData.speed = 100.0d;
+    GPSData.altitude = 555.0d;
+    GPSData.heading = 60.0d;  // ENE or NE (16 cardinal points or 8 cardinal points)
+    GPSData.hdop = 150;       // 1.5
+    GPSData.year = 2017;
+    GPSData.month = 11;  // Day before ST starts
+    GPSData.day = 5;     //      "
+    GPSData.hour = 23;   // 7pm my local time
+    GPSData.minute = 10;
+    GPSData.second = 25;
+#endif  // #ifndef DATA_VALID_OVERRIDE
     // Turn on green LED (all is well)
     if ((digitalRead(BACKLIGHT_SW)) && (GPSData.satellites > 0)) {
       analogWrite(RED_LED_PIN, LED_OFF);
@@ -247,38 +239,39 @@ void loop()
       analogWrite(GREEN_LED_PIN, LED_OFF);
       analogWrite(BLUE_LED_PIN, LED_OFF);
     }
-#ifdef Serial_Debug // Print satellite health data to the serial monitor
+#ifdef Serial_Debug  // Print satellite health data to the serial monitor
     if (GPSData.satellites > 0) {
       Serial.println("   Green");
     }
 #endif
     if ((enhanceDisplay2) && (!enhanceDisplay)) {
       OneTime = true;
-      displayValidFlags(OneTime);
-      lcd.setCursor(19, 3); // Display the counter
-      if (++enhanceCounter2 > 9) enhanceCounter2 = 1; // Limit 1 - 9
+      displayNavMode = false;
+      displayValidFlags(OneTime, displayNavMode);
+      lcd.setCursor(19, 3);                            // Display the counter
+      if (++enhanceCounter2 > 9) enhanceCounter2 = 1;  // Limit 1 - 9
       lcd.print(enhanceCounter2);
-      delay(1000); // 1 seconds
-      goto end; // I hate doing this, but somtimes a man has to do what a man has to do :-(
+      delay(1000);  // 1 seconds
+      goto end;     // I hate doing this, but somtimes a man has to do what a man has to do :-(
     } else if ((enhanceDisplay2) && (enhanceDisplay)) {
-      uint16_t day  = (uint16_t)GPSData.day;
-      uint16_t month =  (uint16_t)GPSData.month;
-      uint16_t year =  (uint16_t)GPSData.year;
-      uint16_t hour =  (uint16_t)GPSData.hour;
+      uint16_t day = (uint16_t)GPSData.day;
+      uint16_t month = (uint16_t)GPSData.month;
+      uint16_t year = (uint16_t)GPSData.year;
+      uint16_t hour = (uint16_t)GPSData.hour;
       uint16_t riseI;
       uint16_t setI;
       uint16_t daylenI;
       double rise, set, daylen;
 
       // Convert UTC date to local date
-      (void) convertToLocal(&hour, &year, &month,
-                            &day, GPSData.lon, true); // true means date conversion
+      (void)convertToLocal(&hour, &year, &month,
+                           &day, GPSData.lon, true);  // true means date conversion
 
       // Get sunrise and sunset time in UTC. Don't need sun rises/sets this day (return value)
-      (void) sun_rise_set(year, month, day,
-                          GPSData.lon,
-                          GPSData.lat,
-                          &rise, &set);
+      (void)sun_rise_set(year, month, day,
+                         GPSData.lon,
+                         GPSData.lat,
+                         &rise, &set);
 
       riseI = (uint16_t)round(rise);
       setI = (uint16_t)round(set);
@@ -288,18 +281,18 @@ void loop()
       double setF = set - (double)setI;
 
       // Convert UTC "sunrise" time to local "sunset" time
-      (void) convertToLocal(&riseI, &year, &month,
-                            &day, GPSData.lon, false); // false means no date and DST conversion.
+      (void)convertToLocal(&riseI, &year, &month,
+                           &day, GPSData.lon, false);  // false means no date and DST conversion.
       // Convert UTC "sunset" time to local "sunset" time
-      (void) convertToLocal(&setI, &year, &month,
-                            &day, GPSData.lon, false); // false means no date and DST conversion.
+      (void)convertToLocal(&setI, &year, &month,
+                           &day, GPSData.lon, false);  // false means no date and DST conversion.
       // Convert UTC "sunrise" time to local "sunset" time
-      (void) convertToLocal((uint16_t)&riseF, &year, &month,
-                            &day, GPSData.lon, false); // false means no date and DST conversion.
+      (void)convertToLocal((uint16_t)&riseF, &year, &month,
+                           &day, GPSData.lon, false);  // false means no date and DST conversion.
       // Convert UTC "sunset" time to local "sunset" time
-      (void) convertToLocal((uint16_t)&setF, &year, &month,
-                            &day, GPSData.lon, false); // false means no date and DST conversion.
-                            
+      (void)convertToLocal((uint16_t)&setF, &year, &month,
+                           &day, GPSData.lon, false);  // false means no date and DST conversion.
+
       String riseFS(abs(riseF));
       String setFS(abs(setF));
       riseFS = riseFS.substring(1, 6);
@@ -316,7 +309,7 @@ void loop()
       String daylenFS(abs(daylenF));
       daylenFS = daylenFS.substring(1, 6);
 
-      lcd.clear(); // Clear the LCD
+      lcd.clear();  // Clear the LCD
       lcd.setCursor(0, 0);
       if (month < 10) lcd.print("0");
       lcd.print(month);
@@ -327,11 +320,11 @@ void loop()
       lcd.print(year);
       displayDayOnLCD(dayOfWeek(year, month, day));
       lcd.setCursor(15, 0);
-      lcd.print("SV:"); // Display the number of satellites
+      lcd.print("SV:");  // Display the number of satellites
       lcd.print(gps.satellites.value());
       lcd.setCursor(0, 1);
       lcd.print("Sunrise: ");
-      if (riseI > 12)  riseI -= 12;
+      if (riseI > 12) riseI -= 12;
       lcd.print(riseI);
       lcd.print(riseFS);
       lcd.print("am");
@@ -346,36 +339,33 @@ void loop()
       lcd.print(daylenI);
       lcd.print(daylenFS);
       lcd.print("hrs");
-      lcd.setCursor(19, 3); // Display the counter
-      if (++enhanceCounter2 > 9) enhanceCounter2 = 1; // Limit 1 - 9
+      lcd.setCursor(19, 3);                            // Display the counter
+      if (++enhanceCounter2 > 9) enhanceCounter2 = 1;  // Limit 1 - 9
       lcd.print(enhanceCounter2);
       delay(1500);
-      goto end; // I hate doing this, but somtimes a man has to do what a man has to do :-(
-    } // } else if ((enhanceDisplay2 && (enhanceDisplay)) {
+      goto end;  // I hate doing this, but somtimes a man has to do what a man has to do :-(
+    }            // } else if ((enhanceDisplay2 && (enhanceDisplay)) {
     // Clear the screen once when leaving initialization
     if (!leftInitialization) {
       leftInitialization = true;
-      lcd.clear(); // Clear the LCD
+      lcd.clear();  // Clear the LCD
     }
     // Display the latest info from the gps object
     // which is derived from the data sent by the u-blox NEO-6M GPS module
     // Send data to the LCD
     if ((altitudeDateTime) && (GPSData.satellites == 0)) {
       OneTime = true;
-      displayValidFlags(OneTime);
-      lcd.setCursor(19, 3); // Display the hdop counter
-      if (++altitudeDateTimeCounter > 9) altitudeDateTimeCounter = 1; // Limit 1 - 9
+      displayValidFlags(OneTime, displayNavMode);
       lcd.print(altitudeDateTimeCounter);
-      delay(1000); // 1 seconds
-      goto end; // I hate doing this, but somtimes a man has to do what a man has to do :-(
+      delay(1000);  // 1 seconds
+      goto end;     // I hate doing this, but somtimes a man has to do what a man has to do :-(
     }
-    lcd.home(); // Go to 1st line
+    lcd.home();  // Go to 1st line
     lcd.print("Lat: ");
     lcd.print(abs(GPSData.lat), 2);
     if (GPSData.lat >= 0) {
       lcd.print("N    ");
-    }
-    else {
+    } else {
       lcd.print("S  ");
     }
     lcd.setCursor(15, 0);
@@ -383,7 +373,7 @@ void loop()
     if ((pastSatellites != GPSData.satellites) || (GPSData.satellites == 0)) {
       pastSatellites = GPSData.satellites;
       if (GPSData.satellites == 0) {
-#ifdef Serial_Debug // Print satellite health data to the serial monitor
+#ifdef Serial_Debug  // Print satellite health data to the serial monitor
         Serial.println("   Red");
 #endif
         // Toggle invalid satellites indicator every TOGGLETIME_INTERVAL seconds
@@ -402,32 +392,29 @@ void loop()
               analogWrite(GREEN_LED_PIN, LED_OFF);
               analogWrite(BLUE_LED_PIN, LED_OFF);
             }
-          }
-          else {
+          } else {
             invalidSatellitesToggle = true;
             lcd.print("  ");
             // Blink red LED
             analogWrite(RED_LED_PIN, LED_OFF);
             analogWrite(GREEN_LED_PIN, LED_OFF);
             analogWrite(BLUE_LED_PIN, LED_OFF);
-          } // if (invalidSatellitesToggle)
-        } // if (now - prevInvalidSatellitesTime > TOGGLETIME_INTERVAL)
-      } // if (GPSData.satellites == 0)
+          }  // if (invalidSatellitesToggle)
+        }    // if (now - prevInvalidSatellitesTime > TOGGLETIME_INTERVAL)
+      }      // if (GPSData.satellites == 0)
       else if (GPSData.satellites <= 9) {
-        lcd.print(" "); // Blank leading char
+        lcd.print(" ");  // Blank leading char
+        lcd.print(GPSData.satellites);
+      } else {
         lcd.print(GPSData.satellites);
       }
-      else {
-        lcd.print(GPSData.satellites);
-      }
-    } // if ((pastSatellites != GPSData.satellites) || (GPSData.satellites == 0))
-    lcd.setCursor(0, 1); // Go to 2nd line
+    }                     // if ((pastSatellites != GPSData.satellites) || (GPSData.satellites == 0))
+    lcd.setCursor(0, 1);  // Go to 2nd line
     lcd.print("Lon: ");
     lcd.print(abs(GPSData.lon), 2);
     if (GPSData.lon >= 0) {
       lcd.print("E");
-    }
-    else {
+    } else {
       lcd.print("W");
     }
     // Only display if time/date is selected
@@ -436,91 +423,87 @@ void loop()
         // Display Hdop
         displayHdopOnLCD(GPSData.hdop, displayHdop, now,
                          &prevHdopTime, &hdopToggle);
-      } // if (!localUTCTimeDate)
+      }  // if (!localUTCTimeDate)
       else {
         if (localUTCTimeDate) {
           // Display Hdop
           displayHdopOnLCD(GPSData.hdop, displayHdop, now,
                            &prevHdopTime, &hdopToggle);
         }
-      } // if (!localUTCTimeDate)
-    } // if (altitudeDateTime)
+      }  // if (!localUTCTimeDate)
+    }    // if (altitudeDateTime)
     else {
       displayHdopOnLCD(GPSData.hdop, displayHdop, now,
                        &prevHdopTime, &hdopToggle);
-    } // if (altitudeDateTime)
-    lcd.setCursor(0, 2); // Go to 3rd line
+    }                     // if (altitudeDateTime)
+    lcd.setCursor(0, 2);  // Go to 3rd line
     lcd.print("Spd: ");
     if ((GPSData.speed < SpeedCutout) && (lowSpeedOverride)) {
       lcd.print("0");
-      lcd.print("m/h   "); // miles per hour
-    }
-    else {
-      lcd.print((int16_t)GPSData.speed); // Miles
+      lcd.print("m/h   ");  // miles per hour
+    } else {
+      lcd.print((int16_t)GPSData.speed);  // Miles
       if ((int16_t)GPSData.speed <= 99) {
-        lcd.print("m/h   "); // Miles per hour
+        lcd.print("m/h   ");  // Miles per hour
       } else {
         lcd.print("m/h ");
       }
       // Enhance display mode
       if (enhanceDisplay) {
         unsigned long KPH;
-        KPH = (GPSData.speed * 1.61f); // Kilometers
+        KPH = (GPSData.speed * 1.61f);  // Kilometers
         lcd.setCursor(5, 2);
         lcd.print((unsigned long)KPH);
         if ((int16_t)GPSData.speed <= 99) {
-          lcd.print("k/h   "); // Kilometers per hour
+          lcd.print("k/h   ");  // Kilometers per hour
         } else {
           lcd.print("k/h ");
         }
-      } // if (enhanceDisplay) {
-    } // if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride))
+      }  // if (enhanceDisplay) {
+    }    // if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride))
     lcd.setCursor(12, 2);
     lcd.print("Hdg: ");
     if ((GPSData.speed < HeadingCutout) && (lowSpeedOverride)) {
       lcd.print("0  ");
-    }
-    else {
+    } else {
       // Toggle heading every TOGGLETIME_INTERVAL seconds
       if (now - prevHeadingTime > TOGGLETIME_INTERVAL) {
         prevHeadingTime = now;
-        if (headingToggle) { // Display cardinal heading
+        if (headingToggle) {  // Display cardinal heading
           headingToggle = false;
           //          lcd.print(cardinal(GPSData.heading, cardinal8_16));
           lcd.print(cardinal(GPSData.heading, cardinal8_16));
-        }
-        else { // Display degrees heading
+        } else {  // Display degrees heading
           headingToggle = true;
           lcd.print((int16_t)GPSData.heading);
-          if (GPSData.heading <= 99.9) lcd.print(" "); // Clear the extra char
-        } // if (headingToggle)
-      } // if (now - prevHeadingTime > TOGGLETIME_INTERVAL)
-    } // if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride))
-    lcd.setCursor(0, 3); // Go to 4th line
+          if (GPSData.heading <= 99.9) lcd.print(" ");  // Clear the extra char
+        }                                               // if (headingToggle)
+      }                                                 // if (now - prevHeadingTime > TOGGLETIME_INTERVAL)
+    }                                                   // if ((GPSData.speed < SPEED_CUTOUT) && (lowSpeedOverride))
+    lcd.setCursor(0, 3);                                // Go to 4th line
     if (altitudeDateTime) {
       lcd.print("Alt: ");
       if (enhanceDisplay) {
-        lcd.print((int16_t)GPSData.altitude * 0.30f); // Convert to meters
-        lcd.print ("mtrs");
-        lcd.print("  "); // Clear the extra chars
+        lcd.print((int16_t)GPSData.altitude * 0.30f);  // Convert to meters
+        lcd.print("mtrs");
+        lcd.print("  ");  // Clear the extra chars
       } else {
         lcd.print((int16_t)GPSData.altitude);
         lcd.print("ft");
-        lcd.print("       "); // Clear the extra chars
+        lcd.print("       ");  // Clear the extra chars
       }
       // Toggle credit every TOGGLETIME_INTERVAL seconds
       if (now - prevCreditTime > (TOGGLETIME_INTERVAL / 2)) {
         prevCreditTime = now;
-        if (creditToggle) { // Display credit
+        if (creditToggle) {  // Display credit
           creditToggle = false;
-          lcd.print(CREDIT); // Yours truly :-)
-        }
-        else {
+          lcd.print(CREDIT);  // Yours truly :-)
+        } else {
           creditToggle = true;
-          lcd.print("            "); // Clear the extra chars
+          lcd.print("            ");  // Clear the extra chars
         }
-      } // if (now - prevCreditTime > TOGGLETIME_INTERVAL)
-    } // if (altitudeDateTime)
+      }  // if (now - prevCreditTime > TOGGLETIME_INTERVAL)
+    }    // if (altitudeDateTime)
     else {
       // Toggle date/time every TOGGLETIME_INTERVAL seconds
       if (now - prevDateTime > TOGGLETIME_INTERVAL) {
@@ -530,29 +513,28 @@ void loop()
           dateTimeToggle = false;
           lcd.print("Time: ");
           uint16_t hour = GPSData.hour;
-          uint16_t day  = GPSData.day;
+          uint16_t day = GPSData.day;
           uint16_t month = GPSData.month;
           uint16_t year = GPSData.year;
           bool DST = false;
           if (!enhanceDisplay) {
             // Convert UTC time to local time (no need to convert the date)
             DST = convertToLocal(&hour, &year, &month,
-                                 &day, GPSData.lon, false); // false means no date conversion
-          }
-          else { // if (localUTCTimeDate)
+                                 &day, GPSData.lon, false);  // false means no date conversion
+          } else {                                           // if (localUTCTimeDate)
             if (display12_24_Hour) {
-              if (hour == 0) { // 12 hour clocks don't display 0
+              if (hour == 0) {  // 12 hour clocks don't display 0
                 hour = 12;
               }
-            } // if (display12_24_Hour)
-          } // if (localUTCTimeDate)
+            }  // if (display12_24_Hour)
+          }    // if (localUTCTimeDate)
           char AMPM[] = "am";
           if (display12_24_Hour) {
-            if (hour >= 12) { // Convert to 12 hour format
+            if (hour >= 12) {  // Convert to 12 hour format
               if (hour > 12) hour -= 12;
               strcpy(AMPM, "pm");
             }
-          } // if (display12_24_Hour)
+          }  // if (display12_24_Hour)
           if (hour < 10) lcd.print("0");
           lcd.print(hour);
           lcd.print(":");
@@ -567,33 +549,31 @@ void loop()
           if (!enhanceDisplay) {
             if (display12_24_Hour) {
               (DST) ? lcd.print(" DST") : lcd.print("  ST");
-            }
-            else {
+            } else {
               (DST) ? lcd.print("   DST") : lcd.print("    ST");
-            } // if (display12_24_Hour)
-          } // if (!enhanceDisplay) {
+            }  // if (display12_24_Hour)
+          }    // if (!enhanceDisplay) {
           if (localUTCTimeDate) {
             if (display12_24_Hour) {
               lcd.print(" UTC");
-            }
-            else {
+            } else {
               lcd.print("   UTC");
-            } // if (display12_24_Hour)
-          } // if (!localUTCTimeDate)
-        } // if (dateTimeToggle)
+            }  // if (display12_24_Hour)
+          }    // if (!localUTCTimeDate)
+        }      // if (dateTimeToggle)
         else {
           // Display date
           dateTimeToggle = true;
           lcd.print("Date: ");
           uint16_t hour = GPSData.hour;
-          uint16_t day  = GPSData.day;
+          uint16_t day = GPSData.day;
           uint16_t month = GPSData.month;
           uint16_t year = GPSData.year;
           if (!enhanceDisplay) {
             // Convert UTC date to local date
             bool DST = convertToLocal(&hour, &year, &month,
-                                      &day, GPSData.lon, true); // true means date conversion
-          } // if (!enhanceDisplay)
+                                      &day, GPSData.lon, true);  // true means date conversion
+          }                                                      // if (!enhanceDisplay)
           if (month < 10) lcd.print("0");
           lcd.print(month);
           lcd.print("/");
@@ -602,10 +582,10 @@ void loop()
           lcd.print("/");
           lcd.print(year);
           displayDayOnLCD(dayOfWeek(year, month, day));
-        } // if (dateTimeToggle)
-      } // if (now - prevDateTime > TOGGLETIME_INTERVAL)
-    } // if (altitudeDateTime)
-  } // if (dataValid || dataValidOverride)
+        }  // if (dateTimeToggle)
+      }    // if (now - prevDateTime > TOGGLETIME_INTERVAL)
+    }      // if (altitudeDateTime)
+  }        // if (dataValid || dataValidOverride)
   else {
     // GPS data is not valid, so it must be initializing
     // Turn on blue LED (Initializing)
@@ -618,46 +598,48 @@ void loop()
       analogWrite(GREEN_LED_PIN, LED_OFF);
       analogWrite(BLUE_LED_PIN, LED_OFF);
     }
-#ifdef Serial_Debug // Print satellite health data to the serial monitor
+#ifdef Serial_Debug  // Print satellite health data to the serial monitor
     Serial.println("   Blue");
 #endif
     // Display initialization screen once every INITIALIZATION_INTERVAL
     if (now - prevInitializationTime > INITIALIZATION_INTERVAL) {
       prevInitializationTime = now;
-      if (altitudeDateTime) { // Display the valid flags
+      if (altitudeDateTime) {  // Display the valid flags
         OneTime = true;
-        displayValidFlags(OneTime);
+        displayNavMode = true;
+        displayValidFlags(OneTime, displayNavMode);
       } else {
         if (enhanceDisplay) {
           displayVersionInfo();
         } else {
-          lcd.clear(); // Clear the LCD
-          lcd.setCursor(8, 0); // Go to 1st line
+          lcd.clear();          // Clear the LCD
+          lcd.setCursor(8, 0);  // Go to 1st line
           lcd.print("GPS");
           lcd.setCursor(15, 0);
-          lcd.print("SV:"); // Display the number of satellites
+          lcd.print("SV:");  // Display the number of satellites
           lcd.print(gps.satellites.value());
-          if (gps.satellites.value() >= 4) { // Need at least 4 satellites to navigate
-            lcd.print("n"); // n = navigate
+          if (gps.satellites.value() >= 4) {  // Need at least 4 satellites to navigate
+            lcd.print("n");                   // n = navigate
           } else {
-            lcd.print("i"); // i = initializing
+            lcd.print("i");  // i = initializing
           }
-          lcd.setCursor(4, 1); // Go to 2nd line
+          lcd.setCursor(4, 1);  // Go to 2nd line
           lcd.print("Initializing");
-          lcd.setCursor(6, 2); // Go to 3rd line
+          lcd.setCursor(6, 2);  // Go to 3rd line
           lcd.print("Data Not");
-          lcd.setCursor(7, 3); // Go to 4th line
+          lcd.setCursor(7, 3);  // Go to 4th line
           lcd.print("Valid");
-        } // if (enhanceDisplay)
-      } // if (altitudeDateTime)
-      lcd.setCursor(19, 3); // Display the initializing counter
-      if (++initializingCounter > 9) initializingCounter = 1; // Limit 1 - 9
+        }                                                      // if (enhanceDisplay)
+      }                                                        // if (altitudeDateTime)
+      lcd.setCursor(19, 3);                                    // Display the initializing counter
+      if (++initializingCounter > 9) initializingCounter = 1;  // Limit 1 - 9
       lcd.print(initializingCounter);
       leftInitialization = false;
-    } // if (now - prevInitializationTime > INITIALIZATION_INTERVAL)
-  } // GPS data is not valid
-end: (void)0; // goto end;
-} // loop
+    }  // if (now - prevInitializationTime > INITIALIZATION_INTERVAL)
+  }    // GPS data is not valid
+end:
+  (void)0;  // goto end;
+}  // loop
 
 // Helper functions start here
 
@@ -669,99 +651,106 @@ end: (void)0; // goto end;
 bool convertToLocal(uint16_t* hour, uint16_t* year, uint16_t* month,
                     uint16_t* day, const double lon, bool convertDate = true) {
 
-  uint8_t DaysAMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+  uint8_t DaysAMonth[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
   // Get Day of Week (DOW)
   uint8_t DOW = dayOfWeek(*year, *month, *day);
   // Get Daylight Saving Time (DST) or Standard Time (ST)
   bool DST = IsDST(*day, *month, DOW);
   // Compute local time (hours)
-  int8_t UTCOffset = (int8_t)round((lon / 15.0d)); // UTC offset
+  int8_t UTCOffset = (int8_t)round((lon / 15.0d));  // UTC offset
   if (UTCOffset < 0) {
     // West of Greenwich, subtract
-    UTCOffset = abs(UTCOffset); // Make offset positive
-    if (DST) UTCOffset -= 1; // Compensate for DST
+    UTCOffset = abs(UTCOffset);  // Make offset positive
+    if (DST) UTCOffset -= 1;     // Compensate for DST
     if (*hour <= UTCOffset) *hour += 24;
-    *hour -= UTCOffset; // Subtract offset
-  }
-  else {
+    *hour -= UTCOffset;  // Subtract offset
+  } else {
     // East of Greenwich, add
-    if (DST) - UTCOffset; // Compensate for DST.
+    if (DST) -UTCOffset;  // Compensate for DST.
     if (*hour <= UTCOffset) *hour += 24;
-    *hour += UTCOffset; // Add offset
+    *hour += UTCOffset;  // Add offset
   }
   // Convert date if convertDate flag is set
   // Portions of the following code (with some modifications) ripped off from Instructables
   // http://www.instructables.com/id/GPS-time-UTC-to-local-time-conversion-using-Arduin/?ALLSTEPS
   if (convertDate) {
-    if ((24 - *hour) <= UTCOffset) { // A new UTC day started
-      if (*year % 4 == 0) DaysAMonth[1] = 29; //leap year check (the simple method)
+    if ((24 - *hour) <= UTCOffset) {           // A new UTC day started
+      if (*year % 4 == 0) DaysAMonth[1] = 29;  //leap year check (the simple method)
       if (*hour < 24) {
         *day -= 1;
         if (*day < 1) {
           if (*month == 1) {
             *month = 12;
             *year -= 1;
-          } // if (*month == 1)
+          }  // if (*month == 1)
           else {
             *month -= 1;
           }
           *day = DaysAMonth[*month - 1];
-        } // if (*day < 1)
-      } // if (*hour < 24)
+        }  // if (*day < 1)
+      }    // if (*hour < 24)
       else if (*hour >= 24) {
         *day += 1;
         if (*day > DaysAMonth[*month - 1]) {
           *day = 1;
           *month += 1;
           if (*month > 12) *year += 1;
-        } // if (*day > DaysAMonth[*month - 1])
-      } // if (*hour >= 24)
-    } // if ((24 - *hour) <= UTCOffset)
-  } // if (convertDate)
+        }  // if (*day > DaysAMonth[*month - 1])
+      }    // if (*hour >= 24)
+    }      // if ((24 - *hour) <= UTCOffset)
+  }        // if (convertDate)
   return (DST);
 }
 
 // Display the Version info on the LCD
 void displayVersionInfo(void) {
-  lcd.clear(); // Clear the LCD
-  lcd.setCursor(6, 0); // Center text (Row, column)
+  lcd.clear();          // Clear the LCD
+  lcd.setCursor(6, 0);  // Center text (Row, column)
   lcd.print("Gary K.");
   lcd.setCursor(15, 0);
-  lcd.print("SV:"); // Display the number of satellites
+  lcd.print("SV:");  // Display the number of satellites
   lcd.print(gps.satellites.value());
-  if (gps.satellites.value() >= 4) { // Need at least 4 satellites to navigate
-    lcd.print("n"); // n = navigate
+  if (gps.satellites.value() >= 4) {  // Need at least 4 satellites to navigate
+    lcd.print("n");                   // n = navigate
   } else {
-    lcd.print("i"); // i = initializing
+    lcd.print("i");  // i = initializing
   }
-  lcd.setCursor(6, 1); // Center text
+  lcd.setCursor(6, 1);  // Center text
   lcd.print("Grotsky");
-  lcd.setCursor(5, 2); // Center text
+  lcd.setCursor(5, 2);  // Center text
   lcd.print("Version ");
   lcd.print(VERSION);
-  lcd.setCursor(6, 3); // Center text
+  lcd.setCursor(6, 3);  // Center text
   lcd.print("IR ");
   lcd.print(DATE);
 }
 // Display the valid flags on the LCD
-void displayValidFlags(bool OneTime) {
+void displayValidFlags(bool OneTime, bool displayNavMode) {
   if (OneTime) {
-    lcd.clear(); // Clear the LCD
+    lcd.clear();  // Clear the LCD
     OneTime = false;
   }
-  lcd.setCursor(2, 0); // Go to 1st line
+  lcd.setCursor(2, 0);  // Go to 1st line
   lcd.print("Valid Flags");
   lcd.setCursor(15, 0);
   lcd.print("SV:");
-  lcd.print(gps.satellites.value());
-  if (gps.satellites.value() >= 4) { // Need at least 4 satellites to navigate
-    lcd.print("n"); // n = navigate
+  if (displayNavMode) {
+    displayNavMode = false;
+    lcd.print(gps.satellites.value());
+    if (gps.satellites.value() >= 4) {  // Need at least 4 satellites to navigate
+      lcd.print("n");                   // n = navigate
+    } else {
+      lcd.print("i");  // i = initializing
+    }
   } else {
-    lcd.print("i"); // i = initializing
+    if (gps.satellites.value() <= 9) {
+      lcd.print(" ");
+      lcd.print(gps.satellites.value());
+    }
   }
   if (GPSData.dataAvailable) {
-    lcd.setCursor(0, 2); // Go to 3rd line
+    lcd.setCursor(0, 2);  // Go to 3rd line
     lcd.print(GPSData.locationisValid);
     lcd.print(GPSData.speedisValid);
     lcd.print(GPSData.altitudeisValid);
@@ -773,11 +762,11 @@ void displayValidFlags(bool OneTime) {
     lcd.print("   ");
     lcd.print(GPSData.dataAvailable);
   } else {
-    lcd.setCursor(11, 2); // Go to 3rd line
+    lcd.setCursor(11, 2);  // Go to 3rd line
     lcd.print(GPSData.dataAvailable);
   }
-  lcd.setCursor(0, 3); // Go to 4th line
-  lcd.print("LSACDTSH   DA"); // Data valid flags
+  lcd.setCursor(0, 3);         // Go to 4th line
+  lcd.print("LSACDTSH   DA");  // Data valid flags
 }
 
 /*  The following three functions ripped off from Electrical Engineering Stack Exchange
@@ -788,8 +777,7 @@ void displayValidFlags(bool OneTime) {
    Gregorian calendar. Instead, it is as though the Gregorian calendar is
    extrapolated back in time to a hypothetical "year zero".
 */
-uint16_t leap(uint16_t year)
-{
+uint16_t leap(uint16_t year) {
   return year * 365 + (year / 4) - (year / 100) + (year / 400);
 }
 /* Returns a number representing the number of days since March 1 in the
@@ -798,53 +786,45 @@ uint16_t leap(uint16_t year)
    algorithm is loosely based on a function known as "Zeller's Congruence".
    This number MOD 7 gives the day of week, where 0 = Monday and 6 = Sunday.
 */
-uint16_t zeller(uint16_t year, uint8_t month, uint8_t day)
-{
+uint16_t zeller(uint16_t year, uint8_t month, uint8_t day) {
   year += ((month + 9) / 12) - 1;
   month = (month + 9) % 12;
   return leap(year) + month * 30 + ((6 * month + 5) / 10) + day + 1;
 }
 
 // Returns the day of week for a given date.
-uint8_t dayOfWeek(uint16_t year, uint8_t month, uint8_t day)
-{
+uint8_t dayOfWeek(uint16_t year, uint8_t month, uint8_t day) {
   return (zeller(year, month, day) % 7) + 1;
 }
 
 // Display the day of the week on the LCD
-void displayDayOnLCD(uint8_t day)
-{
+void displayDayOnLCD(uint8_t day) {
   if (day == 7) day = 0;
-  switch (day)
-  {
-    case 0:  lcd.print(" Mon"); break;
-    case 1:  lcd.print(" Tue"); break;
-    case 2:  lcd.print(" Wed"); break;
-    case 3:  lcd.print(" Thu"); break;
-    case 4:  lcd.print(" Fri"); break;
-    case 5:  lcd.print(" Sat"); break;
-    case 6:  lcd.print(" Sun"); break;
+  switch (day) {
+    case 0: lcd.print(" Mon"); break;
+    case 1: lcd.print(" Tue"); break;
+    case 2: lcd.print(" Wed"); break;
+    case 3: lcd.print(" Thu"); break;
+    case 4: lcd.print(" Fri"); break;
+    case 5: lcd.print(" Sat"); break;
+    case 6: lcd.print(" Sun"); break;
     default: lcd.print(" Err");
   }
 }
 
 // Compute the cardinal points of the compass (16 or 8 cardinal points)
-const char* cardinal(double course, bool cardinalSelect)
-{
+const char* cardinal(double course, bool cardinalSelect) {
   if (!cardinalSelect) {
-    const char* directions[] = {"N  ", "NNE", "NE ", "ENE", "E  ", "ESE", "SE ", "SSE",
-                                "S  ", "SSW", "SW ", "WSW", "W  ", "WNW", "NW ", "NNW"
-                               };
+    const char* directions[] = { "N  ", "NNE", "NE ", "ENE", "E  ", "ESE", "SE ", "SSE",
+                                 "S  ", "SSW", "SW ", "WSW", "W  ", "WNW", "NW ", "NNW" };
     uint8_t direction = (uint8_t)((course + 11.25d) / 22.5d);
     return directions[direction % 16];
-  }
-  else {
-    const char* directions[] = {"N  ", "N  ", "NE ", "NE ", "E  ", "E  ", "SE ", "SE ",
-                                "S  ", "S  ", "SW ", "SW ", "W  ", "W  ", "NW ", "NW "
-                               };
+  } else {
+    const char* directions[] = { "N  ", "N  ", "NE ", "NE ", "E  ", "E  ", "SE ", "SE ",
+                                 "S  ", "S  ", "SW ", "SW ", "W  ", "W  ", "NW ", "NW " };
     uint8_t direction = (uint8_t)((course + 11.25d) / 22.5d);
     return directions[direction % 16];
-  } // if (!cardinalSelect)
+  }  // if (!cardinalSelect)
 }
 
 /* Ripped off from Stackoverflow
@@ -852,23 +832,21 @@ const char* cardinal(double course, bool cardinalSelect)
 
   Check to see if it's Daylight Savings Time (DST)
 */
-bool IsDST(uint8_t day, uint8_t month , uint8_t DOW)
-{
+bool IsDST(uint8_t day, uint8_t month, uint8_t DOW) {
   // If and when permanent DST takes affect
 #ifdef PERMANENT_DST
   return true;
 #else
   // Make Day of Week (DOW) match with what Stackoverflow suggests
   // for DOW (Sunday = 0 to Saturday = 6)
-  switch (DOW)
-  {
-    case 6:  DOW = 0; break; // Sun
-    case 7:  DOW = 1; break; // Mon
-    case 1:  DOW = 2; break; // Tue
-    case 2:  DOW = 3; break; // Wed
-    case 3:  DOW = 4; break; // Thu
-    case 4:  DOW = 5; break; // Fri
-    case 5:  DOW = 6; break; // Sat
+  switch (DOW) {
+    case 6: DOW = 0; break;  // Sun
+    case 7: DOW = 1; break;  // Mon
+    case 1: DOW = 2; break;  // Tue
+    case 2: DOW = 3; break;  // Wed
+    case 3: DOW = 4; break;  // Thu
+    case 4: DOW = 5; break;  // Fri
+    case 5: DOW = 6; break;  // Sat
     default: break;
   }
   // January, February, and December are out
@@ -887,25 +865,24 @@ bool IsDST(uint8_t day, uint8_t month , uint8_t DOW)
   // In November we must be before the first Sunday to be DST
   // That means the previous Sunday must be before the 1st
   return previousSunday <= 0;
-#endif // #ifdef PERMANENT_DTS
+#endif  // #ifdef PERMANENT_DTS
 }
 
 // Dislpays Hdop or horizontal position error on the LCD
 void displayHdopOnLCD(uint32_t Hdop, bool HdopSelect, unsigned long now,
-                      unsigned long * prevHdopTime, bool * hdopToggle) {
+                      unsigned long* prevHdopTime, bool* hdopToggle) {
   if (!HdopSelect) {
     // Display Horizontal Dilution of Precision (Hdop) with the format X.X
     // It comes in from the GPS module as XXX
     // If you care how Hdop is computed (I don't :-)), see the following:
     // http://www2.unb.ca/gge/Resources/gpsworld.may99.pdf
-    float hdop = (float)Hdop / 100.0f; // Hdop in X.X format
+    float hdop = (float)Hdop / 100.0f;  // Hdop in X.X format
     lcd.print(" Hdop:");
     if (hdop < 10.0f) {
       lcd.print((uint32_t)hdop);
       lcd.print(".");
       lcd.print((uint32_t)((hdop - (uint32_t)hdop) * 10.0f));
-    }
-    else {
+    } else {
       // Hdop value too large for my LCD, so cross it out
       // Toggle Hdop indicator every TOGGLETIME_INTERVAL seconds
       if (now - *prevHdopTime > TOGGLETIME_INTERVAL / 3) {
@@ -913,30 +890,26 @@ void displayHdopOnLCD(uint32_t Hdop, bool HdopSelect, unsigned long now,
         if (*hdopToggle) {
           *hdopToggle = false;
           lcd.print("XXX");
-        }
-        else {
+        } else {
           *hdopToggle = true;
           lcd.print("   ");
-        } // if (hdopToggle)
-      } // if (now - prevHdopTime > TOGGLETIME_INTERVAL)
-    } // if (hdop < 10.0f)
-  }
-  else { // if (!HdopSelect)
+        }   // if (hdopToggle)
+      }     // if (now - prevHdopTime > TOGGLETIME_INTERVAL)
+    }       // if (hdop < 10.0f)
+  } else {  // if (!HdopSelect)
     // Display horizontal position error in feet
-    float hError = (float)Hdop / 100.0f; // Error in X.X format
-    hError *= GPS_RECEIVER_ERROR; // Error in meters
-    hError *= _GPS_FEET_PER_METER; // Error in feet
+    float hError = (float)Hdop / 100.0f;  // Error in X.X format
+    hError *= GPS_RECEIVER_ERROR;         // Error in meters
+    hError *= _GPS_FEET_PER_METER;        // Error in feet
     lcd.print(" Err: ");
     if (hError < 100.0f) {
       lcd.print((uint8_t)hError);
       if (hError < 10.0f) {
-        lcd.print("f "); // feet
+        lcd.print("f ");  // feet
+      } else {
+        lcd.print("f");  // feet
       }
-      else {
-        lcd.print("f"); // feet
-      }
-    }
-    else { // if (hError < 100.0f)
+    } else {  // if (hError < 100.0f)
       // horizontal position error value too large for my LCD, so cross it out
       // Toggle Err indicator every TOGGLETIME_INTERVAL seconds
       if (now - *prevHdopTime > TOGGLETIME_INTERVAL / 3) {
@@ -944,14 +917,13 @@ void displayHdopOnLCD(uint32_t Hdop, bool HdopSelect, unsigned long now,
         if (*hdopToggle) {
           *hdopToggle = false;
           lcd.print("XXX");
-        }
-        else {
+        } else {
           *hdopToggle = true;
           lcd.print("   ");
-        } // if (hdopToggle)
-      } // if (now - prevHdopTime > TOGGLETIME_INTERVAL)
-    } // if (hError < 100.0f)
-  } // if (!HdopSelect)
+        }  // if (hdopToggle)
+      }    // if (now - prevHdopTime > TOGGLETIME_INTERVAL)
+    }      // if (hError < 100.0f)
+  }        // if (!HdopSelect)
 }
 
 /*
@@ -965,8 +937,8 @@ void displayHdopOnLCD(uint32_t Hdop, bool HdopSelect, unsigned long now,
 */
 
 /* The "workhorse" function for sun rise/set times */
-int __sunriset__( int year, int month, int day, double lon, double lat,
-                  double altit, int upper_limb, double * trise, double * tset )
+int __sunriset__(int year, int month, int day, double lon, double lat,
+                 double altit, int upper_limb, double* trise, double* tset)
 /***************************************************************************/
 /* Note: year,month,date = calendar date, 1801-2099 only.             */
 /*       Eastern longitude positive, Western longitude negative       */
@@ -997,14 +969,14 @@ int __sunriset__( int year, int month, int day, double lon, double lat,
 /*                                                                    */
 /**********************************************************************/
 {
-  double  d,  /* Days since 2000 Jan 0.0 (negative before) */
-          sr,         /* Solar distance, astronomical units */
-          sRA,        /* Sun's Right Ascension */
-          sdec,       /* Sun's declination */
-          sradius,    /* Sun's apparent radius */
-          t,          /* Diurnal arc */
-          tsouth,     /* Time when Sun is at south */
-          sidtime;    /* Local sidereal time */
+  double d,  /* Days since 2000 Jan 0.0 (negative before) */
+    sr,      /* Solar distance, astronomical units */
+    sRA,     /* Sun's Right Ascension */
+    sdec,    /* Sun's declination */
+    sradius, /* Sun's apparent radius */
+    t,       /* Diurnal arc */
+    tsouth,  /* Time when Sun is at south */
+    sidtime; /* Local sidereal time */
 
   int rc = 0; /* Return cde from function - usually 0 */
 
@@ -1012,10 +984,10 @@ int __sunriset__( int year, int month, int day, double lon, double lat,
   d = days_since_2000_Jan_0(year, month, day) + 0.5 - lon / 360.0;
 
   /* Compute the local sidereal time of this moment */
-  sidtime = revolution( GMST0(d) + 180.0 + lon );
+  sidtime = revolution(GMST0(d) + 180.0 + lon);
 
   /* Compute Sun's RA, Decl and distance at this moment */
-  sun_RA_dec( d, &sRA, &sdec, &sr );
+  sun_RA_dec(d, &sRA, &sdec, &sr);
 
   /* Compute time when Sun is at south - in hours UT */
   tsouth = 12.0 - rev180(sidtime - sRA) / 15.0;
@@ -1024,33 +996,32 @@ int __sunriset__( int year, int month, int day, double lon, double lat,
   sradius = 0.2666 / sr;
 
   /* Do correction to upper limb, if necessary */
-  if ( upper_limb )
+  if (upper_limb)
     altit -= sradius;
 
   /* Compute the diurnal arc that the Sun traverses to reach */
   /* the specified altitude altit: */
   {
     double cost;
-    cost = ( sind(altit) - sind(lat) * sind(sdec) ) /
-           ( cosd(lat) * cosd(sdec) );
-    if ( cost >= 1.0 )
-      rc = -1, t = 0.0;       /* Sun always below altit */
-    else if ( cost <= -1.0 )
-      rc = +1, t = 12.0;      /* Sun always above altit */
+    cost = (sind(altit) - sind(lat) * sind(sdec)) / (cosd(lat) * cosd(sdec));
+    if (cost >= 1.0)
+      rc = -1, t = 0.0; /* Sun always below altit */
+    else if (cost <= -1.0)
+      rc = +1, t = 12.0; /* Sun always above altit */
     else
       t = acosd(cost) / 15.0; /* The diurnal arc, hours */
   }
 
   /* Store rise and set times - in hours UT */
   *trise = tsouth - t;
-  *tset  = tsouth + t;
+  *tset = tsouth + t;
 
   return rc;
-}  /* __sunriset__ */
+} /* __sunriset__ */
 
 /* The "workhorse" function */
-double __daylen__( int year, int month, int day, double lon, double lat,
-                   double altit, int upper_limb )
+double __daylen__(int year, int month, int day, double lon, double lat,
+                  double altit, int upper_limb)
 /**********************************************************************/
 /* Note: year,month,date = calendar date, 1801-2099 only.             */
 /*       Eastern longitude positive, Western longitude negative       */
@@ -1067,14 +1038,14 @@ double __daylen__( int year, int month, int day, double lon, double lat,
 /*               and to zero when computing day+twilight length.      */
 /**********************************************************************/
 {
-  double  d,  /* Days since 2000 Jan 0.0 (negative before) */
-          obl_ecl,    /* Obliquity (inclination) of Earth's axis */
-          sr,         /* Solar distance, astronomical units */
-          slon,       /* True solar longitude */
-          sin_sdecl,  /* Sine of Sun's declination */
-          cos_sdecl,  /* Cosine of Sun's declination */
-          sradius,    /* Sun's apparent radius */
-          t;          /* Diurnal arc */
+  double d,    /* Days since 2000 Jan 0.0 (negative before) */
+    obl_ecl,   /* Obliquity (inclination) of Earth's axis */
+    sr,        /* Solar distance, astronomical units */
+    slon,      /* True solar longitude */
+    sin_sdecl, /* Sine of Sun's declination */
+    cos_sdecl, /* Cosine of Sun's declination */
+    sradius,   /* Sun's apparent radius */
+    t;         /* Diurnal arc */
 
   /* Compute d of 12h local mean solar time */
   d = days_since_2000_Jan_0(year, month, day) + 0.5 - lon / 360.0;
@@ -1083,36 +1054,35 @@ double __daylen__( int year, int month, int day, double lon, double lat,
   obl_ecl = 23.4393 - 3.563E-7 * d;
 
   /* Compute Sun's ecliptic longitude and distance */
-  sunpos( d, &slon, &sr );
+  sunpos(d, &slon, &sr);
 
   /* Compute sine and cosine of Sun's declination */
   sin_sdecl = sind(obl_ecl) * sind(slon);
-  cos_sdecl = sqrt( 1.0 - sin_sdecl * sin_sdecl );
+  cos_sdecl = sqrt(1.0 - sin_sdecl * sin_sdecl);
 
   /* Compute the Sun's apparent radius, degrees */
   sradius = 0.2666 / sr;
 
   /* Do correction to upper limb, if necessary */
-  if ( upper_limb )
+  if (upper_limb)
     altit -= sradius;
 
   /* Compute the diurnal arc that the Sun traverses to reach */
   /* the specified altitude altit: */
   {
     double cost;
-    cost = ( sind(altit) - sind(lat) * sin_sdecl ) /
-           ( cosd(lat) * cos_sdecl );
-    if ( cost >= 1.0 )
-      t = 0.0;                      /* Sun always below altit */
-    else if ( cost <= -1.0 )
-      t = 24.0;                     /* Sun always above altit */
-    else  t = (2.0 / 15.0) * acosd(cost); /* The diurnal arc, hours */
+    cost = (sind(altit) - sind(lat) * sin_sdecl) / (cosd(lat) * cos_sdecl);
+    if (cost >= 1.0)
+      t = 0.0; /* Sun always below altit */
+    else if (cost <= -1.0)
+      t = 24.0;                          /* Sun always above altit */
+    else t = (2.0 / 15.0) * acosd(cost); /* The diurnal arc, hours */
   }
   return t;
-}  /* __daylen__ */
+} /* __daylen__ */
 
 /* This function computes the Sun's position at any instant */
-void sunpos( double d, double * lon, double * r )
+void sunpos(double d, double* lon, double* r)
 /******************************************************/
 /* Computes the Sun's ecliptic longitude and distance */
 /* at an instant given in d, number of days since     */
@@ -1120,31 +1090,31 @@ void sunpos( double d, double * lon, double * r )
 /* computed, since it's always very near 0.           */
 /******************************************************/
 {
-  double M,         /* Mean anomaly of the Sun */
-         w,         /* Mean longitude of perihelion */
-         /* Note: Sun's mean longitude = M + w */
-         e,         /* Eccentricity of Earth's orbit */
-         E,         /* Eccentric anomaly */
-         x, y,      /* x, y coordinates in orbit */
-         v;         /* True anomaly */
+  double M, /* Mean anomaly of the Sun */
+    w,      /* Mean longitude of perihelion */
+    /* Note: Sun's mean longitude = M + w */
+    e,    /* Eccentricity of Earth's orbit */
+    E,    /* Eccentric anomaly */
+    x, y, /* x, y coordinates in orbit */
+    v;    /* True anomaly */
 
   /* Compute mean elements */
-  M = revolution( 356.0470 + 0.9856002585 * d );
+  M = revolution(356.0470 + 0.9856002585 * d);
   w = 282.9404 + 4.70935E-5 * d;
   e = 0.016709 - 1.151E-9 * d;
 
   /* Compute true longitude and radius vector */
-  E = M + e * RADEG * sind(M) * ( 1.0 + e * cosd(M) );
+  E = M + e * RADEG * sind(M) * (1.0 + e * cosd(M));
   x = cosd(E) - e;
-  y = sqrt( 1.0 - e * e ) * sind(E);
-  *r = sqrt( x * x + y * y );          /* Solar distance */
-  v = atan2d( y, x );                  /* True anomaly */
-  *lon = v + w;                        /* True solar longitude */
-  if ( *lon >= 360.0 )
-    *lon -= 360.0;                   /* Make it 0..360 degrees */
+  y = sqrt(1.0 - e * e) * sind(E);
+  *r = sqrt(x * x + y * y); /* Solar distance */
+  v = atan2d(y, x);         /* True anomaly */
+  *lon = v + w;             /* True solar longitude */
+  if (*lon >= 360.0)
+    *lon -= 360.0; /* Make it 0..360 degrees */
 }
 
-void sun_RA_dec( double d, double * RA, double * dec, double * r )
+void sun_RA_dec(double d, double* RA, double* dec, double* r)
 /******************************************************/
 /* Computes the Sun's equatorial coordinates RA, Decl */
 /* and also its distance, at an instant given in d,   */
@@ -1154,7 +1124,7 @@ void sun_RA_dec( double d, double * RA, double * dec, double * r )
   double lon, obl_ecl, x, y, z;
 
   /* Compute Sun's ecliptical coordinates */
-  sunpos( d, &lon, r );
+  sunpos(d, &lon, r);
 
   /* Compute ecliptic rectangular coordinates (z=0) */
   x = *r * cosd(lon);
@@ -1168,33 +1138,33 @@ void sun_RA_dec( double d, double * RA, double * dec, double * r )
   y = y * cosd(obl_ecl);
 
   /* Convert to spherical coordinates */
-  *RA = atan2d( y, x );
-  *dec = atan2d( z, sqrt(x * x + y * y) );
+  *RA = atan2d(y, x);
+  *dec = atan2d(z, sqrt(x * x + y * y));
 
-}  /* sun_RA_dec */
+} /* sun_RA_dec */
 
 /******************************************************************/
 /* This function reduces any angle to within the first revolution */
 /* by subtracting or adding even multiples of 360.0 until the     */
 /* result is >= 0.0 and < 360.0                                   */
 /******************************************************************/
-#define INV360    ( 1.0 / 360.0 )
+#define INV360 (1.0 / 360.0)
 
-double revolution( double x )
+double revolution(double x)
 /*****************************************/
 /* Reduce angle to within 0..360 degrees */
 /*****************************************/
 {
-  return ( x - 360.0 * floor( x * INV360 ) );
-}  /* revolution */
+  return (x - 360.0 * floor(x * INV360));
+} /* revolution */
 
-double rev180( double x )
+double rev180(double x)
 /*********************************************/
 /* Reduce angle to within +180..+180 degrees */
 /*********************************************/
 {
-  return ( x - 360.0 * floor( x * INV360 + 0.5 ) );
-}  /* revolution */
+  return (x - 360.0 * floor(x * INV360 + 0.5));
+} /* revolution */
 
 
 /*******************************************************************/
@@ -1223,15 +1193,13 @@ double rev180( double x )
 /*                                                                 */
 /*******************************************************************/
 
-double GMST0( double d )
-{
+double GMST0(double d) {
   double sidtim0;
   /* Sidtime at 0h UT = L (Sun's mean longitude) + 180.0 degr  */
   /* L = M + w, as defined in sunpos().  Since I'm too lazy to */
   /* add these numbers, I'll let the C compiler do it for me.  */
   /* Any decent C compiler will add the constants at compile   */
   /* time, imposing no runtime or code overhead.               */
-  sidtim0 = revolution( ( 180.0 + 356.0470 + 282.9404 ) +
-                        ( 0.9856002585 + 4.70935E-5 ) * d );
+  sidtim0 = revolution((180.0 + 356.0470 + 282.9404) + (0.9856002585 + 4.70935E-5) * d);
   return sidtim0;
-}  /* GMST0 */
+} /* GMST0 */
